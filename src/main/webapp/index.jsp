@@ -192,7 +192,7 @@
   </div>
 	<script type="text/javascript">
 	/* var mem = '${loginMember.uid}';
-	
+	테스트
 	var lnk = document.querySelectorAll('.forlink');
 	
 	var lnkArr = [
