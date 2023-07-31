@@ -1,0 +1,22 @@
+.description {
+	text-align: center;
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+.image-gallery {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.image-gallery img {
+	width: 500px;
+	height: 450px;
+	object-fit: cover;
+	margin: 10px;
+}
+
+.description span {
+	color: black;
+}
