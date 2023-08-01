@@ -1,6 +1,7 @@
 package service;
 
 import java.util.List;
+import java.util.Optional;
 
 import workDao.MemberDB;
 import workDto.Member;
@@ -10,8 +11,8 @@ public class MemberService {
 	
 	private MemberDB _dao;
 	
-	public MemberService(MemberDB memberDao) {
-		_dao = memberDao;
+	public MemberService(MemberDB memberdb) {
+		_dao = memberdb;
 	}
 
 	public List<Member> selectByList() {
@@ -22,6 +23,27 @@ public class MemberService {
 	public Member selectBySearch(String search) {
 		sql = "select memberid, name, pwd, phone from Member where memberid=?";
 		return (Member) _dao.selectBySearch(sql, search);
+	}
+	
+	public Optional<Member> selectByMember(Member mem) {
+		sql = "select memberid, name, pwd, phone from Member where memberid=? and pwd=?";
+		return _dao.selectByMember(sql, mem);
+	}
+	
+	public Optional<Member> selectByName(Member mem) {
+		sql = "select memberid, name, pwd, phone from Member where name=? and phone=?";
+		return _dao.selectByName(sql, mem);
+	}
+	
+	public Optional<Member> selectByIdName(Member mem) {
+		sql = "select memberid, name, pwd, phone from Member where memberid=? and name=?";
+		return _dao.selectByIdName(sql, mem);
+	}
+	
+	
+	public int selectByCount(String memberid) {
+		sql = "select count(*) from member where memberid=?";
+		return _dao.selectByCount(sql, memberid);
 	}
 	
 	public void insert(Member member) {

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import Utils.SingletonConnectionHelper;
 import workDto.Member;
@@ -76,6 +77,113 @@ public class MemberDB implements MemberDAO {
 		}
 		
 		return mem;
+	}
+	
+	@Override
+	public Optional<Member> selectByMember(String sql, Member member) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Optional<Member> optionMem = Optional.empty();
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, member.getMemberid());
+			pstmt.setString(2, member.getPwd());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				optionMem = optionMem.of(mem);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+			SingletonConnectionHelper.close(rs);
+		}
+		
+		return optionMem;
+	}
+
+	@Override
+	public Optional<Member> selectByName(String sql, Member member) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Optional<Member> optionMem = Optional.empty();
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, member.getName());
+			pstmt.setString(2, member.getPhone());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				optionMem = optionMem.of(mem);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+			SingletonConnectionHelper.close(rs);
+		}
+		
+		return optionMem;
+	}
+	
+	@Override
+	public Optional<Member> selectByIdName(String sql, Member member) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Optional<Member> optionMem = Optional.empty();
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, member.getMemberid());
+			pstmt.setString(2, member.getName());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
+				optionMem = optionMem.of(mem);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+			SingletonConnectionHelper.close(rs);
+		}
+		
+		return optionMem;
+	}
+	
+	@Override
+	public int selectByCount(String sql, String memberid) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, memberid);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				count = Integer.parseInt(rs.getString(1));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+			SingletonConnectionHelper.close(rs);
+		}
+		
+		return count;
 	}
 
 	@Override
@@ -157,6 +265,12 @@ public class MemberDB implements MemberDAO {
 		}
 		return row;
 	}
+
+	
+
+	
+
+	
 
 
 

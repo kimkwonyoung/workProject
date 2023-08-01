@@ -67,53 +67,54 @@ public class MemberController extends HttpServlet  {
 	}
 	
 	public void memberInsert(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
+//		List<Member> memberList = _memberService.selectByList();
 		
 		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String name = request.getParameter("name");
 		String phone = request.getParameter("phone");
-		System.out.println("입력된 이름 값 = " + name);
 		
 		
+//		boolean result = memberList.stream().noneMatch(m -> m.getMemberid().equals(memberid));
 		
-		boolean result = memberList.stream().noneMatch(m -> m.getMemberid().equals(memberid));
+		int count = _memberService.selectByCount(memberid);
+		
 		String message;
 		
-		if (result) {
+		if (count > 0) {
+			message = "이미 존재 하는 아이디 입니다.";
+			request.setAttribute("alertmessage", message);
+		} else {
 			_memberService.insert(new Member(memberid, name, pwd, phone));
 			message = "회원 가입 완료";
 			request.setAttribute("alertmessage", message);
-		} else {
-			System.out.println("이미 존재 하는 아디 확인");
-			message = "이미 존재 하는 아이디 입니다.";
-			request.setAttribute("alertmessage", message);
 		}
+		
+//		if (result) {
+//			_memberService.insert(new Member(memberid, name, pwd, phone));
+//			message = "회원 가입 완료";
+//			request.setAttribute("alertmessage", message);
+//		} else {
+//			System.out.println("이미 존재 하는 아디 확인");
+//			message = "이미 존재 하는 아이디 입니다.";
+//			request.setAttribute("alertmessage", message);
+//		}
 		
 		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
 	}
 	
 	public void memberLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
 		
 		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
-		System.out.println("입력된 아이디 = " + memberid);
-		System.out.println("입력된 비밀번호 = " + pwd);
 		String message;
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(memberid) && m.getPwd().equals(pwd)).findFirst();
+		Optional<Member> optionalMember = _memberService.selectByMember(new Member(memberid, null, pwd));
 		HttpSession session = request.getSession();
-		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd EEEE a", new Locale("ko"));
-		String dateFormat = sdf.format(date);
-		
-		System.out.println("현재시각 = " + dateFormat);
 		
 		if (optionalMember.isPresent()) {
 			System.out.println("로그인 성공 확인");
 			message = "로그인 성공";
 			request.setAttribute("alertmessage", message);
-			session.setAttribute("dateFormat", dateFormat);
 			session.setAttribute("loginMember", optionalMember.get());
 		} else {
 			System.out.println("아이디 비번 실패 확인");
@@ -145,15 +146,14 @@ public class MemberController extends HttpServlet  {
 	
 
 	public void membersearch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
 		String dis = request.getParameter("dis");
+		String name = request.getParameter("name");
+		String phone = request.getParameter("phone");
+		String memberid = request.getParameter("memberid");
 		String message = "";
 		
-		
-		String name = request.getParameter("name");
-		
 		if (dis.equals("searchId")) {
-			Optional<Member> optionalMember = memberList.stream().filter(m -> m.getName().equals(name)).findFirst();
+			Optional<Member> optionalMember = _memberService.selectByName(new Member(null, name, null, phone));
 			if (optionalMember.isPresent()) {
 				Member findId = optionalMember.get();
 				message = "찾으시는 아이디 = " + findId.getMemberid();
@@ -161,11 +161,11 @@ public class MemberController extends HttpServlet  {
 				request.setAttribute("findId", findId);
 				
 			} else {
-				message = "이름이 잘못되었습니다";
+				message = "이름 또는 휴대폰번호가 잘못되었습니다";
 				request.setAttribute("alertmessage", message);
 			}
 		} else if(dis.equals("searchPwd")) {
-			Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(request.getParameter("memberid")) && m.getName().equals(name)).findFirst();
+			Optional<Member> optionalMember = _memberService.selectByIdName(new Member(memberid, name));
 			if (optionalMember.isPresent()) {
 				Member findPwd = optionalMember.get();
 				message = "찾으시는 비밀번호 = " + findPwd.getPwd();
@@ -176,29 +176,6 @@ public class MemberController extends HttpServlet  {
 				request.setAttribute("alertmessage", message);
 			}
 		}
-		
-//		if (dis.equals("searchId")) {
-//			if (member != null) {
-//				message = "찾으시는 아이디 = " + member.getMemberid();
-//				request.setAttribute("alertmessage", message);
-//				request.setAttribute("findId", member.getMemberid());
-//			} else {
-//				message = "이름이 잘못되었습니다";
-//				request.setAttribute("alertmessage", message);
-//			}
-//			
-//		} else if(dis.equals("searchPwd")) {
-//			member = _memberService.selectBySearch(request.getParameter("memberid"));
-//			if (member != null) {
-//				System.out.println("멤버 = " + member);
-//				message = "찾으시는 비밀번호 = " + member.getPwd();
-//				request.setAttribute("alertmessage", message);
-//				request.setAttribute("findPwd", member.getPwd());
-//			} else {
-//				message = "아이디와 이름이 잘못되었습니다";
-//				request.setAttribute("alertmessage", message);
-//			}
-//		}
 		request.setAttribute("dis", dis);
 		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
 	}
@@ -206,7 +183,6 @@ public class MemberController extends HttpServlet  {
 	
 
 	public void memberupdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		List<Member> memberList = _memberService.selectByList();
 		Member member = _memberService.selectBySearch(request.getParameter("searchId"));
 		
 		String pwd = request.getParameter("pwd");
@@ -231,13 +207,12 @@ public class MemberController extends HttpServlet  {
 	}
 	
 	public void memberwithdraw(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
 		
 		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String message = "";
 		
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(memberid) && m.getPwd().equals(pwd)).findFirst();
+		Optional<Member> optionalMember = _memberService.selectByMember(new Member(memberid, null, pwd));
 		
 		if (optionalMember.isPresent()) {
 			Member mem = optionalMember.get();

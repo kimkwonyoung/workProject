@@ -2,9 +2,7 @@ package workDao;
 
 import java.util.List;
 
-import workDto.GeneralModel;
 import workDto.Member;
-import workDto.SearchVo;
 
 public interface GeneralDAO {
 	

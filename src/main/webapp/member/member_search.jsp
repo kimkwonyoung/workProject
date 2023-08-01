@@ -27,6 +27,12 @@
                 <label for="username">이름:</label>
                 <input type="text" id="username" name="name" placeholder="이름을 입력하세요" required>
             </div>
+            <c:if test="${param.dis eq 'searchId' }">
+	            <div class="form-group-insert">
+	                <label for="userid">휴대폰번호:</label>
+	                <input type="text" id="tel" name="phone" placeholder="휴대폰번호를 입력하세요" required>
+	            </div>
+         	</c:if>
             <div class="form-group-insert">
             	<c:if test="${param.dis eq 'searchId' }">
             		<input type="hidden" name="dis" value="searchId">
@@ -41,9 +47,7 @@
                 	
         </form>
     </div>
-    <script type="text/javascript">
-    	
-    </script>
+    <script src="/workProject/js/check.js"></script>
 
 </body>
 </html>

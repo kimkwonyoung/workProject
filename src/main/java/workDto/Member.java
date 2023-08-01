@@ -1,6 +1,5 @@
 package workDto;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import lombok.Data;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 
-public class Member implements GeneralModel {
+public class Member {
 	
 	private String memberid;
 	private String name;
