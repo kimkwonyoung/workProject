@@ -1,12 +1,11 @@
 package service;
 
-import workDao.MemberDao;
 
 public abstract class BaseServiceImpl {
 	
-	private MemberDao _dao;
+	private GeneralDaoImpl _dao;
 	
-	protected MemberDao getDao() {
+	protected GeneralDaoImpl getDao() {
 		return this._dao;
 	}
 }

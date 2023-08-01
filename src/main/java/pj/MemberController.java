@@ -20,7 +20,7 @@ import javax.websocket.Session;
 import org.apache.jasper.compiler.ELFunctionMapper;
 
 import service.MemberService;
-import workDao.MemberDao;
+import workDao.MemberDB;
 import workDto.Member;
 
 @WebServlet("/main")
@@ -30,7 +30,7 @@ public class MemberController extends HttpServlet  {
 	
 	
 	public MemberController() {
-        _memberService = new MemberService(new MemberDao()); //
+        _memberService = new MemberService(new MemberDB()); 
     }
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {

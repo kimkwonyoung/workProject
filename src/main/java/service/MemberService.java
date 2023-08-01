@@ -2,21 +2,15 @@ package service;
 
 import java.util.List;
 
-import workDao.MemberDao;
+import workDao.MemberDB;
 import workDto.Member;
 
-
-/**
- * @author kky
- * 비즈니스 로직 구현 불가능(쿼리문만 적용)
- *
- */
 public class MemberService {
 	String sql = "";
 	
-	private MemberDao _dao;
+	private MemberDB _dao;
 	
-	public MemberService(MemberDao memberDao) {
+	public MemberService(MemberDB memberDao) {
 		_dao = memberDao;
 	}
 

@@ -8,12 +8,11 @@ import java.util.List;
 
 import Utils.SingletonConnectionHelper;
 import workDto.Member;
-import workDto.SearchVo;
 
-public class MemberDao implements GeneralDAO {
+public class MemberDB implements MemberDAO {
 	Connection conn = null;
 	
-	public MemberDao() {
+	public MemberDB() {
 		try {
 			conn = SingletonConnectionHelper.getConnection("oracle");
 			System.out.println("DB연결 확인 = " + conn);
