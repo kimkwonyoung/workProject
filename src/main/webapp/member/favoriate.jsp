@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/project/css/favoriate.css">
+<link rel="stylesheet" href="/workProject/css/favoriate.css">
 </head>
 <body>
   <div class="description">
@@ -12,21 +12,21 @@
   </div>
   
   <div class="image-gallery">
-    <img src="/project/images/s1.jpg">
-    <img src="/project/images/s2.jpg">
-    <img src="/project/images/s3.jpg">
-    <img src="/project/images/s4.jpg">
-    <img src="/project/images/s5.jpg">
-    <img src="/project/images/s6.jpg">
-    <img src="/project/images/s7.jpg">
-    <img src="/project/images/s8.jpg">
-    <img src="/project/images/s9.jpg">
-    <img src="/project/images/s10.jpg">
+    <img src="/workProject/images/s1.jpg">
+    <img src="/workProject/images/s2.jpg">
+    <img src="/workProject/images/s3.jpg">
+    <img src="/workProject/images/s4.jpg">
+    <img src="/workProject/images/s5.jpg">
+    <img src="/workProject/images/s6.jpg">
+    <img src="/workProject/images/s7.jpg">
+    <img src="/workProject/images/s8.jpg">
+    <img src="/workProject/images/s9.jpg">
+    <img src="/workProject/images/s10.jpg">
   </div>
   
 <script>
 	var link = document.querySelector('.description span a');
-	var href = '/project/index.jsp';
+	var href = '/workProject/index.jsp';
 	link.addEventListener('click', () => {
 		window.location.href = href;
 	});
@@ -35,10 +35,10 @@
 	for (let i = 0; i < cover.length; i++) {
 		let num = i + 1;
 		cover[i].addEventListener('mouseover', () => {
-			cover[i].src = '/project/images/f'+ num + '.jpg';
+			cover[i].src = '/workProject/images/f'+ num + '.jpg';
 		});
 		cover[i].addEventListener('mouseout', () => {
-			cover[i].src = '/project/images/s'+ num + '.jpg';
+			cover[i].src = '/workProject/images/s'+ num + '.jpg';
 		});
 		
 	}

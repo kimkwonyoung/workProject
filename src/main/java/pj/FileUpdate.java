@@ -10,6 +10,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import workDto.Member;
+
 
 public class FileUpdate {
 	

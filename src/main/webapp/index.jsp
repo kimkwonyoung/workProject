@@ -43,11 +43,11 @@
 				<a href="#">연혁</a> 
 				<a href="#">비즈니스</a> 
 				<a href="#">연락처</a>
-				<a href="/project/main?action=memberlist" class="forlink">전체 회원 보기</a>
+				<a href="/workProject/main?action=memberlist" class="forlink">전체 회원 보기</a>
 			</div>
           </li>
           
-          <!-- <li><a href="/project/main?action=memberlist">전체 회원 보기</a></li> -->
+          <!-- <li><a href="/workProject/main?action=memberlist">전체 회원 보기</a></li> -->
         </ul>
       </nav>
     </header>
@@ -79,12 +79,12 @@
         <div id="gallery" class="tabContent">
           <h2>갤러리 내용입니다.</h2>
           <ul>
-            <li><img src="/project/images/c1.jpg" ></li>
-            <li><img src="/project/images/c2.jpg" ></li>
-            <li><img src="/project/images/c3.jpg" ></li>
-            <li><img src="/project/images/c4.jpg" ></li>
-            <li><img src="/project/images/f8.jpg" ></li>  
-            <li><img src="/project/images/f5.jpg" ></li>                  
+            <li><img src="/workProject/images/c1.jpg" ></li>
+            <li><img src="/workProject/images/c2.jpg" ></li>
+            <li><img src="/workProject/images/c3.jpg" ></li>
+            <li><img src="/workProject/images/c4.jpg" ></li>
+            <li><img src="/workProject/images/f8.jpg" ></li>  
+            <li><img src="/workProject/images/f5.jpg" ></li>                  
           </ul>
         </div>
         <div id="lightbox">
@@ -109,13 +109,13 @@
       </div>
       <c:if test="${empty loginMember}">
 	      <div id="login">
-	        <form action="/project/main" method="post">
+	        <form action="/workProject/main" method="post">
 	        	<div class="form-group">
 	        		<h2>로그인</h2>
 	        	</div>
 	            <div id="form-group">
 	            	<label for="username">아이디:</label>
-	                <input type="text" name="uid" placeholder="enter your id" required>
+	                <input type="text" name="memberid" placeholder="enter your id" required>
 	            	
 	            </div>
 	            <div id="form-group">
@@ -138,7 +138,7 @@
     	<c:if test="${not empty loginMember}">
     		<div id="loginmember">
 	            <div id="loginmessage">
-	                <label>${loginMember.uid} 회원님</label>
+	                <label>${loginMember.memberid} 회원님</label>
 	            </div>
 	            <div id="date">
 	            	<ul>
@@ -151,16 +151,16 @@
 	        	<div id="mlist">
 	        		<ul>
 	        			<li>장바구니</li>
-	        			<li><a href="/project/member/favoriate.jsp" class="forlink">사진모음</a></li>
+	        			<li><a href="/workProject/member/favoriate.jsp" class="forlink">사진모음</a></li>
 	        			<li>나의문의내역</li>
 	        		</ul>
 	        	        	
 	        	</div>
 	          	<div id="userInfo">
-	            	<a href="/project/main?action=memberInfo&uid=${loginMember.uid}" class="forlink"><span>나의 상세 정보 보기</span></a>
+	            	<a href="/workProject/main?action=memberInfo&memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
 	            </div>       
 	            <div id="loginOut">
-	            	<a href="/project/main?action=logout" class="forlink"><span>로그 아웃</span></a>
+	            	<a href="/workProject/main?action=logout" class="forlink"><span>로그 아웃</span></a>
 	            </div>
 	           
 	    	</div>
@@ -191,15 +191,15 @@
     </footer>  
   </div>
 	<script type="text/javascript">
-	/* var mem = '${loginMember.uid}';
+	/* var mem = '${loginMember.memberid}';
 	테스트
 	var lnk = document.querySelectorAll('.forlink');
 	
 	var lnkArr = [
-				'/project/main?action=memberlist',
-				'/project/member/favoriate.jsp',
-				'/project/main?action=memberInfo&uid='+mem,
-				'/project/main?action=logout']
+				'/workProject/main?action=memberlist',
+				'/workProject/member/favoriate.jsp',
+				'/workProject/main?action=memberInfo&memberid='+mem,
+				'/workProject/main?action=logout']
 
 	for(let i = 0; i < lnk.length; i++) {
 		lnk[i].addEventListener('click', createClickHandler(lnkArr[i]));
@@ -260,9 +260,9 @@
 	}
 	
 	
-	var hrefArr = ['/project/member/member_search.jsp?dis=searchId', 
-				   '/project/member/member_search.jsp?dis=searchPwd',
-				   '/project/member/member_insert.jsp'];
+	var hrefArr = ['/workProject/member/member_search.jsp?dis=searchId', 
+				   '/workProject/member/member_search.jsp?dis=searchPwd',
+				   '/workProject/member/member_insert.jsp'];
 	var links = document.querySelectorAll('#userInsert a');
 	
 	for(let i = 0; i < links.length; i++) {

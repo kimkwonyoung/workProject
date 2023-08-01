@@ -5,7 +5,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/project/css/memberlist.css">
+  <link rel="stylesheet" href="/workProject/css/memberlist.css">
 </head>
 <body>
   <div class="container">
@@ -23,7 +23,7 @@
         <c:forEach var="member" items="${memberlist}">
           <tr>
             <td>${member.name}</td>
-            <td>${member.uid}</td>
+            <td>${member.memberid}</td>
             <td>${member.pwd}</td>
             <td>${member.phone}</td>
           </tr>

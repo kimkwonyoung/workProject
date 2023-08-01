@@ -5,15 +5,15 @@
 <head>
 <meta charset="UTF-8">
     <title>회원 가입</title>
-    <link rel="stylesheet" href="/project/css/style.css">
+    <link rel="stylesheet" href="/workProject/css/style.css">
 </head>
 <body>
     <div id="userForm">
         <h2>회원 가입</h2>
-        <form action="/project/main" method="post">
+        <form action="/workProject/main" method="post">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
-                <input type="text" id="userid" name="uid" placeholder="아이디를 입력하세요" required>
+                <input type="text" id="userid" name="memberid" placeholder="아이디를 입력하세요" required>
             </div>
             <div class="form-group-insert">
                 <label for="password">비밀번호:</label>
@@ -35,6 +35,6 @@
             <input type="hidden" name="action" value="memberInsert">
         </form>
     </div>
-    <script src="/project/js/check.js"></script>
+    <script src="/workProject/js/check.js"></script>
 </body>
 </html>

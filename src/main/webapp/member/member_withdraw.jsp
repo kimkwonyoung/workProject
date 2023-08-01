@@ -5,16 +5,16 @@
 <head>
 </head>
 <title>회원 탈퇴</title>
-    <link rel="stylesheet" href="/project/css/style.css">
+    <link rel="stylesheet" href="/workProject/css/style.css">
 </head>
 <body>
     <div id="userForm2">
         <h2>회원 탈퇴</h2>
-        <form action="/project/main" method="post">
+        <form action="/workProject/main" method="post">
             <div class="form-group-insert">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
-                <input type="text" id="userid" name="uid" placeholder="아이디를 입력하세요" required>
+                <input type="text" id="userid" name="memberid" placeholder="아이디를 입력하세요" required>
             </div>
                 <label for="password">비밀번호:</label>
                 <input type="password" id="password" name="pwd" placeholder="비밀번호를 입력하세요" required>
@@ -30,7 +30,7 @@
     </div>
     <script type="text/javascript">
 		var message = '${alertmessage}';
-  		var href = '/project/member/member_info.jsp';
+  		var href = '/workProject/member/member_info.jsp';
 		if(message) {
 			alert(message);
 		}

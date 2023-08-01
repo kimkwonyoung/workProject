@@ -5,12 +5,12 @@
 <head>
 </head>
 <title>회원 정보 수정</title>
-<link rel="stylesheet" href="/project/css/style.css">
+<link rel="stylesheet" href="/workProject/css/style.css">
 </head>
 <body>
     <div id="userForm">
         <h2 id="titleuser">회원 정보 수정</h2>
-        <form action="/project/main" method="post">
+        <form action="/workProject/main" method="post">
             <div class="form-group-insert">
                 <label for="password">변경 비밀번호:</label>
                 <input type="password" id="password" name="pwd" placeholder="비밀번호를 입력하세요" required>
@@ -33,7 +33,7 @@
             <input type="hidden" name="action" value="memberupdate">
         </form>
     </div>
-    <script src="/project/js/check.js"></script>
+    <script src="/workProject/js/check.js"></script>
     <script>
     	var back = document.querySelector('.back-upwt');
 		back.addEventListener('click', () => {

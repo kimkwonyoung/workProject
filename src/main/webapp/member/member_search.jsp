@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="/project/css/style.css">
+    <link rel="stylesheet" href="/workProject/css/style.css">
  
 </head>
 <body>
@@ -16,11 +16,11 @@
     	<h2>비밀번호 찾기</h2>
     </c:if>
         
-        <form action="/project/main" method="post">
+        <form action="/workProject/main" method="post">
          <c:if test="${param.dis eq 'searchPwd' }">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
-                <input type="text" id="userid" name="uid" placeholder="아이디를 입력하세요" required>
+                <input type="text" id="userid" name="memberid" placeholder="아이디를 입력하세요" required>
             </div>
          </c:if>
             <div class="form-group-insert">

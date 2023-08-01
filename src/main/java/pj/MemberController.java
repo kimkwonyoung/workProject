@@ -19,8 +19,19 @@ import javax.websocket.Session;
 
 import org.apache.jasper.compiler.ELFunctionMapper;
 
+import service.MemberService;
+import workDao.MemberDao;
+import workDto.Member;
+
 @WebServlet("/main")
-public class MainController extends HttpServlet  {
+public class MemberController extends HttpServlet  {
+	
+	MemberService _memberService;
+	
+	
+	public MemberController() {
+        _memberService = new MemberService(new MemberDao()); //
+    }
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		request.setCharacterEncoding("UTF-8");
@@ -54,13 +65,11 @@ public class MainController extends HttpServlet  {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void memberInsert(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
-//		List<Member> memberList = new ArrayList<>();
+		List<Member> memberList = _memberService.selectByList();
 		
-		String uid = request.getParameter("uid");
+		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String name = request.getParameter("name");
 		String phone = request.getParameter("phone");
@@ -68,12 +77,11 @@ public class MainController extends HttpServlet  {
 		
 		
 		
-		boolean result = memberList.stream().noneMatch(m -> m.getUid().equals(uid));
+		boolean result = memberList.stream().noneMatch(m -> m.getMemberid().equals(memberid));
 		String message;
 		
 		if (result) {
-			memberList.add(new Member(uid, name, pwd, phone));
-			fileupdate.saveFileuserList(memberList);
+			_memberService.insert(new Member(memberid, name, pwd, phone));
 			message = "회원 가입 완료";
 			request.setAttribute("alertmessage", message);
 		} else {
@@ -86,15 +94,14 @@ public class MainController extends HttpServlet  {
 	}
 	
 	public void memberLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
+		List<Member> memberList = _memberService.selectByList();
 		
-		String uid = request.getParameter("uid");
+		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
-		System.out.println("입력된 아이디 = " + uid);
+		System.out.println("입력된 아이디 = " + memberid);
 		System.out.println("입력된 비밀번호 = " + pwd);
 		String message;
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getUid().equals(uid) && m.getPwd().equals(pwd)).findFirst();
+		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(memberid) && m.getPwd().equals(pwd)).findFirst();
 		HttpSession session = request.getSession();
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd EEEE a", new Locale("ko"));
@@ -105,7 +112,6 @@ public class MainController extends HttpServlet  {
 		if (optionalMember.isPresent()) {
 			System.out.println("로그인 성공 확인");
 			message = "로그인 성공";
-//			request.setAttribute("loginMember", optionalMember.get());
 			request.setAttribute("alertmessage", message);
 			session.setAttribute("dateFormat", dateFormat);
 			session.setAttribute("loginMember", optionalMember.get());
@@ -119,51 +125,38 @@ public class MainController extends HttpServlet  {
 	}
 	
 	public void logOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		request.getSession().removeAttribute("loginMember");
-//		request.getSession().removeAttribute("dateFormat");
 		request.getSession().invalidate();
 		response.sendRedirect("index.jsp");
 	}
 	
 	public void memberInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
+		Member member = _memberService.selectBySearch(request.getParameter("memberid"));
 		
-		String uid = request.getParameter("uid");
-		
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getUid().equals(uid)).findFirst();
-		
-		if (optionalMember.isPresent()) {
-			Member findMember = optionalMember.get();
-			request.setAttribute("findMember", findMember);
-			request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
-		}
-	
+		request.setAttribute("findMember", member);
+		request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
 	}
 	
 	public void memberlist(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
+		List<Member> memberList = _memberService.selectByList();
 		
 		request.setAttribute("memberlist", memberList);
 		request.getRequestDispatcher("/member/member_list.jsp").forward(request, response);
-		
 	}
 	
 
 	public void membersearch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
-		
+		List<Member> memberList = _memberService.selectByList();
 		String dis = request.getParameter("dis");
-		String name = request.getParameter("name");
 		String message = "";
+		
+		
+		String name = request.getParameter("name");
 		
 		if (dis.equals("searchId")) {
 			Optional<Member> optionalMember = memberList.stream().filter(m -> m.getName().equals(name)).findFirst();
 			if (optionalMember.isPresent()) {
 				Member findId = optionalMember.get();
-				message = "찾으시는 아이디 = " + findId.getUid();
+				message = "찾으시는 아이디 = " + findId.getMemberid();
 				request.setAttribute("alertmessage", message);
 				request.setAttribute("findId", findId);
 				
@@ -172,7 +165,7 @@ public class MainController extends HttpServlet  {
 				request.setAttribute("alertmessage", message);
 			}
 		} else if(dis.equals("searchPwd")) {
-			Optional<Member> optionalMember = memberList.stream().filter(m -> m.getUid().equals(request.getParameter("uid")) && m.getName().equals(name)).findFirst();
+			Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(request.getParameter("memberid")) && m.getName().equals(name)).findFirst();
 			if (optionalMember.isPresent()) {
 				Member findPwd = optionalMember.get();
 				message = "찾으시는 비밀번호 = " + findPwd.getPwd();
@@ -183,6 +176,29 @@ public class MainController extends HttpServlet  {
 				request.setAttribute("alertmessage", message);
 			}
 		}
+		
+//		if (dis.equals("searchId")) {
+//			if (member != null) {
+//				message = "찾으시는 아이디 = " + member.getMemberid();
+//				request.setAttribute("alertmessage", message);
+//				request.setAttribute("findId", member.getMemberid());
+//			} else {
+//				message = "이름이 잘못되었습니다";
+//				request.setAttribute("alertmessage", message);
+//			}
+//			
+//		} else if(dis.equals("searchPwd")) {
+//			member = _memberService.selectBySearch(request.getParameter("memberid"));
+//			if (member != null) {
+//				System.out.println("멤버 = " + member);
+//				message = "찾으시는 비밀번호 = " + member.getPwd();
+//				request.setAttribute("alertmessage", message);
+//				request.setAttribute("findPwd", member.getPwd());
+//			} else {
+//				message = "아이디와 이름이 잘못되었습니다";
+//				request.setAttribute("alertmessage", message);
+//			}
+//		}
 		request.setAttribute("dis", dis);
 		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
 	}
@@ -190,10 +206,9 @@ public class MainController extends HttpServlet  {
 	
 
 	public void memberupdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
+//		List<Member> memberList = _memberService.selectByList();
+		Member member = _memberService.selectBySearch(request.getParameter("searchId"));
 		
-		String uid = request.getParameter("searchId");
 		String pwd = request.getParameter("pwd");
 		String name = request.getParameter("name");
 		String phone = request.getParameter("phone");
@@ -201,45 +216,34 @@ public class MainController extends HttpServlet  {
 		HttpSession session = request.getSession();
 		request.getSession().removeAttribute("loginMember");
 		
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getUid().equals(uid)).findFirst();
-		if (optionalMember.isPresent()) {
-			Member mem = optionalMember.get();
-			mem.setName(name);
-			mem.setPhone(phone);
-			mem.setPwd(pwd);
-//			memberList.remove(mem);
-		}
-//		Member member = new Member(uid, name, pwd, phone);
-//		memberList.add(member);
-		fileupdate.saveFileuserList(memberList);
+		member.setName(name);
+		member.setPhone(phone);
+		member.setPwd(pwd);
+		_memberService.update(member);
+		
 		message = "정보 수정 완료";
 		
 		request.setAttribute("alertmessage", message);
-		session.setAttribute("loginMember", optionalMember.get());
+		session.setAttribute("loginMember", member);
 		
 		request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
 		
 	}
 	
 	public void memberwithdraw(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		FileUpdate fileupdate = new FileUpdate();
-		List<Member> memberList = fileupdate.loadFileUserList();
-		String uid = request.getParameter("uid");
+		List<Member> memberList = _memberService.selectByList();
+		
+		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String message = "";
 		
-		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getUid().equals(uid) && m.getPwd().equals(pwd)).findFirst();
+		Optional<Member> optionalMember = memberList.stream().filter(m -> m.getMemberid().equals(memberid) && m.getPwd().equals(pwd)).findFirst();
 		
 		if (optionalMember.isPresent()) {
 			Member mem = optionalMember.get();
-			memberList.remove(mem);
-			
-			fileupdate.saveFileuserList(memberList);
-			
+			_memberService.delete(mem);
 			
 			message = "회원 탈퇴 완료";
-//			request.getSession().removeAttribute("loginMember");
-//			request.getSession().removeAttribute("dateFormat");
 			request.getSession().invalidate();
 			
 			request.setAttribute("alertmessage", message);

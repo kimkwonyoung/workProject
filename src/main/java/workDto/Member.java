@@ -1,4 +1,4 @@
-package pj;
+package workDto;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,27 +9,26 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 
-public class Member implements Serializable {
-	private static final long serialVersionUID = -1036524153261734687L;
+public class Member implements GeneralModel {
 	
-	private String uid;
+	private String memberid;
 	private String name;
 	private String pwd;
 	private String phone;
 	
-	public Member(String uid, String name, String pwd) {
-		this.uid = uid;
+	public Member(String memberid, String name, String pwd) {
+		this.memberid = memberid;
 		this.name = name;
 		this.pwd = pwd;
 	}
-	public Member(String uid, String name) {
-		this.uid = uid;
+	public Member(String memberid, String name) {
+		this.memberid = memberid;
 		this.name = name;
 		
 	}
 	
-	public Member(String uid, String name, String pwd, String phone) {
-		this.uid = uid;
+	public Member(String memberid, String name, String pwd, String phone) {
+		this.memberid = memberid;
 		this.name = name;
 		this.pwd = pwd;
 		this.phone = phone;
@@ -44,11 +43,11 @@ public class Member implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Member other = (Member) obj;
-		return Objects.equals(uid, other.uid);
+		return Objects.equals(memberid, other.memberid);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(uid);
+		return Objects.hash(memberid);
 	}
 }

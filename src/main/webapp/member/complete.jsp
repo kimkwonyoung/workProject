@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/project/css/complete.css">
+<link rel="stylesheet" href="/workProject/css/complete.css">
 </head>
 <body>
 	<div class="complete" id="link">
@@ -15,10 +15,10 @@
   <script>
   	var dis = '${dis}';
   	var link = document.querySelector('#link a');
-  	var href = '/project/member/member_insert.jsp';
+  	var href = '/workProject/member/member_insert.jsp';
   	
   	if(dis == 'searchId' || dis =='searchPwd') {
-  		href = '/project/member/member_search.jsp?dis=' + dis;
+  		href = '/workProject/member/member_search.jsp?dis=' + dis;
   	}
   	
   	link.addEventListener('click', () => {

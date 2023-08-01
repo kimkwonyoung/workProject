@@ -4,14 +4,14 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/project/css/memberinfo.css">
+  <link rel="stylesheet" href="/workProject/css/memberinfo.css">
 </head>
 <body>
   <div class="container">
     <h1>나의 회원 정보</h1>
     <ul class="info-list">
       <li><span class="info-label">이름:</span> ${loginMember.name}</li>
-      <li><span class="info-label">아이디:</span> ${loginMember.uid}</li>
+      <li><span class="info-label">아이디:</span> ${loginMember.memberid}</li>
       <li><span class="info-label">비밀번호:</span> ${loginMember.pwd}</li>
       <li><span class="info-label">핸드폰번호:</span> ${loginMember.phone}</li>
     </ul>
@@ -27,11 +27,11 @@
 	if(message) {
 		alert(message);
 	}
-  	var searchId = '${loginMember.uid}';
+  	var searchId = '${loginMember.memberid}';
   	var links = document.querySelectorAll('#linklist a');
-    var hrefArr = ['/project/index.jsp', 
-    			   '/project/member/member_update.jsp?searchId='+searchId,
-    			   '/project/member/member_withdraw.jsp'];
+    var hrefArr = ['/workProject/index.jsp', 
+    			   '/workProject/member/member_update.jsp?searchId='+searchId,
+    			   '/workProject/member/member_withdraw.jsp'];
 	
 	for(var i = 0; i < links.length; i++) {
 		var link = links[i];
