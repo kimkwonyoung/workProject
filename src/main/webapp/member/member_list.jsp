@@ -6,9 +6,12 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/workProject/css/memberlist.css">
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-  <div class="container">
+  <div id="container">
+  <%@ include file="../header.jsp" %>
     <c:set var="memberlist" value="${requestScope.memberlist}" />
     <table>
       <thead>
@@ -30,7 +33,7 @@
         </c:forEach>
       </tbody>
     </table>
-    <a class="back" href="index.jsp">돌아가기</a>
+    <a class="back" href="/workProject/main">돌아가기</a>
   </div>
 </body>
 </html>

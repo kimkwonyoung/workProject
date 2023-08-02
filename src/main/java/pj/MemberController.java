@@ -23,9 +23,9 @@ import service.MemberService;
 import workDao.MemberDB;
 import workDto.Member;
 
-@WebServlet("/main")
+@WebServlet("/member")
 public class MemberController extends HttpServlet  {
-	
+	private static final long serialVersionUID = -8738546228574989741L;
 	MemberService _memberService;
 	
 	
@@ -67,15 +67,10 @@ public class MemberController extends HttpServlet  {
 	}
 	
 	public void memberInsert(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		List<Member> memberList = _memberService.selectByList();
-		
 		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String name = request.getParameter("name");
 		String phone = request.getParameter("phone");
-		
-		
-//		boolean result = memberList.stream().noneMatch(m -> m.getMemberid().equals(memberid));
 		
 		int count = _memberService.selectByCount(memberid);
 		
@@ -89,16 +84,6 @@ public class MemberController extends HttpServlet  {
 			message = "회원 가입 완료";
 			request.setAttribute("alertmessage", message);
 		}
-		
-//		if (result) {
-//			_memberService.insert(new Member(memberid, name, pwd, phone));
-//			message = "회원 가입 완료";
-//			request.setAttribute("alertmessage", message);
-//		} else {
-//			System.out.println("이미 존재 하는 아디 확인");
-//			message = "이미 존재 하는 아이디 입니다.";
-//			request.setAttribute("alertmessage", message);
-//		}
 		
 		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
 	}

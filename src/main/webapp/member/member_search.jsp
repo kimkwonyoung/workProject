@@ -16,7 +16,7 @@
     	<h2>비밀번호 찾기</h2>
     </c:if>
         
-        <form action="/workProject/main" method="post">
+        <form action="/workProject/member" method="post">
          <c:if test="${param.dis eq 'searchPwd' }">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>

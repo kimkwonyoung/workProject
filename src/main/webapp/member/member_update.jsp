@@ -10,7 +10,7 @@
 <body>
     <div id="userForm">
         <h2 id="titleuser">회원 정보 수정</h2>
-        <form action="/workProject/main" method="post">
+        <form action="/workProject/member" method="post">
             <div class="form-group-insert">
                 <label for="password">변경 비밀번호:</label>
                 <input type="password" id="password" name="pwd" placeholder="비밀번호를 입력하세요" required>

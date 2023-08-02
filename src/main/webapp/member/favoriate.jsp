@@ -26,7 +26,7 @@
   
 <script>
 	var link = document.querySelector('.description span a');
-	var href = '/workProject/index.jsp';
+	var href = '/workProject/main';
 	link.addEventListener('click', () => {
 		window.location.href = href;
 	});

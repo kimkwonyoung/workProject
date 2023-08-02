@@ -13,44 +13,8 @@
 </head>
 
 <body>
-  <div id="container">    
-    <header>
-      <div id="logo">
-        <a href="index.jsp">
-          <h1>DreamHome</h1>
-        </a>
-      </div>
-	 <nav>
-        <ul id="topMenu">
-          <li><a href="#">주거 공간<span>▼</span></a>
-            <ul>
-              <li><a href="#">가구1</a></li>
-              <li><a href="#">가구2</a></li>
-            </ul>
-          </li>
-          <li><a href="#">상업 공간<span>▼</span></a>
-            <ul>
-              <li><a href="#">상업1</a></li>
-              <li><a href="#">상업2</a></li>
-              <li><a href="#">상업3</a></li>
-            </ul>
-          </li>
-          <li><a href="#">문의하기</a></li>
-          <li>
-			<a href="#" class="openbtn">메뉴 열기</a>
-			<div class="sidebar">
-				<a href="#" class="closebtn">×</a> <a href="#">회사소개</a>
-				<a href="#">연혁</a> 
-				<a href="#">비즈니스</a> 
-				<a href="#">연락처</a>
-				<a href="/workProject/main?action=memberlist" class="forlink">전체 회원 보기</a>
-			</div>
-          </li>
-          
-          <!-- <li><a href="/workProject/main?action=memberlist">전체 회원 보기</a></li> -->
-        </ul>
-      </nav>
-    </header>
+  <div id="container"> 
+  <%@ include file="header.jsp" %>
     <div id="slideShow">
       <div id="slides">
         <img src="images/a-1.jpg" alt="">
@@ -66,7 +30,11 @@
         <input type="radio" id="tab1" name="tabs" checked>
         <label for="tab1">공지사항</label>
         <input type="radio" id="tab2" name="tabs">
-        <label for="tab2">갤러리</label>      
+        <label for="tab2">갤러리</label>
+        <c:if test="${not empty loginMember}">      
+       		<input type="radio" id="tab3" name="tabs">
+        	<label id = "boardTab" for="tab3"><a href="/workProject/board?action=Boardlist">게시판</a></label>
+        </c:if>
         <div id="notice" class="tabContent">
           <h2>공지사항 내용입니다.</h2>
           <ul>            
@@ -87,6 +55,17 @@
             <li><img src="/workProject/images/f5.jpg" ></li>                  
           </ul>
         </div>
+        <c:if test="${not empty loginMember}">
+        <div id="board" class="tabContent">
+          <h2>게시판 내용입니다.</h2>
+          <ul>            
+            <li>가나다라마바사</li>
+            <li>그리워 그리워</li>
+            <li>니가 너무 그리워서</li>
+            <li>라라라라라</li>
+          </ul>
+        </div>
+        </c:if>
         <div id="lightbox">
 			<img src="images/c1.jpg" alt="" id="lightboxImage">			
     	</div>        
@@ -109,7 +88,7 @@
       </div>
       <c:if test="${empty loginMember}">
 	      <div id="login">
-	        <form action="/workProject/main" method="post">
+	        <form action="/workProject/member" method="post">
 	        	<div class="form-group">
 	        		<h2>로그인</h2>
 	        	</div>
@@ -157,10 +136,10 @@
 	        	        	
 	        	</div>
 	          	<div id="userInfo">
-	            	<a href="/workProject/main?action=memberInfo&memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
+	            	<a href="/workProject/member?action=memberInfo&memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
 	            </div>       
 	            <div id="loginOut">
-	            	<a href="/workProject/main?action=logout" class="forlink"><span>로그 아웃</span></a>
+	            	<a href="/workProject/member?action=logout" class="forlink"><span>로그 아웃</span></a>
 	            </div>
 	           
 	    	</div>
@@ -196,10 +175,10 @@
 	var lnk = document.querySelectorAll('.forlink');
 	
 	var lnkArr = [
-				'/workProject/main?action=memberlist',
+				'/workProject/member?action=memberlist',
 				'/workProject/member/favoriate.jsp',
-				'/workProject/main?action=memberInfo&memberid='+mem,
-				'/workProject/main?action=logout']
+				'/workProject/member?action=memberInfo&memberid='+mem,
+				'/workProject/member?action=logout']
 
 	for(let i = 0; i < lnk.length; i++) {
 		lnk[i].addEventListener('click', createClickHandler(lnkArr[i]));
@@ -210,16 +189,7 @@
 			window.location.href = href;
 		}
 	} */
-	var open = document.querySelector('.openbtn');
-	var close = document.querySelector('.closebtn');
-	open.addEventListener('click', () => {
-		document.querySelector('.sidebar').style.width = "226px";
-		document.querySelector('.openbtn').style.display = 'none';
-	});
-	close.addEventListener('click', () => {
-		document.querySelector('.sidebar').style.width = "0";
-		document.querySelector('.openbtn').style.display = 'block';
-	});
+
 	
 	var message = '${alertmessage}';
 	if(message) {
@@ -275,6 +245,8 @@
 			showIframe(href);
 		}
 	}
+	
+	
 	
 	var imgs = document.querySelectorAll('#gallery ul li img');
 	var lightbox = document.getElementById('lightbox');

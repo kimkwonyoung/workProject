@@ -29,7 +29,7 @@
 	}
   	var searchId = '${loginMember.memberid}';
   	var links = document.querySelectorAll('#linklist a');
-    var hrefArr = ['/workProject/index.jsp', 
+    var hrefArr = ['/workProject/main', 
     			   '/workProject/member/member_update.jsp?searchId='+searchId,
     			   '/workProject/member/member_withdraw.jsp'];
 	

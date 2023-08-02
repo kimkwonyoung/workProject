@@ -11,7 +11,7 @@ import Utils.SingletonConnectionHelper;
 import workDto.Member;
 
 public class MemberDB implements MemberDAO {
-	Connection conn = null;
+	private Connection conn = null;
 	
 	public MemberDB() {
 		try {

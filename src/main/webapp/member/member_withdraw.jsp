@@ -10,7 +10,7 @@
 <body>
     <div id="userForm2">
         <h2>회원 탈퇴</h2>
-        <form action="/workProject/main" method="post">
+        <form action="/workProject/member" method="post">
             <div class="form-group-insert">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>

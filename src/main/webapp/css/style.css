@@ -225,6 +225,15 @@ button:focus {
 	font-size: 16px;
 	line-height: 2.5;
 }
+#board ul {
+	list-style: disc;
+	margin-left: 30px;
+}
+
+#board ul li {
+	font-size: 16px;
+	line-height: 2.5;
+}
 
 #gallery ul li {
 	display: inline; /* 이미지 가로로 배치 */
@@ -234,8 +243,11 @@ button:focus {
   max-height: 30%;
 }
 
-#tab1:checked ~ #notice, #tab2:checked ~ #gallery {
+#tab1:checked ~ #notice, #tab2:checked ~ #gallery, #tab3:checked ~ #board {
 	display: block;
+}
+#boardTab a {
+	color:gray;
 }
 
 /* 퀵 링크 */
