@@ -167,8 +167,9 @@ public class BoardController extends HttpServlet {
 		System.out.println("보드 삭제 컨트롤로 도달 확인");
 		_BoardService.delete(Integer.parseInt(board_num));
 		
-		List<Board> boardList = _BoardService.selectByNomalList();
-		request.setAttribute("boardList", boardList);
+//		List<Board> boardList = _BoardService.selectByNomalList();
+//		request.setAttribute("boardList", boardList);
+		//리스트 포워딩은 수정 필요
 		
 		request.getRequestDispatcher("/board/board_list.jsp").forward(request, response);
 	}
