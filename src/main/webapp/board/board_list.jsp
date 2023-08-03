@@ -42,9 +42,7 @@
     th {
       background-color: #f2f2f2;
     }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
+    
     th:nth-child(4), td:nth-child(4) { 
       width: 100px;
     }
@@ -58,6 +56,10 @@
     .checkbox-cell {
       text-align: center;
     }
+    .highlight {
+      background-color: #fff4e1;
+      font-weight: bold;
+  	}
   </style>
 </head>
 <body>
@@ -65,8 +67,15 @@
   <%@ include file="../header.jsp" %>
    <c:set var="boardList" value="${requestScope.boardList }" />
     <div class="board-header">
-      <h1 class="board-title">전체 게시판</h1>
+    <c:if test="${board_type eq 'notice' }">
+    	<h1 class="board-title">공지사항 게시판</h1>
+    </c:if>
+    <c:if test="${board_type eq 'nomal' }">
+    	<h1 class="board-title">전체 게시판</h1>
+    </c:if>
+      <c:if test="${not empty loginMember}">
       <a class="write-button">글쓰기</a>
+      </c:if>
     </div>
     <table>
       <thead>
@@ -81,7 +90,7 @@
       </thead>
       <tbody>
        <c:forEach var="board" items="${boardList}">
-        <tr>
+        <tr class="${board.fixed_yn eq 'Y' ? 'highlight':'' }">
           <td class="checkbox-cell"><input type="checkbox"></td>
           <td>${board.board_num }</td>
           <td><a href="/workProject/board?action=BoardInfo&board_num=${board.board_num }">${board.title}</a></td>
@@ -96,8 +105,9 @@
   <script>
     var open = document.querySelector('.write-button');
     open.addEventListener('click', () => {
-      window.location.href = '/workProject/board/board_write.jsp';
+      window.location.href = '/workProject/board?action=BoardWrite';
     });
+    
   </script>
 </body>
 </html>

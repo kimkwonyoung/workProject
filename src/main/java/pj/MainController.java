@@ -29,11 +29,16 @@ public class MainController extends HttpServlet {
     
     public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	request.setCharacterEncoding("UTF-8");
-    	List<Board> boardList = _BoardService.selectByBoardList();
-		//리스트 수정해야함 체크
+    	
+    	List<Board> noticeList = _BoardService.selectByMainNotice();
+    	List<Board> nomalList = _BoardService.selectByMainNomal();
     	System.out.println("세션 값 = " + request.getSession().getAttribute("loginMember"));
     	
-		request.setAttribute("boardList", boardList);
+		request.setAttribute("noticeList", noticeList);
+		request.setAttribute("nomalList", nomalList);
+		System.out.println("noticeList = " + noticeList);
+		System.out.println("nomalList = " + nomalList);
+		
 		request.getRequestDispatcher("index.jsp").forward(request, response);
     	
     }

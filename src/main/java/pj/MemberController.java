@@ -106,13 +106,12 @@ public class MemberController extends HttpServlet  {
 			message = "아이디 또는 비밀번호가 잘못되었습니다";
 			request.setAttribute("alertmessage", message);
 		}
-	
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("/main").forward(request, response);
 	}
 	
 	public void logOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().invalidate();
-		response.sendRedirect("index.jsp");
+		request.getRequestDispatcher("/main").forward(request, response);
 	}
 	
 	public void memberInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -208,7 +207,7 @@ public class MemberController extends HttpServlet  {
 			
 			request.setAttribute("alertmessage", message);
 			
-			request.getRequestDispatcher("index.jsp").forward(request, response);
+			request.getRequestDispatcher("/main").forward(request, response);
 			
 		} else {
 			message = "아이디 또는 비밀번호가 잘못되었습니다";

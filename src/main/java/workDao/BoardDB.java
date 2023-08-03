@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -26,9 +28,11 @@ public class BoardDB implements BoardDAO {
 
 	@Override
 	public List<Board> selectByBoardList(String sql) {
+		System.out.println("쿼리 확인 = " + sql);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<Board> boardList = new ArrayList<>();
+		
 		
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -41,11 +45,11 @@ public class BoardDB implements BoardDAO {
 								rs.getString(2),
 								rs.getString(3),
 								rs.getString(4),
-								rs.getString(5),
+								rs.getDate(5),
 								rs.getDate(6),
-								rs.getDate(7),
+								rs.getInt(7),
 								rs.getInt(8),
-								rs.getInt(9)
+								rs.getString(9)
 							));
 				} while(rs.next());
 			} else {
@@ -57,7 +61,9 @@ public class BoardDB implements BoardDAO {
 			SingletonConnectionHelper.close(pstmt);
 			SingletonConnectionHelper.close(rs);
 		}
-		System.out.println("보드리스트 = " + boardList.toString());
+		for(Board board : boardList) {
+			System.out.println("데이터값 = " + board);
+		}
 		
 		return boardList;
 	}
@@ -80,11 +86,11 @@ public class BoardDB implements BoardDAO {
 								rs.getString(2),
 								rs.getString(3),
 								rs.getString(4),
-								rs.getString(5),
+								rs.getDate(5),
 								rs.getDate(6),
-								rs.getDate(7),
+								rs.getInt(7),
 								rs.getInt(8),
-								rs.getInt(9)
+								rs.getString(9)
 							));
 				} while(rs.next());
 			} else {
@@ -117,11 +123,11 @@ public class BoardDB implements BoardDAO {
 								rs.getString(2),
 								rs.getString(3),
 								rs.getString(4),
-								rs.getString(5),
+								rs.getDate(5),
 								rs.getDate(6),
-								rs.getDate(7),
+								rs.getInt(7),
 								rs.getInt(8),
-								rs.getInt(9)
+								rs.getString(9)
 							));
 				} while(rs.next());
 			} else {
@@ -154,11 +160,11 @@ public class BoardDB implements BoardDAO {
 						rs.getString(2),
 						rs.getString(3),
 						rs.getString(4),
-						rs.getString(5),
+						rs.getDate(5),
 						rs.getDate(6),
-						rs.getDate(7),
+						rs.getInt(7),
 						rs.getInt(8),
-						rs.getInt(9)
+						rs.getString(9)
 					);
 				optionBoard = optionBoard.of(board);
 			} else {
@@ -194,10 +200,10 @@ public class BoardDB implements BoardDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, board_num);
 			pstmt.setString(2, board.getMem_id());
-			pstmt.setString(3, board.getMem_name());
-			pstmt.setString(4, board.getTitle());
-			pstmt.setString(5, board.getContent());
-			pstmt.setInt(6, board.getBoard_code());
+			pstmt.setString(3, board.getTitle());
+			pstmt.setString(4, board.getContent());
+			pstmt.setInt(5, board.getBoard_code());
+			pstmt.setString(6, board.getFixed_yn());
 			
 			row = pstmt.executeUpdate();
 			
@@ -221,7 +227,6 @@ public class BoardDB implements BoardDAO {
 	public int update(String sql, Board board) {
 		PreparedStatement pstmt = null;
 		int row = 0;
-		
 		try {
 			java.sql.Date nowDate = new java.sql.Date(System.currentTimeMillis());
 			
@@ -229,7 +234,9 @@ public class BoardDB implements BoardDAO {
 			pstmt.setString(1, board.getTitle());
 			pstmt.setString(2, board.getContent());
 			pstmt.setDate(3, nowDate);
-			pstmt.setInt(4, board.getBoard_num());
+			pstmt.setInt(4, board.getBoard_code());
+			pstmt.setString(5, board.getFixed_yn());
+			pstmt.setInt(6, board.getBoard_num());
 			
 			row = pstmt.executeUpdate();
 			
@@ -275,10 +282,28 @@ public class BoardDB implements BoardDAO {
 
 	@Override
 	public int updateViewCount(String sql, int num) {
-		return 0;
+		PreparedStatement pstmt = null;
+		int row = 0;
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			
+			row = pstmt.executeUpdate();
+			
+			if(row > 0) {
+				System.out.println("반영된 행의 수 : " + row);
+			} else {
+				System.out.println("반영 X");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+		}
+		return row;
 	}
 
-	
-	
 
 }

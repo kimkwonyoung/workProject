@@ -28,24 +28,19 @@
     <div id="contents">
       <div id="tabMenu">
         <input type="radio" id="tab1" name="tabs" checked>
-        <label for="tab1">공지사항</label>
+        <label for="tab1"><a href="/workProject/board?action=Boardlist&board_type=notice">공지사항</a></label>
         <input type="radio" id="tab2" name="tabs">
         <label for="tab2">갤러리</label>
-        <c:if test="${not empty loginMember}">      
-       		<input type="radio" id="tab3" name="tabs">
-        	<label id = "boardTab" for="tab3"><a href="/workProject/board?action=Boardlist">게시판</a></label>
-        </c:if>
+       	<input type="radio" id="tab3" name="tabs">
+        <label id = "boardTab" for="tab3"><a href="/workProject/board?action=Boardlist&board_type=nomal">게시판</a></label>
         <div id="notice" class="tabContent">
-          <h2>공지사항 내용입니다.</h2>
-          <ul>            
-            <li>미니멀 하고 내츄럴한 18평형 인테리어</li>
-            <li>모던 & 화이트 조합의 포근한 가구</li>
-            <li>심플하고 세련된 그레이 패턴의 인테리어</li>
-            <li>다청림 라인시티 사무실의 내부 분위기 화이트 변신</li>
+          <ul>
+          <c:forEach var="notice" items="${noticeList }">           
+            <li><a href="/workProject/board?action=BoardInfo&board_num=${notice.board_num }">${notice.title }</a></li>
+          </c:forEach> 
           </ul>
         </div>
         <div id="gallery" class="tabContent">
-          <h2>갤러리 내용입니다.</h2>
           <ul>
             <li><img src="/workProject/images/c1.jpg" ></li>
             <li><img src="/workProject/images/c2.jpg" ></li>
@@ -55,17 +50,13 @@
             <li><img src="/workProject/images/f5.jpg" ></li>                  
           </ul>
         </div>
-        <c:if test="${not empty loginMember}">
         <div id="board" class="tabContent">
-          <h2>게시판 내용입니다.</h2>
           <ul>            
-            <li>가나다라마바사</li>
-            <li>그리워 그리워</li>
-            <li>니가 너무 그리워서</li>
-            <li>라라라라라</li>
+            <c:forEach var="nomal" items="${nomalList }">           
+            <li><a href="/workProject/board?action=BoardInfo&board_num=${nomal.board_num }">${nomal.title }</a></li>
+          </c:forEach> 
           </ul>
         </div>
-        </c:if>
         <div id="lightbox">
 			<img src="images/c1.jpg" alt="" id="lightboxImage">			
     	</div>        

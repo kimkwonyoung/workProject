@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -62,12 +63,21 @@
     .back-button:hover {
       background-color: #0056b3;
     }
+    .check-fix {
+    	margin-bottom:20px;
+    	display:none;
+    }
   </style>
 </head>
 <body>
   <div id="container">
   <%@ include file="../header.jsp" %>
-    <h1 class="form-title">글쓰기 폼</h1>
+  <c:if test="${requestScope.chk eq 'write' }">
+    <h1 class="form-title">글쓰기</h1>
+  </c:if>
+  <c:if test="${requestScope.chk eq 'update' }">
+  	<h1 class="form-title">글수정</h1>
+  </c:if>
     <form id="writeForm" action="/workProject/board" method="post">
       <div class="radio-group">
         <input type="radio" id="notice" name="type" value="20" class="radio-input" required>
@@ -76,26 +86,67 @@
         <input type="radio" id="normal" name="type" value="10" class="radio-input" required>
         <label for="normal" class="radio-label">일반글</label>
       </div>
+      <div class="check-fix" id="checkbox-div">
+      	<input type="checkbox" id="fiexed-yn" name="fixed_yn" value="Y">
+      	<label class="">상단 고정</label>
+      </div>
 
       <label for="title">제목:</label><br>
-      <input type="text" id="title" name="title" class="form-input" required><br>
+      <input type="text" id="title" name="title" class="form-input" value="${infoBoard.title }" required><br>
 
       <label for="content">내용:</label><br>
-      <textarea id="content" name="content" rows="6" class="form-input" required></textarea><br>
+      <textarea id="content" name="content" rows="6" class="form-input" required>${infoBoard.content }</textarea><br>
 
       <a href="#" id="submitLink" class="submit-button">글쓰기 완료</a>
       <a href="#" class="back-button">목록으로 돌아가기</a>
-      <input type="hidden" name="memberid" value="${loginMember.memberid}">
-      <input type="hidden" name="action" value="boardInsert">
+      
+      <c:if test="${requestScope.chk eq 'write' }">
+        <input type="hidden" name="memberid" value="${loginMember.memberid}">
+      	<input type="hidden" name="action" value="BoardInsert">
+      </c:if>
+      <c:if test="${requestScope.chk eq 'update' }">
+      	<input type="hidden" name="board_num" value="${infoBoard.board_num}">
+      	<input type="hidden" name="action" value="BoardUpdate">
+      </c:if>
     </form>
   </div>
   <script>
+  	
+	  const board_code = '${infoBoard.board_code}';
+	  const radioButtons = document.getElementsByName("type");
+	
+	  for (const radioButton of radioButtons) {
+	    if (radioButton.value === board_code) {
+	      radioButton.checked = true;
+	    }
+	  }
   	document.getElementById("submitLink").addEventListener("click", () => {
-	  document.getElementById("writeForm").submit();
+	  	document.getElementById("writeForm").submit();
 	});
     var open = document.querySelector('.back-button');
     open.addEventListener('click', () => {
-      window.location.href = '/workProject/board?action=Boardlist';
+      	history.back();
+    });
+    
+    const noticeRadioButton = document.getElementById('notice');
+    const normalRadioButton = document.getElementById('normal');
+
+    const checkboxDiv = document.getElementById('checkbox-div');
+
+    noticeRadioButton.addEventListener('change', ()=> {
+      if (noticeRadioButton.checked) {
+        checkboxDiv.style.display = 'block'; 
+      } else {
+        checkboxDiv.style.display = 'none'; 
+      }
+    });
+
+    normalRadioButton.addEventListener('change', ()=> {
+      if (normalRadioButton.checked) {
+        checkboxDiv.style.display = 'none'; 
+      } else {
+        checkboxDiv.style.display = 'block'; 
+      }
     });
   </script>
 </body>

@@ -34,7 +34,7 @@ th {
 }
 
 .back {
-	position: absolute;
+	/* position: absolute; */
 	bottom: 0px;
 	right: 2px;
 	padding: 10px 20px;

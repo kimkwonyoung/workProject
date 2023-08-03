@@ -15,16 +15,40 @@ public class BoardService {
 		_boardDao = boardDB;
 	}
 	
-	//수정 필요
-	public List<Board> selectByMain() {
-		sql = "select * from (select rownum as num, b.board_num, b.title from ("
-				+ "select board_num, title from board where board_code = 20 order by board_num desc) b"
-				+ ") where num <= 4";
+	
+	public List<Board> selectByMainNotice() {
+		sql = "select * from board "
+			+ "where rownum <= 4 and board_code=20 and fixed_yn='Y' "
+			+ "order by board_num desc";
+		return _boardDao.selectByBoardList(sql);
+	}
+	
+	public List<Board> selectByMainNomal() {
+		sql = "select * from board "
+			+ "where rownum <= 4 and board_code=10 "
+			+ "order by board_num desc";
+		return _boardDao.selectByBoardList(sql);
+	}
+	
+	public List<Board> selectByNoticeList() {
+		sql = "select /*+INDEX_desc(board PK_BOARD) */ board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
+				+ "from board where board_code = 20 and fixed_yn='Y' "
+				+ "union all "
+				+ "select /*+INDEX_desc(board PK_BOARD) */ "
+				+ "board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
+				+ "from board where board_code = 20 and fixed_yn='N' ";
 		return _boardDao.selectByBoardList(sql);
 	}
 
-	public List<Board> selectByBoardList() {
-		sql = "select * from board order by board_num desc";
+	
+	public List<Board> selectByNomalList() {
+		sql = "select /*+INDEX_desc(board PK_BOARD) */ board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
+				+ "from board where board_code=20 and fixed_yn='Y' "
+				+ "union all\r\n"
+				+ "select /*+ index_desc(board PK_BOARD) */ "
+				+ "board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
+				+ "from board "
+				+ "where board_code = 10";
 		return _boardDao.selectByBoardList(sql);
 	}
 	
@@ -45,12 +69,12 @@ public class BoardService {
 	
 	
 	public void insert(Board board) {
-		sql = "insert into board(board_num, mem_id, mem_name, title, content, board_code)"
+		sql = "insert into board(board_num, mem_id, title, content, board_code, fixed_yn)"
 				+ "values(?, ?, ?, ?, ?, ?)";
 		_boardDao.insert(sql, board);
 	}
 	public void update(Board board) {
-		sql = "update board set title=?, content=?, mod_date=? where board_num = ?";
+		sql = "update board set title=?, content=?, mod_date=?, board_code=?, fixed_yn=? where board_num = ?";
 		_boardDao.update(sql, board);
 	}
 	public void delete(int num) {
@@ -59,7 +83,7 @@ public class BoardService {
 	}
 	
 	public void updateViewCount(int num) {
-		sql = "";
+		sql = "update board set view_count = view_count+1 where board_num =?";
 		_boardDao.updateViewCount(sql, num);
 	}
 	
