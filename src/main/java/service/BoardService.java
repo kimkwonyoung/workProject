@@ -9,7 +9,7 @@ import workDto.Board;
 public class BoardService {
 	String sql = "";
 
-	private BoardDB _boardDao;
+	final private BoardDB _boardDao;
 	
 	public BoardService(BoardDB boardDB) {
 		_boardDao = boardDB;

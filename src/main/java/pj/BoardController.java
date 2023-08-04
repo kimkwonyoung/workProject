@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.Session;
 
 import Utils.StringUtil;
 import service.BoardService;
@@ -20,54 +19,69 @@ import workDao.MemberDB;
 import workDto.Board;
 import workDto.Member;
 
-@WebServlet("/board")
+/**
+ * @author kky
+ * 게시판 서블릿 컨트롤러
+ *
+ */
+@WebServlet("/board/*")
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = -2850407651698537945L;
 	BoardService _BoardService;
 	MemberService _MemberService;
-
-	public BoardController() {
-        _BoardService = new BoardService(new BoardDB());
+	///WEB-INF/jsp/board/
+	
+//	public BoardController() {
+//        _BoardService = new BoardService(new BoardDB());
+//        _MemberService = new MemberService(new MemberDB());
+//    }
+	public void init() {
+    	_BoardService = new BoardService(new BoardDB());
         _MemberService = new MemberService(new MemberDB());
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		String action = request.getParameter("action");
-		
-		try {
-			switch(action) {
-				case "BoardInfo" -> BoardInfo(request, response);
-				case "Boardlist" -> Boardlist(request, response);
-				case "BoardUpdateInfo" -> BoardUpdateInfo(request, response);
-				case "BoardWrite" -> BoardWrite(request, response);
-				case "BoardDelete" -> boardDelete(request, response);
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
 	
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		String action = request.getParameter("action");
 		
+		//가져온 주소 체크 
+		//requestURI = /workProject/board/설정주소
+		//contextPath = /workProject
+		//action = 설정주소
+		String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String action = requestURI.substring(contextPath.length() + "/board/".length());
+		
+        System.out.println("requestURI = " + requestURI);
+        System.out.println("contextPath = " + contextPath);
+        System.out.println("action = " + action);
+        
 		try {
 			switch(action) {
-			case "BoardInsert" -> boardInsert(request, response);
-			case "BoardUpdate" -> boardUpdate(request, response);
+				case "boardList" -> boardList(request, response);
+			}
 			
-			
-		}
-			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doProcess(request, response);
+//			switch(action) {
+//				case "BoardInfo" -> BoardInfo(request, response);
+//				case "Boardlist" -> Boardlist(request, response);
+//				case "BoardUpdateInfo" -> BoardUpdateInfo(request, response);
+//				case "BoardWrite" -> BoardWrite(request, response);
+//				case "BoardDelete" -> boardDelete(request, response);
+//			}
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doProcess(request, response);
+//			switch(action) {
+//			case "BoardInsert" -> boardInsert(request, response);
+//			case "BoardUpdate" -> boardUpdate(request, response);
+	}
 	
 
 	public void boardInsert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -174,7 +188,7 @@ public class BoardController extends HttpServlet {
 		request.getRequestDispatcher("/board/board_list.jsp").forward(request, response);
 	}
 	
-	public void Boardlist(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void boardList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String board_type = request.getParameter("board_type");
 		System.out.println("타입 확인 = " + board_type);
 		List<Board> boardList = new ArrayList<>();
@@ -195,7 +209,7 @@ public class BoardController extends HttpServlet {
 		request.setAttribute("board_type", board_type);
 		request.setAttribute("boardList", boardList);
 		
-		request.getRequestDispatcher("/board/board_list.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/jsp/board/board_list.jsp").forward(request, response);
 	}
 
 	public void BoardInfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

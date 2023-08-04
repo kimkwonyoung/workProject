@@ -19,23 +19,30 @@ import javax.websocket.Session;
 
 import org.apache.jasper.compiler.ELFunctionMapper;
 
+import service.BoardService;
 import service.MemberService;
+import workDao.BoardDB;
 import workDao.MemberDB;
 import workDto.Member;
 
 @WebServlet("/member")
 public class MemberController extends HttpServlet  {
 	private static final long serialVersionUID = -8738546228574989741L;
-	MemberService _memberService;
+	MemberService _MemberService;
 	
 	
-	public MemberController() {
-        _memberService = new MemberService(new MemberDB()); 
+//	public MemberController() {
+//        _MemberService = new MemberService(new MemberDB()); 
+//    }
+	
+	public void init() {
+		_MemberService = new MemberService(new MemberDB());
     }
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		request.setCharacterEncoding("UTF-8");
-		
+		System.out.println("path체크 = " + request.getContextPath());
+    	System.out.println("content타입체크 = " + request.getContentType());
 		String action = request.getParameter("action");
 		
 		try {
@@ -55,6 +62,8 @@ public class MemberController extends HttpServlet  {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) {
 		String action = request.getParameter("action");
+		System.out.println("path체크 = " + request.getContextPath());
+    	System.out.println("content타입체크 = " + request.getContentType());
 		try {
 			switch(action) {
 				case "logout" -> logOut(request, response);
@@ -72,7 +81,7 @@ public class MemberController extends HttpServlet  {
 		String name = request.getParameter("name");
 		String phone = request.getParameter("phone");
 		
-		int count = _memberService.selectByCount(memberid);
+		int count = _MemberService.selectByCount(memberid);
 		
 		String message;
 		
@@ -80,7 +89,7 @@ public class MemberController extends HttpServlet  {
 			message = "이미 존재 하는 아이디 입니다.";
 			request.setAttribute("alertmessage", message);
 		} else {
-			_memberService.insert(new Member(memberid, name, pwd, phone));
+			_MemberService.insert(new Member(memberid, name, pwd, phone));
 			message = "회원 가입 완료";
 			request.setAttribute("alertmessage", message);
 		}
@@ -93,7 +102,7 @@ public class MemberController extends HttpServlet  {
 		String memberid = request.getParameter("memberid");
 		String pwd = request.getParameter("pwd");
 		String message;
-		Optional<Member> optionalMember = _memberService.selectByMember(new Member(memberid, null, pwd));
+		Optional<Member> optionalMember = _MemberService.selectByMember(new Member(memberid, null, pwd));
 		HttpSession session = request.getSession();
 		
 		if (optionalMember.isPresent()) {
@@ -115,14 +124,14 @@ public class MemberController extends HttpServlet  {
 	}
 	
 	public void memberInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Member member = _memberService.selectBySearch(request.getParameter("memberid"));
+		Member member = _MemberService.selectBySearch(request.getParameter("memberid"));
 		
 		request.setAttribute("findMember", member);
 		request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
 	}
 	
 	public void memberlist(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
+		List<Member> memberList = _MemberService.selectByList();
 		
 		request.setAttribute("memberlist", memberList);
 		request.getRequestDispatcher("/member/member_list.jsp").forward(request, response);
@@ -137,7 +146,7 @@ public class MemberController extends HttpServlet  {
 		String message = "";
 		
 		if (dis.equals("searchId")) {
-			Optional<Member> optionalMember = _memberService.selectByName(new Member(null, name, null, phone));
+			Optional<Member> optionalMember = _MemberService.selectByName(new Member(null, name, null, phone));
 			if (optionalMember.isPresent()) {
 				Member findId = optionalMember.get();
 				message = "찾으시는 아이디 = " + findId.getMemberid();
@@ -149,7 +158,7 @@ public class MemberController extends HttpServlet  {
 				request.setAttribute("alertmessage", message);
 			}
 		} else if(dis.equals("searchPwd")) {
-			Optional<Member> optionalMember = _memberService.selectByIdName(new Member(memberid, name));
+			Optional<Member> optionalMember = _MemberService.selectByIdName(new Member(memberid, name));
 			if (optionalMember.isPresent()) {
 				Member findPwd = optionalMember.get();
 				message = "찾으시는 비밀번호 = " + findPwd.getPwd();
@@ -167,7 +176,7 @@ public class MemberController extends HttpServlet  {
 	
 
 	public void memberupdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Member member = _memberService.selectBySearch(request.getParameter("searchId"));
+		Member member = _MemberService.selectBySearch(request.getParameter("searchId"));
 		
 		String pwd = request.getParameter("pwd");
 		String name = request.getParameter("name");
@@ -179,7 +188,7 @@ public class MemberController extends HttpServlet  {
 		member.setName(name);
 		member.setPhone(phone);
 		member.setPwd(pwd);
-		_memberService.update(member);
+		_MemberService.update(member);
 		
 		message = "정보 수정 완료";
 		
@@ -196,11 +205,11 @@ public class MemberController extends HttpServlet  {
 		String pwd = request.getParameter("pwd");
 		String message = "";
 		
-		Optional<Member> optionalMember = _memberService.selectByMember(new Member(memberid, null, pwd));
+		Optional<Member> optionalMember = _MemberService.selectByMember(new Member(memberid, null, pwd));
 		
 		if (optionalMember.isPresent()) {
 			Member mem = optionalMember.get();
-			_memberService.delete(mem);
+			_MemberService.delete(mem);
 			
 			message = "회원 탈퇴 완료";
 			request.getSession().invalidate();

@@ -22,24 +22,35 @@ public class MainController extends HttpServlet {
 	BoardService _BoardService;
 	MemberService _MemberService;
        
-    public MainController() {
-    	 _BoardService = new BoardService(new BoardDB());
-         _MemberService = new MemberService(new MemberDB());
+//    public MainController() {
+//    	 _BoardService = new BoardService(new BoardDB());
+//         _MemberService = new MemberService(new MemberDB());
+//    }
+    public void init() {
+    	_BoardService = new BoardService(new BoardDB());
+        _MemberService = new MemberService(new MemberDB());
     }
     
     public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	request.setCharacterEncoding("UTF-8");
     	
+    	String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
+		
+        System.out.println("requestURI = " + requestURI);
+        System.out.println("contextPath = " + contextPath);
+    	
     	List<Board> noticeList = _BoardService.selectByMainNotice();
     	List<Board> nomalList = _BoardService.selectByMainNomal();
     	System.out.println("세션 값 = " + request.getSession().getAttribute("loginMember"));
+    	
     	
 		request.setAttribute("noticeList", noticeList);
 		request.setAttribute("nomalList", nomalList);
 		System.out.println("noticeList = " + noticeList);
 		System.out.println("nomalList = " + nomalList);
-		
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		///WEB-INF/jsp/board/
+		request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
     	
     }
 

@@ -28,11 +28,12 @@
     <div id="contents">
       <div id="tabMenu">
         <input type="radio" id="tab1" name="tabs" checked>
-        <label for="tab1"><a href="/workProject/board?action=Boardlist&board_type=notice">공지사항</a></label>
+        <label for="tab1"><a href="/workProject/board/boardList?board_type=notice">공지사항</a></label>
         <input type="radio" id="tab2" name="tabs">
         <label for="tab2">갤러리</label>
        	<input type="radio" id="tab3" name="tabs">
-        <label id = "boardTab" for="tab3"><a href="/workProject/board?action=Boardlist&board_type=nomal">게시판</a></label>
+        <label id = "boardTab" for="tab3"><a href="/workProject/board/boardList?board_type=nomal">게시판</a></label>
+        <!-- <a href="/workProject/board?action=Boardlist&board_type=nomal"> -->
         <div id="notice" class="tabContent">
           <ul>
           <c:forEach var="notice" items="${noticeList }">           
