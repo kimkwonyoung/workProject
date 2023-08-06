@@ -72,15 +72,16 @@
         <a class="edit-button" id="edit" href="#">글 수정</a>
         <a class="delete-button" id="del" href="#">글 삭제</a>
        </c:if>
-        <a class="back-button" id="back" href="/workProject/board?action=Boardlist">목록</a>
+        <a class="back-button" id="back" href="/workProject/board/boardList?board_type=${requestScope.board_type }">목록</a>
       </div>
       
   </div>
   <script>
  	var boardnum = '${infoBoard.board_num}';
+ 	var boardcode = '${infoBoard.board_code}';
 	var updateLink = document.getElementById('edit');
 	updateLink.addEventListener('click', () => {
-		window.location.href = '/workProject/board?action=BoardUpdateInfo&board_num=' + boardnum;
+		window.location.href = '/workProject/board/boardUpdateInfo?board_num=' + boardnum;
 	});
 /* 	var back = document.getElementById('back');
 	back.addEventListener('click', () => {
@@ -90,7 +91,7 @@
 	var deleteLink = document.getElementById('del');
 	deleteLink.addEventListener('click', (event)=> {
 		if(confirm('정말로 삭제 하시겠습니까?')) {
-			window.location.href = '/workProject/board?action=BoardDelete&board_num=' + boardnum;
+			window.location.href = '/workProject/board/boardDelete?board_num=' + boardnum + '&board_code=' + boardcode;
 		} else {
 			event.preventDefault();
 		}

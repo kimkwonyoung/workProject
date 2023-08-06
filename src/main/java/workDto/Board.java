@@ -3,12 +3,14 @@ package workDto;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Board {
 	private int board_num;
 	private String mem_id;

@@ -78,17 +78,30 @@
   <c:if test="${requestScope.chk eq 'update' }">
   	<h1 class="form-title">글수정</h1>
   </c:if>
-    <form id="writeForm" action="/workProject/board" method="post">
+   <c:if test="${requestScope.chk eq 'write' }">
+   
+   </c:if>
+    <form id="writeForm" action=
+    
+    	<c:if test="${requestScope.chk eq 'write' }">
+    		"/workProject/board/boardInsert" 
+    	</c:if>
+    	<c:if test="${requestScope.chk eq 'update' }">
+    		"/workProject/board/boardUpdate" 
+    	</c:if>
+    	
+    method="post">
+    
       <div class="radio-group">
-        <input type="radio" id="notice" name="type" value="20" class="radio-input" required>
+        <input type="radio" id="notice" name="board_code" value="20" class="radio-input" required>
         <label for="notice" class="radio-label">공지사항</label>
 
-        <input type="radio" id="normal" name="type" value="10" class="radio-input" required>
+        <input type="radio" id="normal" name="board_code" value="10" class="radio-input" required>
         <label for="normal" class="radio-label">일반글</label>
       </div>
       <div class="check-fix" id="checkbox-div">
-      	<input type="checkbox" id="fiexed-yn" name="fixed_yn" value="Y">
-      	<label class="">상단 고정</label>
+      	<input type="checkbox" id="fixed-yn" name="fixed_yn" value="Y">
+      	<label class="" id="fixed">상단 고정</label>
       </div>
 
       <label for="title">제목:</label><br>
@@ -102,52 +115,55 @@
       
       <c:if test="${requestScope.chk eq 'write' }">
         <input type="hidden" name="memberid" value="${loginMember.memberid}">
-      	<input type="hidden" name="action" value="BoardInsert">
       </c:if>
       <c:if test="${requestScope.chk eq 'update' }">
       	<input type="hidden" name="board_num" value="${infoBoard.board_num}">
-      	<input type="hidden" name="action" value="BoardUpdate">
       </c:if>
     </form>
   </div>
-  <script>
-  	
-	  const board_code = '${infoBoard.board_code}';
-	  const radioButtons = document.getElementsByName("type");
+<script>
+const board_code = '${infoBoard.board_code}';
+const radioButtons = document.getElementsByName("type");
 	
-	  for (const radioButton of radioButtons) {
-	    if (radioButton.value === board_code) {
-	      radioButton.checked = true;
-	    }
-	  }
-  	document.getElementById("submitLink").addEventListener("click", () => {
-	  	document.getElementById("writeForm").submit();
-	});
-    var open = document.querySelector('.back-button');
-    open.addEventListener('click', () => {
-      	history.back();
-    });
+for (const radioButton of radioButtons) {
+	if (radioButton.value === board_code) {
+		radioButton.checked = true;
+	}
+}
+document.getElementById("submitLink").addEventListener("click", () => {
+	document.getElementById("writeForm").submit();
+});
+var open = document.querySelector('.back-button');
+open.addEventListener('click', () => {
+	history.back();
+});
     
-    const noticeRadioButton = document.getElementById('notice');
-    const normalRadioButton = document.getElementById('normal');
+const fixedCheckbox = document.getElementById('fixed-yn');
+const fiexed = document.getElementById('fixed');
+fiexed.addEventListener('click', () => {
+	fixedCheckbox.checked = !fixedCheckbox.checked;
+});
+    
+const noticeRadioButton = document.getElementById('notice');
+const normalRadioButton = document.getElementById('normal');
 
-    const checkboxDiv = document.getElementById('checkbox-div');
+const checkboxDiv = document.getElementById('checkbox-div');
 
-    noticeRadioButton.addEventListener('change', ()=> {
-      if (noticeRadioButton.checked) {
-        checkboxDiv.style.display = 'block'; 
-      } else {
-        checkboxDiv.style.display = 'none'; 
-      }
-    });
+noticeRadioButton.addEventListener('change', ()=> {
+	if (noticeRadioButton.checked) {
+		checkboxDiv.style.display = 'block'; 
+	} else {
+		checkboxDiv.style.display = 'none'; 
+	}
+});
 
-    normalRadioButton.addEventListener('change', ()=> {
-      if (normalRadioButton.checked) {
-        checkboxDiv.style.display = 'none'; 
-      } else {
-        checkboxDiv.style.display = 'block'; 
-      }
-    });
-  </script>
+normalRadioButton.addEventListener('change', ()=> {
+if (normalRadioButton.checked) {
+	checkboxDiv.style.display = 'none'; 
+} else {
+	checkboxDiv.style.display = 'block'; 
+	}
+});
+</script>
 </body>
 </html>

@@ -10,7 +10,6 @@ public interface BoardDAO {
 	
 	List<Board> selectByBoardList(String sql);
 	List<Board> selectByIdBoardList(String sql, String id);
-	List<Board> selectByBoardCode(String sql, int code);
 	Optional<Board> selectByBoardNum(String sql, int num);
 	
 	int insert(String sql, Board board);

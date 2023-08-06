@@ -1,7 +1,9 @@
 package pj;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 
+import Utils.CommonProperty;
 import service.BoardService;
 import service.MemberService;
 import workDao.BoardDB;
@@ -21,6 +24,7 @@ public class MainController extends HttpServlet {
 	private static final long serialVersionUID = -1625158307803301508L;
 	BoardService _BoardService;
 	MemberService _MemberService;
+	
        
 //    public MainController() {
 //    	 _BoardService = new BoardService(new BoardDB());
@@ -34,24 +38,13 @@ public class MainController extends HttpServlet {
     public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	request.setCharacterEncoding("UTF-8");
     	
-    	String requestURI = request.getRequestURI();
-        String contextPath = request.getContextPath();
-		
-        System.out.println("requestURI = " + requestURI);
-        System.out.println("contextPath = " + contextPath);
-    	
-    	List<Board> noticeList = _BoardService.selectByMainNotice();
-    	List<Board> nomalList = _BoardService.selectByMainNomal();
     	System.out.println("세션 값 = " + request.getSession().getAttribute("loginMember"));
     	
     	
-		request.setAttribute("noticeList", noticeList);
-		request.setAttribute("nomalList", nomalList);
-		System.out.println("noticeList = " + noticeList);
-		System.out.println("nomalList = " + nomalList);
-		///WEB-INF/jsp/board/
-		request.getRequestDispatcher("/WEB-INF/jsp/index.jsp").forward(request, response);
-    	
+		request.setAttribute("noticeList", _BoardService.selectByMainList().get("noticeList"));
+		request.setAttribute("nomalList", _BoardService.selectByMainList().get("nomalList"));
+		
+		request.getRequestDispatcher(CommonProperty.getJspPath() + "index.jsp").forward(request, response);
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

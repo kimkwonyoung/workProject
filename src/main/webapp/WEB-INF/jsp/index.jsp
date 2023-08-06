@@ -28,16 +28,16 @@
     <div id="contents">
       <div id="tabMenu">
         <input type="radio" id="tab1" name="tabs" checked>
-        <label for="tab1"><a href="/workProject/board/boardList?board_type=notice">공지사항</a></label>
+        <label for="tab1"><a href="/workProject/board/boardList?board_type=20">공지사항</a></label>
         <input type="radio" id="tab2" name="tabs">
         <label for="tab2">갤러리</label>
        	<input type="radio" id="tab3" name="tabs">
-        <label id = "boardTab" for="tab3"><a href="/workProject/board/boardList?board_type=nomal">게시판</a></label>
+        <label id = "boardTab" for="tab3"><a href="/workProject/board/boardList?board_type=10">게시판</a></label>
         <!-- <a href="/workProject/board?action=Boardlist&board_type=nomal"> -->
         <div id="notice" class="tabContent">
           <ul>
           <c:forEach var="notice" items="${noticeList }">           
-            <li><a href="/workProject/board?action=BoardInfo&board_num=${notice.board_num }">${notice.title }</a></li>
+            <li><a href="/workProject/board/boardInfo?board_num=${notice.board_num }&board_type=${notice.board_code}">${notice.title }</a></li>
           </c:forEach> 
           </ul>
         </div>
@@ -54,7 +54,7 @@
         <div id="board" class="tabContent">
           <ul>            
             <c:forEach var="nomal" items="${nomalList }">           
-            <li><a href="/workProject/board?action=BoardInfo&board_num=${nomal.board_num }">${nomal.title }</a></li>
+            <li><a href="/workProject/board/boardInfo?board_num=${nomal.board_num }&board_type=${nomal.board_code}">${nomal.title }</a></li>
           </c:forEach> 
           </ul>
         </div>

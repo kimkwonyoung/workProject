@@ -1,90 +1,99 @@
 package service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import Utils.CommonProperty;
+import Utils.QueryProperty;
+import Utils.StringUtil;
 import workDao.BoardDB;
 import workDto.Board;
+import workDto.SearchVO;
 
 public class BoardService {
-	String sql = "";
-
 	final private BoardDB _boardDao;
 	
 	public BoardService(BoardDB boardDB) {
 		_boardDao = boardDB;
 	}
 	
-	
-	public List<Board> selectByMainNotice() {
-		sql = "select * from board "
-			+ "where rownum <= 4 and board_code=20 and fixed_yn='Y' "
-			+ "order by board_num desc";
-		return _boardDao.selectByBoardList(sql);
+	public Map<String, List<Board>> selectByMainList() {
+		Map<String, List<Board>> map = new HashMap<>();
+		
+		map.put("noticeList", _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectMainNotice")));
+		map.put("nomalList", _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectMainNomal")));
+		return map;
 	}
 	
-	public List<Board> selectByMainNomal() {
-		sql = "select * from board "
-			+ "where rownum <= 4 and board_code=10 "
-			+ "order by board_num desc";
-		return _boardDao.selectByBoardList(sql);
+	public List<Board> selectByBoardList(SearchVO search) {
+		List<Board> boardList = new ArrayList<>();
+		
+		if (search.getsBoard_code() == 10) {
+			boardList = _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectNomal"));
+		} else if (search.getsBoard_code() == 20) {
+			boardList = _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectNotice"));
+		} else {
+			System.out.println("타입 오류 체크");
+		}
+		
+		return boardList;
 	}
 	
-	public List<Board> selectByNoticeList() {
-		sql = "select /*+INDEX_desc(board PK_BOARD) */ board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
-				+ "from board where board_code = 20 and fixed_yn='Y' "
-				+ "union all "
-				+ "select /*+INDEX_desc(board PK_BOARD) */ "
-				+ "board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
-				+ "from board where board_code = 20 and fixed_yn='N' ";
-		return _boardDao.selectByBoardList(sql);
-	}
-
 	
-	public List<Board> selectByNomalList() {
-		sql = "select /*+INDEX_desc(board PK_BOARD) */ board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
-				+ "from board where board_code=20 and fixed_yn='Y' "
-				+ "union all\r\n"
-				+ "select /*+ index_desc(board PK_BOARD) */ "
-				+ "board_num, mem_id, title, content, reg_date, mod_date, view_count, board_code, fixed_yn "
-				+ "from board "
-				+ "where board_code = 10";
-		return _boardDao.selectByBoardList(sql);
+	public List<Board> selectByIdBoardList(SearchVO search) {
+		return _boardDao.selectByIdBoardList(QueryProperty.getQuery("board.selectId"), search.getsMemid());
 	}
 	
-	public List<Board> selectByIdBoardList(String id) {
-		sql = "select * from board where mem_id = ?";
-		return _boardDao.selectByIdBoardList(sql, id);
+	public Board selectByBoardNum(SearchVO search) {
+		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), search.getsBoard_num());
+		
+		int row = _boardDao.updateViewCount(QueryProperty.getQuery("board.updateView"), search.getsBoard_num());
+		
+		if (row > 0) {
+			System.out.println("조회수 반영된 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
+		return optionalBoard.orElse(null);
 	}
 	
-	public List<Board> selectByBoardCode(int code) {
-		sql = "select * from board where board_code = ?";
-		return _boardDao.selectByBoardCode(sql, code);
-	}
-	
-	public Optional<Board> selectByBoardNum(int num) {
-		sql = "select * from board where board_num = ?";
-		return _boardDao.selectByBoardNum(sql, num);
+	public Board selectKeyNum(SearchVO search) {
+		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), search.getsBoard_num());
+		return optionalBoard.orElse(null);
 	}
 	
 	
 	public void insert(Board board) {
-		sql = "insert into board(board_num, mem_id, title, content, board_code, fixed_yn)"
-				+ "values(?, ?, ?, ?, ?, ?)";
-		_boardDao.insert(sql, board);
+		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
+		
+		int row = _boardDao.insert(QueryProperty.getQuery("board.insert"), board);
+		if(row > 0) {
+			System.out.println("반영된 글 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
 	}
 	public void update(Board board) {
-		sql = "update board set title=?, content=?, mod_date=?, board_code=?, fixed_yn=? where board_num = ?";
-		_boardDao.update(sql, board);
+		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
+		
+		int row = _boardDao.update(QueryProperty.getQuery("board.update"), board);
+		if(row > 0) {
+			System.out.println("반영된 글 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
 	}
-	public void delete(int num) {
-		sql = "delete from board where board_num = ?";
-		_boardDao.delete(sql, num);
+	public void delete(SearchVO search) {
+		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), search.getsBoard_num());
+		if(row > 0) {
+			System.out.println("삭제된 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
 	}
 	
-	public void updateViewCount(int num) {
-		sql = "update board set view_count = view_count+1 where board_num =?";
-		_boardDao.updateViewCount(sql, num);
-	}
 	
 }
