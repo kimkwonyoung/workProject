@@ -5,8 +5,10 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
@@ -19,215 +21,218 @@ import javax.websocket.Session;
 
 import org.apache.jasper.compiler.ELFunctionMapper;
 
+import Utils.CommonProperty;
 import service.BoardService;
 import service.MemberService;
 import workDao.BoardDB;
 import workDao.MemberDB;
 import workDto.Member;
+import workDto.SearchVO;
 
-@WebServlet("/member")
+/**회원 서블릿
+ * @author kky
+ *
+ */
+@WebServlet("/member/*")
 public class MemberController extends HttpServlet  {
 	private static final long serialVersionUID = -8738546228574989741L;
-	MemberService _MemberService;
-	
-	
-//	public MemberController() {
-//        _MemberService = new MemberService(new MemberDB()); 
-//    }
+	private MemberService _MemberService;
+	private SearchVO search = new SearchVO();
 	
 	public void init() {
 		_MemberService = new MemberService(new MemberDB());
     }
 	
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
 		request.setCharacterEncoding("UTF-8");
-		System.out.println("path체크 = " + request.getContextPath());
-    	System.out.println("content타입체크 = " + request.getContentType());
-		String action = request.getParameter("action");
-		
-		try {
+		String requestURI = request.getRequestURI();
+        String contextPath = request.getContextPath();
+        String action = requestURI.substring(contextPath.length() + "/member/".length());
+        
+        try {
 			switch(action) {
-				case "memberInsert" -> memberInsert(request, response);
+				case "memberWrite" -> memberWrite(request, response);
+				case "memberSearch" -> memberSearch(request, response);
+				case "memberSearchMove" -> memberSearchMove(request, response);
+				case "memberFavorite" -> memberFavorite(request, response);
 				case "memberLogin" -> memberLogin(request, response);
-				case "membersearch" -> membersearch(request, response);
-				case "memberupdate" -> memberupdate(request, response);
-				case "memberwithdraw" -> memberwithdraw(request, response);
+				case "memberLogout" -> memberLogout(request, response);
+				case "memberInfo" -> memberInfo(request, response);
+				case "memberUpdateMove" -> memberUpdateMove(request, response);
+				case "memberUpdate" -> memberUpdate(request, response);
+				case "memberList" -> memberList(request, response);
+				case "memberWithdrawMove" -> memberWithdrawMove(request, response);
+				case "memberWithdraw" -> memberWithdraw(request, response);
+				case "memberInsert" -> memberInsert(request, response);
 			}
 			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-    }
-
-	public void doGet(HttpServletRequest request, HttpServletResponse response) {
-		String action = request.getParameter("action");
-		System.out.println("path체크 = " + request.getContextPath());
-    	System.out.println("content타입체크 = " + request.getContentType());
-		try {
-			switch(action) {
-				case "logout" -> logOut(request, response);
-				case "memberInfo" -> memberInfo(request, response);
-				case "memberlist" -> memberlist(request, response);
-			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doProcess(request, response);
+    }
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doProcess(request, response);
+	}
+	
+	//회원 가입 수행
 	public void memberInsert(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String memberid = request.getParameter("memberid");
-		String pwd = request.getParameter("pwd");
-		String name = request.getParameter("name");
-		String phone = request.getParameter("phone");
+		Member member = Member.builder()
+						.memberid(request.getParameter("memberid"))
+						.pwd(request.getParameter("pwd"))
+						.name(request.getParameter("name"))
+						.phone(request.getParameter("phone"))
+						.build();
 		
-		int count = _MemberService.selectByCount(memberid);
-		
-		String message;
-		
-		if (count > 0) {
-			message = "이미 존재 하는 아이디 입니다.";
-			request.setAttribute("alertmessage", message);
-		} else {
-			_MemberService.insert(new Member(memberid, name, pwd, phone));
-			message = "회원 가입 완료";
-			request.setAttribute("alertmessage", message);
-		}
+		request.setAttribute(CommonProperty.getAlertmessage(), _MemberService.insert(member));
 		
 		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
 	}
 	
+	//회원 로그인
 	public void memberLogin(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Member member = Member.builder()
+						.memberid(request.getParameter("memberid"))
+						.pwd(request.getParameter("pwd"))
+						.build();
 		
-		String memberid = request.getParameter("memberid");
-		String pwd = request.getParameter("pwd");
-		String message;
-		Optional<Member> optionalMember = _MemberService.selectByMember(new Member(memberid, null, pwd));
+		Map<String, Object> map = new HashMap<>();
+		
+		//로그인 결과 값 = 성공시 Member값 + message, 실패시 message
+		map = _MemberService.selectByMember(member);
+		search = (SearchVO) map.get("message");
 		HttpSession session = request.getSession();
 		
-		if (optionalMember.isPresent()) {
-			System.out.println("로그인 성공 확인");
-			message = "로그인 성공";
-			request.setAttribute("alertmessage", message);
-			session.setAttribute("loginMember", optionalMember.get());
-		} else {
-			System.out.println("아이디 비번 실패 확인");
-			message = "아이디 또는 비밀번호가 잘못되었습니다";
-			request.setAttribute("alertmessage", message);
-		}
-		request.getRequestDispatcher("/main").forward(request, response);
-	}
-	
-	public void logOut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getSession().invalidate();
-		request.getRequestDispatcher("/main").forward(request, response);
-	}
-	
-	public void memberInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Member member = _MemberService.selectBySearch(request.getParameter("memberid"));
+		request.setAttribute(CommonProperty.getAlertmessage(), search.getMessage());
+		request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
+		session.setAttribute("loginMember", (Member) map.get("member"));
 		
-		request.setAttribute("findMember", member);
-		request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
+		request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
 	}
 	
-	public void memberlist(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	//회원 로그아웃
+	public void memberLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getSession().invalidate();
+		request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
+		
+		request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
+	}
+	
+	//회원 상세 정보
+	public void memberInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		search.setsMemid(request.getParameter("memberid"));
+//		Member member = _MemberService.selectByMember(search);
+//		
+//		request.setAttribute("findMember", member);
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_info.jsp").forward(request, response);
+	}
+	
+	//회원 전체 목록
+	public void memberList(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		List<Member> memberList = _MemberService.selectByList();
 		
 		request.setAttribute("memberlist", memberList);
-		request.getRequestDispatcher("/member/member_list.jsp").forward(request, response);
-	}
-	
-
-	public void membersearch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String dis = request.getParameter("dis");
-		String name = request.getParameter("name");
-		String phone = request.getParameter("phone");
-		String memberid = request.getParameter("memberid");
-		String message = "";
-		
-		if (dis.equals("searchId")) {
-			Optional<Member> optionalMember = _MemberService.selectByName(new Member(null, name, null, phone));
-			if (optionalMember.isPresent()) {
-				Member findId = optionalMember.get();
-				message = "찾으시는 아이디 = " + findId.getMemberid();
-				request.setAttribute("alertmessage", message);
-				request.setAttribute("findId", findId);
-				
-			} else {
-				message = "이름 또는 휴대폰번호가 잘못되었습니다";
-				request.setAttribute("alertmessage", message);
-			}
-		} else if(dis.equals("searchPwd")) {
-			Optional<Member> optionalMember = _MemberService.selectByIdName(new Member(memberid, name));
-			if (optionalMember.isPresent()) {
-				Member findPwd = optionalMember.get();
-				message = "찾으시는 비밀번호 = " + findPwd.getPwd();
-				request.setAttribute("alertmessage", message);
-				request.setAttribute("findPwd", findPwd);
-			} else {
-				message = "아이디와 이름이 잘못되었습니다";
-				request.setAttribute("alertmessage", message);
-			}
-		}
-		request.setAttribute("dis", dis);
-		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_list.jsp").forward(request, response);
 	}
 	
 	
-
-	public void memberupdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Member member = _MemberService.selectBySearch(request.getParameter("searchId"));
+	//회원 아이디 찾기, 비밀번호 찾기
+	public void memberSearch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		search.setChkMem(request.getParameter("chkMem")); //아이디 찾기, 비밀번호 찾기 구분자 ex) value= findid, findpwd
+		search.setsMemid(request.getParameter("memberid")); //파라미터 아이디
 		
-		String pwd = request.getParameter("pwd");
-		String name = request.getParameter("name");
-		String phone = request.getParameter("phone");
-		String message = "";
+		Member member = Member.builder()
+						.name(request.getParameter("name"))
+						.phone(request.getParameter("phone"))
+						.build();
+		
+		String message = _MemberService.selectBySearch(member, search);
+		
+		request.setAttribute("chkMem", search.getChkMem());
+		request.setAttribute(CommonProperty.getAlertmessage(), message);
+		
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "complete.jsp").forward(request, response);
+	}
+	
+	//회원 정보 수정 수행
+	public void memberUpdate(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Member member = Member.builder()
+						.memberid(request.getParameter("memberid"))
+						.pwd(request.getParameter("pwd"))
+						.name(request.getParameter("name"))
+						.phone(request.getParameter("phone"))
+						.build();
+		
 		HttpSession session = request.getSession();
 		request.getSession().removeAttribute("loginMember");
 		
-		member.setName(name);
-		member.setPhone(phone);
-		member.setPwd(pwd);
-		_MemberService.update(member);
+		request.setAttribute(CommonProperty.getAlertmessage(), CommonProperty.getMessageUpdate());
+		session.setAttribute("loginMember", _MemberService.update(member));
 		
-		message = "정보 수정 완료";
-		
-		request.setAttribute("alertmessage", message);
-		session.setAttribute("loginMember", member);
-		
-		request.getRequestDispatcher("/member/member_info.jsp").forward(request, response);
-		
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_info.jsp").forward(request, response);
 	}
 	
-	public void memberwithdraw(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	//회원 탈퇴 수행
+	public void memberWithdraw(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		Map<String, Object> map = new HashMap<>();
+		Member member = Member.builder()
+				.memberid(request.getParameter("memberid"))
+				.pwd(request.getParameter("pwd"))
+				.build();
 		
-		String memberid = request.getParameter("memberid");
-		String pwd = request.getParameter("pwd");
-		String message = "";
+		map = _MemberService.delete(member);
 		
-		Optional<Member> optionalMember = _MemberService.selectByMember(new Member(memberid, null, pwd));
+		Boolean status = (Boolean) map.get("status");
 		
-		if (optionalMember.isPresent()) {
-			Member mem = optionalMember.get();
-			_MemberService.delete(mem);
-			
-			message = "회원 탈퇴 완료";
+		if (status) {
+			//회원 탈퇴 성공
 			request.getSession().invalidate();
-			
-			request.setAttribute("alertmessage", message);
-			
-			request.getRequestDispatcher("/main").forward(request, response);
-			
+			request.setAttribute(CommonProperty.getAlertmessage(), (String) map.get("message"));
+			request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
+			request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
 		} else {
-			message = "아이디 또는 비밀번호가 잘못되었습니다";
-			request.setAttribute("alertmessage", message);
-			
-			request.getRequestDispatcher("/member/member_withdraw.jsp").forward(request, response);
+			//회원 탈퇴 실패
+			request.setAttribute(CommonProperty.getAlertmessage(), (String) map.get("message"));
+			request.setAttribute(CommonProperty.getAlerthref(), CommonProperty.getMemberPath() + "member_withdraw.jsp");
+			request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
 		}
+	}
+	
+	//회원가입 폼 이동
+	public void memberWrite(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_write.jsp").forward(request, response);
+	}
+	
+	//아이디 찾기, 비밀번호 찾기 폼 이동
+	public void memberSearchMove(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setAttribute("chkMem", request.getParameter("chkMem"));
 		
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_search.jsp").forward(request, response);
+	}
+	
+	//사진 보기 이동 (로직 존재X)
+	public void memberFavorite(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "favorite.jsp").forward(request, response);
+	}
+	
+	//정보 수정 폼 이동
+	public void memberUpdateMove(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		search.setsMemid(request.getParameter("memberid"));
 		
-		
+		request.setAttribute("memid", search.getsMemid());
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_update.jsp").forward(request, response);
+	}
+	
+	//회원 탈퇴 폼 이동
+	public void memberWithdrawMove(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_withdraw.jsp").forward(request, response);
 	}
 
+	
+	
 	
 }

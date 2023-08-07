@@ -10,7 +10,7 @@
 <body>
     <div id="userForm">
         <h2>회원 가입</h2>
-        <form action="/workProject/member" method="post">
+        <form action="/workProject/member/memberInsert" method="post">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
                 <input type="text" id="userid" name="memberid" placeholder="아이디를 입력하세요" required>
@@ -32,7 +32,6 @@
             <div class="form-group-insert">
                 <input type="submit" value="가입하기">
             </div>
-            <input type="hidden" name="action" value="memberInsert">
         </form>
     </div>
     <script src="/workProject/js/check.js"></script>

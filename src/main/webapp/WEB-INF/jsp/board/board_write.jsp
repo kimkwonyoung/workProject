@@ -5,69 +5,8 @@
 <html lang="ko">
 <head>
 <link rel="stylesheet" href="/workProject/css/style.css">
+<link rel="stylesheet" href="/workProject/css/board.css">
   <title>게시판 글쓰기</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f1f1f1;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 800px;
-      margin: 20px auto;
-      background-color: #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      border-radius: 5px;
-    }
-    .form-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    .form-input {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-    .radio-group {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .radio-label {
-      margin-right: 10px;
-    }
-    .radio-input {
-      margin-right: 5px;
-    }
-    .submit-button,
-    .back-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .back-button {
-    	float:right;
-    }
-    
-    .submit-button:hover,
-    .back-button:hover {
-      background-color: #0056b3;
-    }
-    .check-fix {
-    	margin-bottom:20px;
-    	display:none;
-    }
-  </style>
 </head>
 <body>
   <div id="container">

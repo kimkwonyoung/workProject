@@ -5,65 +5,11 @@
 <html lang="ko">
 <head>
 <link rel="stylesheet" href="/workProject/css/style.css">
+<link rel="stylesheet" href="/workProject/css/board.css">
   <title>게시판 목록</title>
-  <style>
-    .board-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .board-title {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .write-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top:20px;
-    }
-    .write-button:hover {
-      background-color: #0056b3;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    
-    th:nth-child(4), td:nth-child(4) { 
-      width: 100px;
-    }
-    tr:hover {
-      background-color: #f9f9f9;
-    }
-    th input[type="checkbox"],
-    td input[type="checkbox"] {
-      margin-right: 5px;
-    }
-    .checkbox-cell {
-      text-align: center;
-    }
-    .highlight {
-      background-color: #fff4e1;
-      font-weight: bold;
-  	}
-  </style>
 </head>
 <body>
-  <div id="container">
+  <div class="list-all" id="container">
   <%@ include file="../header.jsp" %>
    <c:set var="boardList" value="${requestScope.boardList }" />
     <div class="board-header">
@@ -80,7 +26,7 @@
     <table>
       <thead>
         <tr>
-          <th class="checkbox-cell"><input type="checkbox"></th>
+          <th class="checkbox-all"><input type="checkbox"></th>
           <th>글번호</th>
           <th>글제목</th>
           <th>작성자</th>

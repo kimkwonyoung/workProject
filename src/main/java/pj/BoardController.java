@@ -1,9 +1,6 @@
 package pj;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,9 +17,9 @@ import workDao.MemberDB;
 import workDto.Board;
 import workDto.SearchVO;
 
-/**
+/**게시판 서블릿
  * @author kky
- * 게시판 서블릿 컨트롤러
+ * 
  *
  */
 @WebServlet("/board/*")
@@ -30,19 +27,11 @@ public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = -2850407651698537945L;
 	private SearchVO search = new SearchVO();
 	private BoardService _BoardService;
-	private MemberService _MemberService;
 	
-	
-//	public BoardController() {
-//        _BoardService = new BoardService(new BoardDB());
-//        _MemberService = new MemberService(new MemberDB());
-//    }
 	public void init() {
     	_BoardService = new BoardService(new BoardDB());
-        _MemberService = new MemberService(new MemberDB());
     }
 
-	
 	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		
@@ -138,7 +127,6 @@ public class BoardController extends HttpServlet {
 		
 		request.setAttribute("board_type", search.getsBoard_code());
 		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
-		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
 	}
 	

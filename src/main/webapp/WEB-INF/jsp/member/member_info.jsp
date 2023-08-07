@@ -22,16 +22,11 @@
     </div>
   </div>
   <script>
-  	var message = '${alertmessage}';
-  	
-	if(message) {
-		alert(message);
-	}
-  	var searchId = '${loginMember.memberid}';
+  	var memberid = '${loginMember.memberid}';
   	var links = document.querySelectorAll('#linklist a');
     var hrefArr = ['/workProject/main', 
-    			   '/workProject/member/member_update.jsp?searchId='+searchId,
-    			   '/workProject/member/member_withdraw.jsp'];
+    			   '/workProject/member/memberUpdateMove?memberid=' + memberid,
+    			   '/workProject/member/memberWithdrawMove'];
 	
 	for(var i = 0; i < links.length; i++) {
 		var link = links[i];

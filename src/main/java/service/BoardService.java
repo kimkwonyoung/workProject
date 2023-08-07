@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import Utils.CommonProperty;
 import Utils.QueryProperty;
 import Utils.StringUtil;
 import workDao.BoardDB;
@@ -70,7 +69,7 @@ public class BoardService {
 		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
 		
 		int row = _boardDao.insert(QueryProperty.getQuery("board.insert"), board);
-		if(row > 0) {
+		if (row > 0) {
 			System.out.println("반영된 글 갯수 : " + row);
 		} else {
 			System.out.println("반영 X");
@@ -80,7 +79,7 @@ public class BoardService {
 		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
 		
 		int row = _boardDao.update(QueryProperty.getQuery("board.update"), board);
-		if(row > 0) {
+		if (row > 0) {
 			System.out.println("반영된 글 갯수 : " + row);
 		} else {
 			System.out.println("반영 X");
@@ -88,7 +87,7 @@ public class BoardService {
 	}
 	public void delete(SearchVO search) {
 		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), search.getsBoard_num());
-		if(row > 0) {
+		if (row > 0) {
 			System.out.println("삭제된 갯수 : " + row);
 		} else {
 			System.out.println("반영 X");

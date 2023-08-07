@@ -13,12 +13,12 @@
     <a class="back" href="#">돌아가기</a>
   </div>
   <script>
-  	var dis = '${dis}';
+  	var chkMem = '${chkMem}';
   	var link = document.querySelector('#link a');
-  	var href = '/workProject/member/member_insert.jsp';
+  	var href = '/workProject/member/memberWrite';
   	
-  	if(dis == 'searchId' || dis =='searchPwd') {
-  		href = '/workProject/member/member_search.jsp?dis=' + dis;
+  	if(chkMem == 'findid' || chkMem =='findpwd') {
+  		href = '/workProject/member/memberSearchMove?chkMem=' + chkMem;
   	}
   	
   	link.addEventListener('click', () => {

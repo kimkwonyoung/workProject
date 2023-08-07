@@ -5,55 +5,14 @@
 <html>
 <head>
 <link rel="stylesheet" href="/workProject/css/style.css">
+<link rel="stylesheet" href="/workProject/css/board.css">
   <title>게시물 상세 보기</title>
   <style>
-    .post-detail {
-      margin-top: 50px;
-    }
-    .post-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #604e4e;
-      padding-bottom: 10px;
-    }
-    .post-meta {
-      color: #777;
-      margin-bottom: 10px;
-    }
-    .post-content {
-      line-height: 1.6;
-      padding-left: 10px;
-      border-bottom: 1px solid #604e4e;
-      padding: 10px 0px 30px 5px;
-      margin-top: 20px;
-    }
+    
+    
 
-    .button-container {
-      margin-top: 20px;
-      align-items: center;
-    }
-    .edit-button,
-    .back-button,
-    .delete-button {
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      font-size: 14px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-right: 10px;
-      transition: background-color 0.3s;
-    }
-    .edit-button:hover,
-    .back-button:hover,
-    .delete-button:hover {
-      background-color: #0056b3;
-    }
-    .back-button {
-      float:right;
-    }
+    
+    
   </style>
 </head>
 <body>
@@ -69,10 +28,10 @@
     </div>
       <div class="button-container">
       <c:if test="${loginMember.memberid eq infoBoard.mem_id }">
-        <a class="edit-button" id="edit" href="#">글 수정</a>
-        <a class="delete-button" id="del" href="#">글 삭제</a>
+        <a class="edit-button-info" id="edit" href="#">글 수정</a>
+        <a class="delete-button-info" id="del" href="#">글 삭제</a>
        </c:if>
-        <a class="back-button" id="back" href="/workProject/board/boardList?board_type=${requestScope.board_type }">목록</a>
+        <a class="back-button-info" id="back" href="/workProject/board/boardList?board_type=${requestScope.board_type }">목록</a>
       </div>
       
   </div>

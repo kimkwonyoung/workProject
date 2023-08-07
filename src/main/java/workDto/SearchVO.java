@@ -11,6 +11,8 @@ public class SearchVO {
 	
 	private String chk; //게시판 글쓰기 타입 ex)write : 글쓰기, update : 글수정
 	private String sMemid; //게시판 글 작성자
+	private String chkMem; //회원 아이디 찾기, 비밀번호 찾기 구별자
+	private String message; //포워딩 메시지
 	
 	private int sBoard_num; // PK 게시판 번호(request로 넘어온 값 : String) 
 	private int sBoard_code; // 게시판 코드 10 : 일반 게시판 , 20 : 공지사항 게시판
@@ -45,6 +47,22 @@ public class SearchVO {
 
 	public void setsMemid(String sMemid) {
 		this.sMemid = sMemid;
+	}
+
+	public String getChkMem() {
+		return chkMem;
+	}
+
+	public void setChkMem(String chkMem) {
+		this.chkMem = chkMem;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }

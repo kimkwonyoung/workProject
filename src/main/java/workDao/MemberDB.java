@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import Utils.SingletonConnectionHelper;
 import workDto.Member;
+import workDto.SearchVO;
 
 public class MemberDB implements MemberDAO {
 	private Connection conn = null;
@@ -34,7 +35,13 @@ public class MemberDB implements MemberDAO {
 			
 			if(rs.next()) {
 				do {
-					memberList.add(new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+					Member mem = Member.builder()
+							.memberid(rs.getString(1))
+							.name(rs.getString(2))
+							.pwd(rs.getString(3))
+							.phone(rs.getString(4))
+							.build();
+					memberList.add(mem);
 				} while(rs.next());
 			} else {
 				System.out.println("데이터 없음");
@@ -50,7 +57,7 @@ public class MemberDB implements MemberDAO {
 	}
 	
 	@Override
-	public Object selectBySearch(String sql, String search) {
+	public Member selectBySearch(String sql, SearchVO search) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		Member mem = null;
@@ -58,15 +65,16 @@ public class MemberDB implements MemberDAO {
 		try {
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, search);
+			pstmt.setString(1, search.getsMemid());
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				mem = new Member();
-				mem.setMemberid(rs.getString(1));
-				mem.setName(rs.getString(2));
-				mem.setPhone(rs.getString(3));
-				mem.setPwd(rs.getString(4));
+				mem = Member.builder()
+						.memberid(rs.getString(1))
+						.name(rs.getString(2))
+						.pwd(rs.getString(3))
+						.phone(rs.getString(4))
+						.build();
 			}
 			
 		} catch (Exception e) {
@@ -93,8 +101,13 @@ public class MemberDB implements MemberDAO {
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				optionMem = optionMem.of(mem);
+				Member mem = Member.builder()
+						.memberid(rs.getString(1))
+						.name(rs.getString(2))
+						.pwd(rs.getString(3))
+						.phone(rs.getString(4))
+						.build();
+				optionMem = Optional.of(mem);
 			}
 			
 		} catch (Exception e) {
@@ -121,8 +134,13 @@ public class MemberDB implements MemberDAO {
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				optionMem = optionMem.of(mem);
+				Member mem = Member.builder()
+								.memberid(rs.getString(1))
+								.name(rs.getString(2))
+								.pwd(rs.getString(3))
+								.phone(rs.getString(4))
+								.build();
+				optionMem = Optional.of(mem);
 			}
 			
 		} catch (Exception e) {
@@ -149,8 +167,13 @@ public class MemberDB implements MemberDAO {
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				Member mem = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-				optionMem = optionMem.of(mem);
+				Member mem = Member.builder()
+						.memberid(rs.getString(1))
+						.name(rs.getString(2))
+						.pwd(rs.getString(3))
+						.phone(rs.getString(4))
+						.build();
+				optionMem = Optional.of(mem);
 			}
 			
 		} catch (Exception e) {
@@ -199,13 +222,6 @@ public class MemberDB implements MemberDAO {
 			pstmt.setString(4, member.getPhone());
 			
 			row = pstmt.executeUpdate();
-			
-			if(row > 0) {
-				System.out.println("반영된 행의 수 : " + row);
-			} else {
-				System.out.println("반영 X");
-			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -227,13 +243,6 @@ public class MemberDB implements MemberDAO {
 			pstmt.setString(4, member.getMemberid());
 			
 			row = pstmt.executeUpdate();
-			
-			if(row > 0) {
-				System.out.println("반영된 행의 수 : " + row);
-			} else {
-				System.out.println("반영 X");
-			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -251,13 +260,6 @@ public class MemberDB implements MemberDAO {
 			pstmt.setString(1, member.getMemberid());
 			
 			row = pstmt.executeUpdate();
-			
-			if(row > 0) {
-				System.out.println("반영된 행의 수 : " + row);
-			} else {
-				System.out.println("반영 X");
-			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DreamHome</title>
-  <link rel="stylesheet" href="css/style.css">
   
 </head>
 
@@ -17,10 +16,10 @@
   <%@ include file="header.jsp" %>
     <div id="slideShow">
       <div id="slides">
-        <img src="images/a-1.jpg" alt="">
-        <img src="images/a-2.jpg" alt="">
-        <img src="images/a-3.jpg" alt="">
-        <img src="images/a-4.jpg" alt="">
+        <img src="/workProject/images/a-1.jpg" alt="">
+        <img src="/workProject/images/a-2.jpg" alt="">
+        <img src="/workProject/images/a-3.jpg" alt="">
+        <img src="/workProject/images/a-4.jpg" alt="">
         <button id="prev">&lang;</button>
         <button id="next">&rang;</button>
       </div>
@@ -80,7 +79,7 @@
       </div>
       <c:if test="${empty loginMember}">
 	      <div id="login">
-	        <form action="/workProject/member" method="post">
+	        <form action="/workProject/member/memberLogin" method="post">
 	        	<div class="form-group">
 	        		<h2>로그인</h2>
 	        	</div>
@@ -102,7 +101,6 @@
 	            	<a href="#">비밀번호 찾기</a>｜
 	            	<a href="#">회원 가입</a>
 	            </div>
-	            <input type="hidden" name="action" value="memberLogin">        
 	        </form>
 	    	</div>
     	</c:if>
@@ -122,16 +120,16 @@
 	        	<div id="mlist">
 	        		<ul>
 	        			<li>장바구니</li>
-	        			<li><a href="/workProject/member/favoriate.jsp" class="forlink">사진모음</a></li>
+	        			<li><a href="/workProject/member/favorite" class="forlink">사진모음</a></li>
 	        			<li>나의문의내역</li>
 	        		</ul>
 	        	        	
 	        	</div>
 	          	<div id="userInfo">
-	            	<a href="/workProject/member?action=memberInfo&memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
+	            	<a href="/workProject/member/memberInfo?memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
 	            </div>       
 	            <div id="loginOut">
-	            	<a href="/workProject/member?action=logout" class="forlink"><span>로그 아웃</span></a>
+	            	<a href="/workProject/member/memberLogout" class="forlink"><span>로그 아웃</span></a>
 	            </div>
 	           
 	    	</div>
@@ -183,10 +181,10 @@
 	} */
 
 	
-	var message = '${alertmessage}';
+	/* var message = '${alertmessage}';
 	if(message) {
 		alert(message);
-	}
+	} */
 
 	var showIframe = (href) => {
 		var iframe = document.createElement('iframe');
@@ -222,9 +220,9 @@
 	}
 	
 	
-	var hrefArr = ['/workProject/member/member_search.jsp?dis=searchId', 
-				   '/workProject/member/member_search.jsp?dis=searchPwd',
-				   '/workProject/member/member_insert.jsp'];
+	var hrefArr = ['/workProject/member/memberSearch?chkMem=findid', 
+				   '/workProject/member/memberSearch?chkMem=findpwd',
+				   '/workProject/member/memberWrite'];
 	var links = document.querySelectorAll('#userInsert a');
 	
 	for(let i = 0; i < links.length; i++) {
@@ -263,6 +261,6 @@
 }
 	
 </script>
-<script src="js/slideshow.js"></script>
+<script src="/workProject/js/slideshow.js"></script>
 </body>
 </html>

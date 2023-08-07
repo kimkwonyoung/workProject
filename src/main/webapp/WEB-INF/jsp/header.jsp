@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 </head>
-
+<link rel="stylesheet" href="/workProject/css/style.css">
 <body>
 <header>
       <div id="logo">
@@ -36,7 +36,7 @@
 				<a href="#">연혁</a> 
 				<a href="#">비즈니스</a> 
 				<a href="#">연락처</a>
-				<a href="/workProject/member?action=memberlist" class="forlink">전체 회원 보기</a>
+				<a href="/workProject/member/memberList" class="forlink">전체 회원 보기</a>
 			</div>
           </li>
         </ul>

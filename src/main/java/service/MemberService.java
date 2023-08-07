@@ -1,14 +1,17 @@
 package service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import Utils.CommonProperty;
+import Utils.QueryProperty;
 import workDao.MemberDB;
 import workDto.Member;
+import workDto.SearchVO;
 
 public class MemberService {
-	String sql = "";
-	
 	private MemberDB _dao;
 	
 	public MemberService(MemberDB memberdb) {
@@ -16,49 +19,112 @@ public class MemberService {
 	}
 
 	public List<Member> selectByList() {
-		sql = "select memberid, name, pwd, phone from Member";
-		return _dao.selectByList(sql);
+		return _dao.selectByList(QueryProperty.getQuery("member.selectMemList"));
 	}
 	
-	public Member selectBySearch(String search) {
-		sql = "select memberid, name, pwd, phone from Member where memberid=?";
-		return (Member) _dao.selectBySearch(sql, search);
+	public Member selectByMember(SearchVO search) {
+		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
 	}
 	
-	public Optional<Member> selectByMember(Member mem) {
-		sql = "select memberid, name, pwd, phone from Member where memberid=? and pwd=?";
-		return _dao.selectByMember(sql, mem);
+	public Map<String, Object> selectByMember(Member mem) {
+		Member member = new Member();
+		SearchVO search = new SearchVO();
+		Optional<Member> optionalMember = _dao.selectByMember(QueryProperty.getQuery("member.selectMember"), mem);
+		Map<String, Object> map = new HashMap<>();
+		
+		if (optionalMember.isPresent()) {
+			member = optionalMember.get();
+			search.setMessage(CommonProperty.getMessageLoginSuccess());
+			map.put("member", member);
+			map.put("message", search);
+		} else {
+			search.setMessage(CommonProperty.getMessageMemMiss());
+			map.put("member", member);
+			map.put("message", search);
+		}
+		return map;
 	}
 	
-	public Optional<Member> selectByName(Member mem) {
-		sql = "select memberid, name, pwd, phone from Member where name=? and phone=?";
-		return _dao.selectByName(sql, mem);
-	}
-	
-	public Optional<Member> selectByIdName(Member mem) {
-		sql = "select memberid, name, pwd, phone from Member where memberid=? and name=?";
-		return _dao.selectByIdName(sql, mem);
+	public String selectBySearch(Member mem, SearchVO search) {
+		Member member = new Member();
+		String message = "";
+		if (search.getChkMem().equals(CommonProperty.getFindid())) {
+			Optional<Member> optionalMember = _dao.selectByName(QueryProperty.getQuery("member.selectName"), mem);
+			if (optionalMember.isPresent()) {
+				member = optionalMember.get();
+				message = CommonProperty.getMessageFid() + member.getMemberid();
+			} else {
+				message = CommonProperty.getMessageMissid();
+			}
+		} else if (search.getChkMem().equals(CommonProperty.getFindpwd())) {
+			Optional<Member> optionalMember = _dao.selectByIdName(QueryProperty.getQuery("member.selectIdName"), mem);
+			if (optionalMember.isPresent()) {
+				member = optionalMember.get();
+				message = CommonProperty.getMessageFpwd() + member.getPwd();
+			} else {
+				message = CommonProperty.getMessageMisspwd();
+			}
+		}
+		return message;
 	}
 	
 	
 	public int selectByCount(String memberid) {
-		sql = "select count(*) from member where memberid=?";
-		return _dao.selectByCount(sql, memberid);
+		return _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), memberid);
 	}
 	
-	public void insert(Member member) {
-		sql = "insert into Member(memberid, name, pwd, phone) values(?,?,?,?)";
-		_dao.insert(sql, member);
+	public String insert(Member mem) {
+		String message = "";
+		int count = _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), mem.getMemberid());
+		
+		if (count > 0) {
+			message = CommonProperty.getMessageExist();
+		} else {
+			int row = _dao.insert(QueryProperty.getQuery("member.insert"), mem);
+			if (row > 0) {
+				System.out.println("반영된 행의 수 : " + row);
+			} else {
+				System.out.println("반영 X");
+			}
+			message = CommonProperty.getMessageInsertSuccess();
+		}
+		return message;
 	}
 	
-	public void update(Member member) {
-		sql = "update Member set pwd=?, name=?, phone=? where memberid=?";
-		_dao.update(sql, member);
+	public Member update(Member mem) {
+		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
+		if (row > 0) {
+			System.out.println("반영된 행의 수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
+		SearchVO search = new SearchVO();
+		search.setsMemid(mem.getMemberid());
+		
+		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
 	}
 	
-	public void delete(Member member) {
-		sql = "delete from Member where memberid=?";
-		_dao.delete(sql, member);
+	public Map<String, Object> delete(Member mem) {
+		String message = "";
+		Map<String, Object> map = new HashMap<>();
+		
+		Optional<Member> optionalMamber = _dao.selectByMember(QueryProperty.getQuery("member.selectMember"), mem);
+		if (optionalMamber.isPresent()) {
+			Member member = optionalMamber.get();
+			message = CommonProperty.getMessageWithdraw();
+			map.put("status", true);
+			int row = _dao.delete(QueryProperty.getQuery("member.delete"), member);
+			if (row > 0) {
+				System.out.println("반영된 행의 수 : " + row);
+			} else {
+				System.out.println("반영 X");
+			}
+		} else {
+			message = CommonProperty.getMessageMemMiss();
+			map.put("status", false);
+		}
+		map.put("message", message);
+		return map;
 	}
 	
 }

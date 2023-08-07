@@ -8,9 +8,9 @@ import workDto.Board;
 
 public interface BoardDAO {
 	
-	List<Board> selectByBoardList(String sql);
-	List<Board> selectByIdBoardList(String sql, String id);
-	Optional<Board> selectByBoardNum(String sql, int num);
+	List<?> selectByBoardList(String sql);
+	List<?> selectByIdBoardList(String sql, String id);
+	Optional<?> selectByBoardNum(String sql, int num);
 	
 	int insert(String sql, Board board);
 	int update(String sql, Board board);

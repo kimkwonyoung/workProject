@@ -10,7 +10,7 @@
 <body>
     <div id="userForm2">
         <h2>회원 탈퇴</h2>
-        <form action="/workProject/member" method="post">
+        <form action="/workProject/member/memberWithdraw" method="post">
             <div class="form-group-insert">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
@@ -25,18 +25,15 @@
                 <input type="submit" value="회원 탈퇴 하기">
             </div>
             <a href="#" class="back-upwt">돌아가기</a>
-            <input type="hidden" name="action" value="memberwithdraw">
         </form>
     </div>
     <script type="text/javascript">
-		var message = '${alertmessage}';
-  		var href = '/workProject/member/member_info.jsp';
-		if(message) {
-			alert(message);
-		}
+  		var href = '/workProject/member/memberInfo';
+		
 		var back = document.querySelector('.back-upwt');
     	back.addEventListener('click', () => {
     		window.location.href = href;
+    		
     	});
 		
     	var pwdCheck = document.querySelector('form');
