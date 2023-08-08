@@ -90,7 +90,7 @@ public class MemberController extends HttpServlet  {
 		
 		request.setAttribute(CommonProperty.getAlertmessage(), _MemberService.insert(member));
 		
-		request.getRequestDispatcher("/member/complete.jsp").forward(request, response);
+		request.getRequestDispatcher(CommonProperty.getMemberPath() + "complete.jsp").forward(request, response);
 	}
 	
 	//회원 로그인
@@ -111,15 +111,17 @@ public class MemberController extends HttpServlet  {
 		request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
 		session.setAttribute("loginMember", (Member) map.get("member"));
 		
-		request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
+		request.getRequestDispatcher(CommonProperty.getJspPath() + "alertpage.jsp").forward(request, response);
 	}
 	
 	//회원 로그아웃
 	public void memberLogout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.getSession().invalidate();
+		
+		request.setAttribute(CommonProperty.getAlertmessage(), CommonProperty.getMessageLogout());
 		request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
 		
-		request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
+		request.getRequestDispatcher(CommonProperty.getJspPath() + "alertpage.jsp").forward(request, response);
 	}
 	
 	//회원 상세 정보
@@ -144,8 +146,8 @@ public class MemberController extends HttpServlet  {
 	public void memberSearch(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		search.setChkMem(request.getParameter("chkMem")); //아이디 찾기, 비밀번호 찾기 구분자 ex) value= findid, findpwd
 		search.setsMemid(request.getParameter("memberid")); //파라미터 아이디
-		
 		Member member = Member.builder()
+						.memberid(request.getParameter("memberid"))
 						.name(request.getParameter("name"))
 						.phone(request.getParameter("phone"))
 						.build();
@@ -193,12 +195,12 @@ public class MemberController extends HttpServlet  {
 			request.getSession().invalidate();
 			request.setAttribute(CommonProperty.getAlertmessage(), (String) map.get("message"));
 			request.setAttribute(CommonProperty.getAlerthref(), request.getContextPath() + "/main");
-			request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
+			request.getRequestDispatcher(CommonProperty.getJspPath() + "alertpage.jsp").forward(request, response);
 		} else {
 			//회원 탈퇴 실패
 			request.setAttribute(CommonProperty.getAlertmessage(), (String) map.get("message"));
 			request.setAttribute(CommonProperty.getAlerthref(), CommonProperty.getMemberPath() + "member_withdraw.jsp");
-			request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
+			request.getRequestDispatcher(CommonProperty.getJspPath() + "alertpage.jsp").forward(request, response);
 		}
 	}
 	
@@ -231,6 +233,7 @@ public class MemberController extends HttpServlet  {
 	public void memberWithdrawMove(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.getRequestDispatcher(CommonProperty.getMemberPath() + "member_withdraw.jsp").forward(request, response);
 	}
+	
 
 	
 	

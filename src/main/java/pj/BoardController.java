@@ -49,6 +49,7 @@ public class BoardController extends HttpServlet {
 				case "boardInfo" -> boardInfo(request, response);
 				case "boardUpdateInfo" -> boardUpdateInfo(request, response);
 				case "boardDelete" -> boardDelete(request, response);
+				case "boardDeleteChkbox" -> boardDeleteChkbox(request, response);
 				case "boardInsert" -> boardInsert(request, response);
 				case "boardUpdate" -> boardUpdate(request, response);
 				case "boardWrite" -> boardWrite(request, response);
@@ -116,6 +117,23 @@ public class BoardController extends HttpServlet {
 		
 		request.setAttribute("board_type", search.getsBoard_code());
 		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		
+		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
+	}
+	
+	//게시판 체크한 글 삭제
+	public void boardDeleteChkbox(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		search.setsBNumStr(request.getParameter("bnumStr"));
+		System.out.println("넘어온 글번호 값 : " + request.getParameter("bnumStr"));
+		
+		_BoardService.deleteChkbox(search);
+		
+		request.setAttribute("board_type", request.getParameter("board_type"));
+		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		
+//		request.setAttribute(CommonProperty.getAlertmessage(), "게시글 삭제 완료");
+//		request.setAttribute(CommonProperty.getAlerthref(), CommonProperty.getBoardPath() + "board_list.jsp);
+//		request.getRequestDispatcher(CommonProperty.getJspPath() + "/alertpage.jsp").forward(request, response);
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
 	}

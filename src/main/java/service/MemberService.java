@@ -11,6 +11,10 @@ import workDao.MemberDB;
 import workDto.Member;
 import workDto.SearchVO;
 
+/** 회원 비즈니스 로직
+ * @author kky
+ *
+ */
 public class MemberService {
 	private MemberDB _dao;
 	
@@ -39,7 +43,7 @@ public class MemberService {
 			map.put("message", search);
 		} else {
 			search.setMessage(CommonProperty.getMessageMemMiss());
-			map.put("member", member);
+			//map.put("member", member);
 			map.put("message", search);
 		}
 		return map;

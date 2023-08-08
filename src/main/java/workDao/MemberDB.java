@@ -234,7 +234,6 @@ public class MemberDB implements MemberDAO {
 	public int update(String sql, Member member) {
 		PreparedStatement pstmt = null;
 		int row = 0;
-		// update member set pwd = ?, name = ?, phone = ? where memberid = ?
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, member.getPwd());

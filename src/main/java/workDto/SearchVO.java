@@ -13,6 +13,7 @@ public class SearchVO {
 	private String sMemid; //게시판 글 작성자
 	private String chkMem; //회원 아이디 찾기, 비밀번호 찾기 구별자
 	private String message; //포워딩 메시지
+	private String sBNumStr; //게시판 번호 여러개 문자열 (1,2,3,4,5)
 	
 	private int sBoard_num; // PK 게시판 번호(request로 넘어온 값 : String) 
 	private int sBoard_code; // 게시판 코드 10 : 일반 게시판 , 20 : 공지사항 게시판
@@ -63,6 +64,14 @@ public class SearchVO {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getsBNumStr() {
+		return sBNumStr;
+	}
+
+	public void setsBNumStr(String sBNumStr) {
+		this.sBNumStr = sBNumStr;
 	}
 
 }

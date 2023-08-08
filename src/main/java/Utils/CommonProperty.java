@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/** 자주 쓰는 문자열 파일로 읽어 오는 클래스
+ * @author kky
+ *
+ */
 public class CommonProperty {
 	
 	private static String boardPath = getProperty("boardPath");
@@ -23,6 +27,7 @@ public class CommonProperty {
 	private static String messageWithdraw = getProperty("messageWithdraw");
 	private static String messageExist = getProperty("messageExist");
 	private static String messageInsertSuccess = getProperty("messageInsertSuccess");
+	private static String messageLogout = getProperty("messageLogout");
 	private static String alertmessage = getProperty("alertmessage");
 	private static String alerthref = getProperty("alerthref");
 	
@@ -137,6 +142,11 @@ public class CommonProperty {
 
 	public static String getMessageInsertSuccess() {
 		return messageInsertSuccess;
+	}
+
+
+	public static String getMessageLogout() {
+		return messageLogout;
 	}
 
 

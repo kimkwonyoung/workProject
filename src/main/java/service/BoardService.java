@@ -12,6 +12,10 @@ import workDao.BoardDB;
 import workDto.Board;
 import workDto.SearchVO;
 
+/** 게시판 비즈니스 로직
+ * @author kky
+ *
+ */
 public class BoardService {
 	final private BoardDB _boardDao;
 	
@@ -92,6 +96,10 @@ public class BoardService {
 		} else {
 			System.out.println("반영 X");
 		}
+	}
+	
+	public void deleteChkbox(SearchVO search) {
+		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), search.getsBNumStr());
 	}
 	
 	

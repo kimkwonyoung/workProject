@@ -208,6 +208,23 @@ public class BoardDB implements BoardDAO {
 		}
 		return row;
 	}
+	
+	public void delete(String sql, String num) {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			String[] numsArray = num.split(",");
+			for (String numValue : numsArray) {
+			    pstmt.setString(1, numValue); // 인덱스를 1로 고정
+			    pstmt.addBatch(); // 배치로 추가
+			}
+			pstmt.executeBatch();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+		}
+	}
 
 	@Override
 	public int updateViewCount(String sql, int num) {

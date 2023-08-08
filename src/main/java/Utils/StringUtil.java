@@ -9,7 +9,9 @@ public class StringUtil {
 	public static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
-	
+	/*
+	 * String params = Stream.of(boardIds).collect(Collectors.joining("','", "('", "')"));
+	 * */
 	/**
 	 * 날짜 객체를 형식에 맞는 문자열로 가져옵니다.
 	 * @param date

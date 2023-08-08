@@ -220,8 +220,8 @@
 	}
 	
 	
-	var hrefArr = ['/workProject/member/memberSearch?chkMem=findid', 
-				   '/workProject/member/memberSearch?chkMem=findpwd',
+	var hrefArr = ['/workProject/member/memberSearchMove?chkMem=findid', 
+				   '/workProject/member/memberSearchMove?chkMem=findpwd',
 				   '/workProject/member/memberWrite'];
 	var links = document.querySelectorAll('#userInsert a');
 	
