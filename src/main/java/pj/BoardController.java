@@ -1,12 +1,17 @@
 package pj;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.JSONObject;
 
 import Utils.CommonProperty;
 import Utils.StringUtil;
@@ -15,6 +20,7 @@ import service.MemberService;
 import workDao.BoardDB;
 import workDao.MemberDB;
 import workDto.Board;
+import workDto.Board_comment;
 import workDto.SearchVO;
 
 /**게시판 서블릿
@@ -53,6 +59,10 @@ public class BoardController extends HttpServlet {
 				case "boardInsert" -> boardInsert(request, response);
 				case "boardUpdate" -> boardUpdate(request, response);
 				case "boardWrite" -> boardWrite(request, response);
+				case "boardUpdateComment" -> boardUpdateComment(request, response);
+				case "commentInsert" -> commentInsert(request, response);
+				case "commentDelete" -> commentDelete(request, response);
+				
 			}
 			
 		} catch (Exception e) {
@@ -155,6 +165,8 @@ public class BoardController extends HttpServlet {
 		
 		request.setAttribute("board_type", search.getsBoard_code());
 		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
+		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 	}
@@ -174,5 +186,82 @@ public class BoardController extends HttpServlet {
 		request.setAttribute("chk", CommonProperty.getWrite());
 
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_write.jsp").forward(request, response);
+	}
+	
+	//댓글 작성 (비동기 ajax로 나중에 바꿔야함)
+	public void commentInsert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		search.setsBoard_num(request.getParameter("board_num"));
+		search.setsBoard_code(request.getParameter("board_type"));
+		
+		Board_comment comment = Board_comment.builder()
+								.board_num(search.getsBoard_num())
+								.detail(request.getParameter("detail"))
+								.mem_id(request.getParameter("mem_id"))
+								.build();
+		
+		_BoardService.insert(comment);
+		
+		request.setAttribute("board_type", search.getsBoard_code());
+		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
+		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+		
+		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
+	}
+	
+	//댓글 삭제 (비동기 ajax로 나중에 바꿔야함)
+	public void commentDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		search.setsBoard_num(request.getParameter("board_num"));
+		search.setsBoard_code(request.getParameter("board_type"));
+		search.setsComment_num(Integer.parseInt(request.getParameter("comment_num")));
+		
+		_BoardService.deleteComment(search);
+
+		request.setAttribute("board_type", search.getsBoard_code());
+		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
+		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+
+		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
+	}
+	
+	//게시판에 댓글 수정하기 (최초 구현 ajax 수업 진행 후 새로 설계 필요)
+	public void boardUpdateComment(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		BufferedInputStream in = new BufferedInputStream(request.getInputStream());
+		int available = request.getContentLength();
+		
+		byte [] data = new byte[available];
+		
+		in.read(data);
+		String str = new String(data, "utf-8");
+		
+		
+		JSONObject jsonObject = new JSONObject(str);
+		
+		//넘어온 수정된 데이터
+		int cnum = jsonObject.getInt("comment_num");
+		String detail = jsonObject.getString("detail");
+		String nowtime = StringUtil.getDateToString(new Date(), "yyyy-MM-dd HH:mm:ss");
+		
+		Board_comment comment = Board_comment.builder()
+								.comment_num(cnum)
+								.detail(detail)
+								.reg_date(nowtime)
+								.build();
+		
+		_BoardService.update(comment);
+		
+		JSONObject jsonResult = new JSONObject();
+		
+		jsonResult.put("comment_num", cnum);
+		jsonResult.put("detail", detail);
+		jsonResult.put("reg_date", nowtime);
+		
+		response.reset();
+		response.setContentType("Content-Type: application/json; charset=utf-8");
+		ServletOutputStream out = response.getOutputStream();
+		out.println(new String(jsonResult.toString().getBytes("utf-8"), "8859_1"));
+		out.flush();
 	}
 }

@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<link rel="stylesheet" href="/workProject/css/style.css">
 <link rel="stylesheet" href="/workProject/css/board.css">
   <title>게시판 목록</title>
 </head>

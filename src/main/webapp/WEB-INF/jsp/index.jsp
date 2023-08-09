@@ -32,7 +32,6 @@
         <label for="tab2">갤러리</label>
        	<input type="radio" id="tab3" name="tabs">
         <label id = "boardTab" for="tab3"><a href="/workProject/board/boardList?board_type=10">게시판</a></label>
-        <!-- <a href="/workProject/board?action=Boardlist&board_type=nomal"> -->
         <div id="notice" class="tabContent">
           <ul>
           <c:forEach var="notice" items="${noticeList }">           

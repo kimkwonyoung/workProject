@@ -3,13 +3,16 @@ package workDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 
 import Utils.SingletonConnectionHelper;
 import workDto.Board;
+import workDto.Board_comment;
 
 public class BoardDB implements BoardDAO {
 	
@@ -42,8 +45,8 @@ public class BoardDB implements BoardDAO {
 							.mem_id(rs.getString(2))
 							.title(rs.getString(3))
 							.content(rs.getString(4))
-							.reg_date(rs.getDate(5))
-							.mod_date(rs.getDate(6))
+							.reg_date(rs.getString(5))
+							.mod_date(rs.getString(6))
 							.view_count(rs.getInt(7))
 							.board_code(rs.getInt(8))
 							.fixed_yn(rs.getString(9))
@@ -82,8 +85,8 @@ public class BoardDB implements BoardDAO {
 							.mem_id(rs.getString(2))
 							.title(rs.getString(3))
 							.content(rs.getString(4))
-							.reg_date(rs.getDate(5))
-							.mod_date(rs.getDate(6))
+							.reg_date(rs.getString(5))
+							.mod_date(rs.getString(6))
 							.view_count(rs.getInt(7))
 							.board_code(rs.getInt(8))
 							.fixed_yn(rs.getString(9))
@@ -122,8 +125,8 @@ public class BoardDB implements BoardDAO {
 								.mem_id(rs.getString(2))
 								.title(rs.getString(3))
 								.content(rs.getString(4))
-								.reg_date(rs.getDate(5))
-								.mod_date(rs.getDate(6))
+								.reg_date(rs.getString(5))
+								.mod_date(rs.getString(6))
 								.view_count(rs.getInt(7))
 								.board_code(rs.getInt(8))
 								.fixed_yn(rs.getString(9))
@@ -244,6 +247,107 @@ public class BoardDB implements BoardDAO {
 		}
 		return row;
 	}
+
+	@Override
+	public List<Board_comment> selectByCommentList(String sql, int num) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Board_comment> commentList = new ArrayList<>();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				do {
+					Board_comment comment = Board_comment.builder()
+											.comment_num(rs.getInt(1))
+											.mem_id(rs.getString(2))
+											.board_num(rs.getInt(3))
+											.detail(rs.getString(4))
+											.reg_date(rs.getString(5))
+											.build();
+					commentList.add(comment);
+				} while(rs.next());
+			} else {
+				System.out.println("데이터 없음");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+		}
+		return commentList;
+	}
+
+	@Override
+	public int selectByCommentCount(String sql, int num) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int count = 0;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, num);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				count = Integer.parseInt(rs.getString(1));
+			} else {
+				System.out.println("데이터 없음");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+		}
+		return count;
+	}
+
+	@Override
+	public int updateComment(String sql, Board_comment comment) {
+		PreparedStatement pstmt = null;
+		int row = 0;
+		try {
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parsedDate = sdf.parse(comment.getReg_date());
+			java.sql.Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, comment.getDetail());
+			pstmt.setTimestamp(2, timestamp);
+			pstmt.setInt(3, comment.getComment_num());
+			
+			row = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+		}
+		return row;
+	}
+
+	@Override
+	public int insertComment(String sql, Board_comment comment) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int row = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, comment.getMem_id());
+			pstmt.setInt(2, comment.getBoard_num());
+			pstmt.setString(3, comment.getDetail());
+			row = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			SingletonConnectionHelper.close(pstmt);
+			SingletonConnectionHelper.close(rs);
+		}
+		return row;
+	}
+	
+	
 
 
 }

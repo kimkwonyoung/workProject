@@ -17,6 +17,7 @@ public class SearchVO {
 	
 	private int sBoard_num; // PK 게시판 번호(request로 넘어온 값 : String) 
 	private int sBoard_code; // 게시판 코드 10 : 일반 게시판 , 20 : 공지사항 게시판
+	private int sComment_num; //댓글 번호
 	
 	public int getsBoard_num() {
 		return sBoard_num;
@@ -72,6 +73,14 @@ public class SearchVO {
 
 	public void setsBNumStr(String sBNumStr) {
 		this.sBNumStr = sBNumStr;
+	}
+
+	public int getsComment_num() {
+		return sComment_num;
+	}
+
+	public void setsComment_num(int sComment_num) {
+		this.sComment_num = sComment_num;
 	}
 
 }

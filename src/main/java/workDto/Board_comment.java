@@ -8,22 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Board {
-	private int board_num;
+public class Board_comment {
+	private int comment_num;
 	private String mem_id;
-	private String title;
-	private String content;
+	private int board_num;
+	private String detail;
 	private String reg_date;
-	private String mod_date;
-	private int view_count;
-	private int board_code;
-	private String fixed_yn;
 	
-	
-	
-	
-
 }

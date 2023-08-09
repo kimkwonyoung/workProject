@@ -10,6 +10,7 @@ import Utils.QueryProperty;
 import Utils.StringUtil;
 import workDao.BoardDB;
 import workDto.Board;
+import workDto.Board_comment;
 import workDto.SearchVO;
 
 /** 게시판 비즈니스 로직
@@ -69,6 +70,14 @@ public class BoardService {
 	}
 	
 	
+	public List<Board_comment> selectCommentList(SearchVO search) {
+		return _boardDao.selectByCommentList(QueryProperty.getQuery("board.selectCommentList"), search.getsBoard_num());
+	}
+	
+	public int selectCommentCount(SearchVO search) {
+		return _boardDao.selectByCommentCount(QueryProperty.getQuery("board.selectCommentCount"), search.getsBoard_num());
+	}
+	
 	public void insert(Board board) {
 		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
 		
@@ -79,9 +88,18 @@ public class BoardService {
 			System.out.println("반영 X");
 		}
 	}
+	
+	public void insert(Board_comment comment) {
+		int row = _boardDao.insertComment(QueryProperty.getQuery("board.insertComment"), comment);
+		if (row > 0) {
+			System.out.println("반영된 글 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
+	}
+	
 	public void update(Board board) {
 		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
-		
 		int row = _boardDao.update(QueryProperty.getQuery("board.update"), board);
 		if (row > 0) {
 			System.out.println("반영된 글 갯수 : " + row);
@@ -89,6 +107,16 @@ public class BoardService {
 			System.out.println("반영 X");
 		}
 	}
+	
+	public void update(Board_comment comment) {
+		int row = _boardDao.updateComment(QueryProperty.getQuery("board.updateComment"), comment);
+		if (row > 0) {
+			System.out.println("반영된 댓글 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
+	}
+	
 	public void delete(SearchVO search) {
 		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), search.getsBoard_num());
 		if (row > 0) {
@@ -102,5 +130,14 @@ public class BoardService {
 		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), search.getsBNumStr());
 	}
 	
+	public void deleteComment(SearchVO search) {
+		int row = _boardDao.delete(QueryProperty.getQuery("board.deleteComment"), search.getsComment_num());
+		if (row > 0) {
+			System.out.println("삭제된 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
+		
+	}
 	
 }

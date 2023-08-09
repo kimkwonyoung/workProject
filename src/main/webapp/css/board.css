@@ -8,13 +8,14 @@
 }
 
 .board-header {
-	margin-top:20px;
+	margin-top: 20px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
+
 .link-header {
-	float:right;
+	float: right;
 }
 
 .board-title {
@@ -65,7 +66,7 @@ th input[type="checkbox"], td input[type="checkbox"] {
 	margin-right: 5px;
 }
 
-.checkbox-cell, .checkbox-all{
+.checkbox-cell, .checkbox-all {
 	text-align: center;
 }
 
@@ -147,12 +148,9 @@ th input[type="checkbox"], td input[type="checkbox"] {
 	align-items: center;
 }
 
-.submit-button:hover, .back-button:hover, 
-.edit-button:hover,
-.delete-button:hover,
-.edit-button-info:hover, 
-.back-button-info:hover, 
-.delete-button-info:hover {
+.submit-button:hover, .back-button:hover, .edit-button:hover,
+	.delete-button:hover, .edit-button-info:hover, .back-button-info:hover,
+	.delete-button-info:hover {
 	background-color: #0056b3;
 }
 
@@ -171,4 +169,109 @@ th input[type="checkbox"], td input[type="checkbox"] {
 .check-fix {
 	margin-bottom: 20px;
 	display: none;
+}
+
+/*********************************/
+/* 댓글 */
+/*********************************/
+#comment {
+	margin-top: 20px;
+	padding: 20px;
+	border: 1px solid #ddd;
+	background-color: #f9f9f9;
+	border-radius: 5px;
+	height: 210px;
+}
+#comment h3 {
+	margin-left: 5px;
+}
+.comment-list {
+	margin-top: 20px;
+}
+
+.comment {
+	margin-bottom: 15px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	border-radius: 5px;
+}
+
+.comment-header {
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.comment-content {
+	margin-bottom: 10px;
+}
+
+.comment-meta {
+	color: #777;
+}
+
+.comment-form {
+	margin-top: 20px;
+}
+
+.comment-form textarea {
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	resize: vertical;
+}
+
+.commentdetail {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 10px;
+	font-size: 15px;
+	border-radius: 5px;
+	resize: vertical;
+}
+
+.comment-area {
+	border: 1px solid #ccc;
+	width: 100%;
+}
+
+.write-comment {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	padding: 1px 5px;
+	font-size: 16px;
+	border-radius: 5px;
+	cursor: pointer;
+	float: right;
+	margin-top: 5px
+}
+
+.up-del-link {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.up-del-link h5 {
+	margin-left: 10px;
+}
+
+.up-del-link a {
+	float: right;
+}
+
+.comment-date {
+	color:#8e8b8b;
+	margin-right: auto;
+}
+
+
+.comment-form a:hover {
+	background-color: #0056b3;
+}
+
+.edit-comment-link, .delete-comment, .edit-button-info, .delete-button-info {
+	display:none;
 }
