@@ -61,21 +61,27 @@
   </div>
 <script>
 const board_code = '${infoBoard.board_code}';
-const radioButtons = document.getElementsByName("type");
-	
+const radioButtons = document.getElementsByName("board_code");
+
+//공지사항 일반 라디오 체크
 for (const radioButton of radioButtons) {
 	if (radioButton.value === board_code) {
 		radioButton.checked = true;
 	}
 }
+
+//form submit
 document.getElementById("submitLink").addEventListener("click", () => {
 	document.getElementById("writeForm").submit();
 });
+
+//뒤로가기
 var open = document.querySelector('.back-button');
 open.addEventListener('click', () => {
 	history.back();
 });
-    
+
+//상단 고정 체크박스
 const fixedCheckbox = document.getElementById('fixed-yn');
 const fiexed = document.getElementById('fixed');
 fiexed.addEventListener('click', () => {
@@ -87,6 +93,7 @@ const normalRadioButton = document.getElementById('normal');
 
 const checkboxDiv = document.getElementById('checkbox-div');
 
+//공지사항 라디오 버튼
 noticeRadioButton.addEventListener('change', ()=> {
 	if (noticeRadioButton.checked) {
 		checkboxDiv.style.display = 'block'; 
@@ -95,6 +102,7 @@ noticeRadioButton.addEventListener('change', ()=> {
 	}
 });
 
+//일반 라디오 버튼
 normalRadioButton.addEventListener('change', ()=> {
 if (normalRadioButton.checked) {
 	checkboxDiv.style.display = 'none'; 

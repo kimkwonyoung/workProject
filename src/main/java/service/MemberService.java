@@ -21,15 +21,18 @@ public class MemberService {
 	public MemberService(MemberDB memberdb) {
 		_dao = memberdb;
 	}
-
+	
+	//회원 전체 목록
 	public List<Member> selectByList() {
 		return _dao.selectByList(QueryProperty.getQuery("member.selectMemList"));
 	}
 	
+	//아이디를 Key로 회원 조회
 	public Member selectByMember(SearchVO search) {
 		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
 	}
 	
+	//메시지와 회원 정보를 Map으로 리턴
 	public Map<String, Object> selectByMember(Member mem) {
 		Member member = new Member();
 		SearchVO search = new SearchVO();
@@ -49,6 +52,7 @@ public class MemberService {
 		return map;
 	}
 	
+	//아이디 비밀번호 찾기
 	public String selectBySearch(Member mem, SearchVO search) {
 		Member member = new Member();
 		String message = "";
@@ -72,11 +76,12 @@ public class MemberService {
 		return message;
 	}
 	
-	
+	//존재 하는 회원 카운트
 	public int selectByCount(String memberid) {
 		return _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), memberid);
 	}
 	
+	//회원 가입
 	public String insert(Member mem) {
 		String message = "";
 		int count = _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), mem.getMemberid());
@@ -95,6 +100,7 @@ public class MemberService {
 		return message;
 	}
 	
+	//회원 정보 수정
 	public Member update(Member mem) {
 		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
 		if (row > 0) {
@@ -108,6 +114,7 @@ public class MemberService {
 		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
 	}
 	
+	//회원 탈퇴 
 	public Map<String, Object> delete(Member mem) {
 		String message = "";
 		Map<String, Object> map = new HashMap<>();

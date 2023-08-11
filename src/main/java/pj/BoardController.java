@@ -111,6 +111,8 @@ public class BoardController extends HttpServlet {
 		
 		request.setAttribute("board_type", search.getsBoard_code());
 		request.setAttribute("infoBoard", _BoardService.selectKeyNum(search));
+		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
+		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
 
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 		

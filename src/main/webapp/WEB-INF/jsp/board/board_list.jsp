@@ -50,6 +50,7 @@
     </table>
   </div>
   <script>
+    //글쓰기 이동
     var open = document.querySelector('#wr');
     open.addEventListener('click', () => {
       window.location.href = '/workProject/board/boardWrite';
@@ -60,12 +61,14 @@
     var checkAllCheckbox = document.getElementById("checkAll");
     var chkboxs = document.querySelectorAll(".chkbox");
     
+    //체크 박스 전체 선택
     checkAllCheckbox.addEventListener("click", () => {
     	chkboxs.forEach((chk) => {
     		chk.checked = checkAllCheckbox.checked;
     	});
     });
     
+    //체크 박스 선택한것 삭제
     var deleteLink = document.getElementById('del');
 	deleteLink.addEventListener('click', (event) => {		
 		if (confirm('정말로 삭제 하시겠습니까?')) {
