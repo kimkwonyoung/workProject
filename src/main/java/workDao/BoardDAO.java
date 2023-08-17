@@ -15,6 +15,7 @@ public interface BoardDAO {
 	
 	List<?> selectByCommentList(String sql, int num);
 	int selectByCommentCount(String sql, int num);
+//	Board_comment selectByComment(String sql, Board_comment comment);
 	
 	int insert(String sql, Board board);
 	int update(String sql, Board board);

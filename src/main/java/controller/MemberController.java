@@ -21,7 +21,6 @@ import workDto.SearchVO;
  */
 public class MemberController {
 	private MemberService _memberService;
-	private SearchVO search = new SearchVO();
 	
 	//회원 가입 수행
 	public String memberInsert(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -70,6 +69,7 @@ public class MemberController {
 	
 	//회원 아이디 찾기, 비밀번호 찾기
 	public String memberSearch(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		SearchVO search = new SearchVO();
 		search.setChkMem(request.getParameter("chkMem")); //아이디 찾기, 비밀번호 찾기 구분자 ex) value= findid, findpwd
 		search.setsMemid(request.getParameter("memberid")); //파라미터 아이디
 		String message = _memberService.selectBySearch(member, search);

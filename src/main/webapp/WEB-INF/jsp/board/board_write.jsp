@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<link rel="stylesheet" href="/workProject/css/board.css">
+<link rel="stylesheet" href="<c:url value='/css/board.css'/>">
   <title>게시판 글쓰기</title>
 </head>
 <body>
@@ -22,10 +22,10 @@
     <form id="writeForm" action=
     
     	<c:if test="${requestScope.chk eq 'write' }">
-    		"/workProject/board/boardInsert" 
+    		"boardInsert.do" 
     	</c:if>
     	<c:if test="${requestScope.chk eq 'update' }">
-    		"/workProject/board/boardUpdate" 
+    		"boardUpdate.do" 
     	</c:if>
     	
     method="post">
@@ -52,7 +52,7 @@
       <a href="#" class="back-button">목록으로 돌아가기</a>
       
       <c:if test="${requestScope.chk eq 'write' }">
-        <input type="hidden" name="memberid" value="${loginMember.memberid}">
+        <input type="hidden" name="mem_id" value="${loginMember.memberid}">
       </c:if>
       <c:if test="${requestScope.chk eq 'update' }">
       	<input type="hidden" name="board_num" value="${infoBoard.board_num}">

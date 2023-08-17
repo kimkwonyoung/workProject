@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/workProject/css/board.css">
+<link rel="stylesheet" href="<c:url value='/css/board.css'/>">
   <title>게시물 상세 보기</title>
 </head>
 <body>
@@ -33,7 +33,7 @@
     			<%-- <fmt:formatDate value="${comment.reg_date}" pattern="yyyy-MM-dd HH:mm:ss" /> --%>
     			<%-- <c:if test="${loginMember.memberid eq comment.mem_id }"> --%>
     				<a href="" class="edit-comment-link" style="margin-right:10px" data-mem-id="${comment.mem_id }">수정</a>
-    				<a href="/workProject/board/commentDelete?board_num=${infoBoard.board_num}&board_type=${requestScope.board_type }&comment_num=${comment.comment_num }"class="delete-comment">삭제</a>
+    				<a href="commentDelete.do?board_num=${infoBoard.board_num}&board_type=${requestScope.board_type }&comment_num=${comment.comment_num }"class="delete-comment">삭제</a>
     			<%-- </c:if> --%>
     		</div>
     	</div>
@@ -50,22 +50,21 @@
     <div id="comment">
     	 <h3>${loginMember.memberid }</h3>
 	    <div class="comment-form">
-	       <form id="commentForm" action="/workProject/board/commentInsert">
+        <form id="commentForm" action="commentInsert.do">
         	<textarea name="detail" rows="4" cols="50" placeholder="댓글 내용"></textarea>
         	<a class="write-comment" href="#">댓글 작성</a>
         	<input type="hidden" name="board_type" value="${requestScope.board_type }" />
         	<input type="hidden" name="board_num" value="${infoBoard.board_num}" />
         	<input type="hidden" name="mem_id" value="${loginMember.memberid }" />
-   	 	   </form>
+   	 	</form>
 	    </div>
+	    
     </div>
     </c:if>
       <div class="button-container">
-      <%-- <c:if test="${loginMember.memberid eq infoBoard.mem_id }"> --%>
         <a class="edit-button-info" id="edit" href="#">글 수정</a>
         <a class="delete-button-info" id="del" href="#">글 삭제</a>
-      <%-- </c:if> --%>
-        <a class="back-button-info" id="back" href="/workProject/board/boardList?board_type=${requestScope.board_type }">목록</a>
+        <a class="back-button-info" id="back" href="boardList.do?board_type=${requestScope.board_type }">목록</a>
       </div>
       
   </div>
@@ -74,6 +73,7 @@
  	var boardcode = '${infoBoard.board_code}';
  	var loginmem = '${loginMember.memberid}';
  	var infomem = '${infoBoard.mem_id}';
+ 	var boardtype = '${board_type}';
 	var updateLink = document.getElementById('edit');
 	var deleteLink = document.getElementById('del');
 	const writeCommentLink = document.querySelector('.write-comment');
@@ -82,12 +82,30 @@
 	if (loginmem === infomem) {
 		//글 수정
 		updateLink.addEventListener('click', () => {
-			window.location.href = '/workProject/board/boardUpdateInfo?board_num=' + boardnum;
+			window.location.href = 'boardUpdateInfo.do?board_num=' + boardnum;
 		});
 		//글 삭제
 		deleteLink.addEventListener('click', (event)=> {
 			if(confirm('정말로 삭제 하시겠습니까?')) {
-				window.location.href = '/workProject/board/boardDelete?board_num=' + boardnum + '&board_code=' + boardcode;
+				const param = {
+					board_num: boardnum,
+					board_code: boardcode,
+				  };
+				
+				  fetch("boardDelete.do", {
+				    method: "POST",
+				    headers: {
+				      "Content-Type": "application/json; charset=UTF-8",
+				    },
+				    body: JSON.stringify(param),
+				  })
+				  .then((response) => response.json())
+				  .then((json) => {
+					  alert(json.message);
+				      if (json.status) {
+				    	  location.href = "boardList.do?board_type=" + boardtype; 
+				      }
+				  });
 			} else {
 				event.preventDefault();
 			}
@@ -100,6 +118,54 @@
 	    const commentForm = document.getElementById('commentForm');
 	    commentForm.submit();
 	});
+/* 	writeCommentLink.addEventListener('click', () => {
+	    const param = {
+				board_num: boardnum,
+				mem_id: loginmem,
+				detail: detail.value,
+			  };
+			
+			  fetch("commentInsert.do", {
+			    method: "POST",
+			    headers: {
+			      "Content-Type": "application/json; charset=UTF-8",
+			    },
+			    body: JSON.stringify(param),
+			  })
+			  .then((response) => response.json())
+			  .then((json) => {
+			      if (json.status) {
+			    	  addNewComment(json.board_comment);
+			      }
+			  });
+	}); */
+	
+/* 	function addNewComment(newComment) {
+	    const commentForm = document.querySelector(".comment-form");
+
+	    const newCommentHTML = `
+	        <div class="comment-list">
+	            <h5>${newComment.mem_id}</h5>
+	            <div class="comment-area">
+	                <div class="commentdetail">
+	                    <span class="comment-content">${newComment.detail}</span>
+	                </div>
+	                <div class="up-del-link">
+	    			<h5 class="comment-date">${newComment.reg_date}</h5>	
+	    				<a href="" class="edit-comment-link" style="margin-right:10px" data-mem-id="${newComment.mem_id }">수정</a>
+	    				<a href="/workProject/board/commentDelete?board_num=${infoBoard.board_num}&board_type=${requestScope.board_type }&comment_num=${newComment.comment_num }"class="delete-comment">삭제</a>
+	    			</div>
+	            </div>
+	            <div class="edit-comment-form" style="display:none;">
+	            	<textarea class="edit-comment-textarea" rows="4" cols="50">${newComment.detail}</textarea>
+	        		<a href="#" class="save-edited-comment" data-comment-id="${newComment.comment_num}">저장</a>
+	        		<a href="#" class="cancel-edit-comment">취소</a>
+	            </div>
+	        </div>
+	    `;
+
+	    commentForm.insertAdjacentHTML("beforeend", newCommentHTML);
+	} */
 	
 	const commentArea = document.querySelectorAll('.comment-area');
 	const editCommentLinks = document.querySelectorAll('.edit-comment-link');
@@ -137,30 +203,33 @@
         });
     });
     
-    //ajax fetch로 댓글 수정 수행(초기버전)
+    
+    //ajax fetch로 댓글 수정
     saveButtons.forEach((button, index) => {
         button.addEventListener('click', (event) => {
         	event.preventDefault();
             const editedContent = editTextareas[index].value;
             const commentNum = button.getAttribute('data-comment-id');
-            
-            fetch('/workProject/board/boardUpdateComment', {
+            const param = {
+            		comment_num: commentNum,
+    				detail: editedContent
+    			  };
+            fetch('boardUpdateComment.do', {
             	method: 'POST',
             	headers: {
-    			    "Content-Type": "application/json",
+            		  "Content-Type": "application/json; charset=UTF-8",
     			  },
-    			body: JSON.stringify({
-    				comment_num: commentNum,
-    				detail: editedContent
-    			}),
+    			  body: JSON.stringify(param),
             })
             .then((response) => response.json())
-    		.then((data) => {
-    				commentContents[index].textContent = data.detail
-    				commentDate[index].textContent = data.comment_date
-    				editCommentForms[index].style.display = 'none';
-    	            commentContents[index].style.display = 'block';
-    	            commentArea[index].style.display = 'block';
+    		.then((json) => {
+    			if (json.status) {
+	    				commentContents[index].textContent = json.detail
+	    				commentDate[index].textContent = json.comment_date
+	    				editCommentForms[index].style.display = 'none';
+	    	            commentContents[index].style.display = 'block';
+	    	            commentArea[index].style.display = 'block';
+    				}
     			}
     		);
          });
@@ -176,11 +245,6 @@
         });
     });
 	
-	
-	/* 	var back = document.getElementById('back');
-	back.addEventListener('click', () => {
-		window.location.href = '/workProject/board?action=Boardlist';
-  }); */
   </script>
 </body>
 </html>

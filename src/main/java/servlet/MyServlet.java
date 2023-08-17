@@ -245,12 +245,16 @@ public class MyServlet extends HttpServlet {
 		System.out.println("requestURI = " + requestURI);
 		
 		Method method = actions.get(requestURI);
+		
+		
+		
 		if (method == null) {
 			response.getWriter().append("실행할 경로로 설정되지 않았습니다");
 			response.getWriter().append("error");
 		} else {
 			Object obj = objectMap.get(requestURI);
 			System.out.println("obj -> " + obj);
+			System.out.println("method -> " + method.toString());
 			try {
 				String result = "";
 				switch (method.getParameterCount()) {
@@ -324,6 +328,7 @@ public class MyServlet extends HttpServlet {
 		}
 		
 	}
+	
 	
 	private void jsonProcess(Method method, Object obj, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		

@@ -4,7 +4,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<link rel="stylesheet" href="/workProject/css/board.css">
+<link rel="stylesheet" href="<c:url value='/css/board.css'/>">
+
   <title>게시판 목록</title>
 </head>
 <body>
@@ -40,7 +41,7 @@
         <tr class="${board.fixed_yn eq 'Y' ? 'highlight':'' }">
           <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox" value="${board.board_num }"></td>
           <td>${board.board_num }</td>
-          <td><a href="/workProject/board/boardInfo?board_num=${board.board_num }&board_type=${board.board_code}">${board.title}</a></td>
+          <td><a href="<c:url value='boardInfo.do?board_num=${board.board_num }&board_type=${board.board_code}'/>">${board.title}</a></td>
           <td>${board.mem_id }</td>
           <td>${board.mod_date }</td>
           <td>${board.view_count }</td>
@@ -53,7 +54,7 @@
     //글쓰기 이동
     var open = document.querySelector('#wr');
     open.addEventListener('click', () => {
-      window.location.href = '/workProject/board/boardWrite';
+      window.location.href = 'boardWrite.do';
     });
 	
     
@@ -82,7 +83,7 @@
 				alert('삭제할 글을 선택 하세요.');
 			} else {
 				deleteStr = deleteStr.substr(0, deleteStr.length - 1);
-				window.location.href = '/workProject/board/boardDeleteChkbox?board_type=' + board_type + '&bnumStr=' + deleteStr;
+				window.location.href = 'boardDeleteChkbox.do?board_type=' + board_type + '&bnumStr=' + deleteStr;
 			}
 		} else {
 	        event.preventDefault();

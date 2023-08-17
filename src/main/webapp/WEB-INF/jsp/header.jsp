@@ -9,7 +9,7 @@
 <body>
 <header>
       <div id="logo">
-        <a href="mainIndex.do">
+        <a href="<c:url value='/main/mainIndex.do'/>">
           <h1>DreamHome</h1>
         </a>
       </div>

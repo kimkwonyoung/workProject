@@ -31,6 +31,8 @@ public class CommonProperty {
 	private static String alertmessage = getProperty("alertmessage");
 	private static String alerthref = getProperty("alerthref");
 	private static String messagePossibleId = getProperty("messagePossibleId");
+	private static String messageBoardDelete = getProperty("messageBoardDelete");
+	private static String messageBoardFail = getProperty("messageBoardFail");
 	
 	
 	
@@ -154,6 +156,16 @@ public class CommonProperty {
 
 	public static String getMessagePossibleId() {
 		return messagePossibleId;
+	}
+
+
+	public static String getMessageBoardDelete() {
+		return messageBoardDelete;
+	}
+
+
+	public static String getMessageBoardFail() {
+		return messageBoardFail;
 	}
 
 

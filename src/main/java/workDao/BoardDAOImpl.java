@@ -380,7 +380,41 @@ public class BoardDAOImpl implements BoardDAO {
 		}
 		return row;
 	}
-	
+
+//	@Override
+//	public Board_comment selectByComment(String sql, Board_comment comment) {
+//		PreparedStatement pstmt = null;
+//		ResultSet rs = null;
+//		Connection conn = null;
+//		Board_comment board_comment = new Board_comment();
+//		try {
+//			conn = ConnectionUtil.getConnection();
+//			pstmt = conn.prepareStatement(sql);
+//			pstmt.setString(1, comment.getMem_id());
+//			pstmt.setInt(2, comment.getBoard_num());
+//			rs = pstmt.executeQuery();
+//			
+//			if(rs.next()) {
+//				board_comment = Board_comment.builder()
+//												.comment_num(rs.getInt(1))
+//												.mem_id(rs.getString(2))
+//												.board_num(rs.getInt(3))
+//												.detail(rs.getString(4))
+//												.reg_date(rs.getString(5))
+//												.build();
+//			} else {
+//				System.out.println("데이터 없음");
+//			}
+//		} catch (Exception e) {
+//			
+//		} finally {
+//			ConnectionUtil.close(pstmt);
+//			ConnectionUtil.close(rs);
+//			ConnectionUtil.close(conn);
+//		}
+//		return board_comment;
+//	}
+//	
 	
 
 

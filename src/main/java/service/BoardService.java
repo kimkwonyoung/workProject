@@ -1,11 +1,15 @@
 package service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONObject;
+
+import Utils.CommonProperty;
 import Utils.QueryProperty;
 import Utils.StringUtil;
 import workDao.BoardDAOImpl;
@@ -54,10 +58,10 @@ public class BoardService {
 	}
 	
 	//게시판 번호를 Key로 게시판 글 가져오기 + 조회수 1증가 업데이트
-	public Board selectByBoardNum(SearchVO search) {
-		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), search.getsBoard_num());
+	public Board selectByBoardNum(int board_num) {
+		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), board_num);
 		
-		int row = _boardDao.updateViewCount(QueryProperty.getQuery("board.updateView"), search.getsBoard_num());
+		int row = _boardDao.updateViewCount(QueryProperty.getQuery("board.updateView"), board_num);
 		
 		if (row > 0) {
 			System.out.println("조회수 반영된 갯수 : " + row);
@@ -68,19 +72,19 @@ public class BoardService {
 	}
 	
 	//게시판 번호를 Key로 게시판 글 가져오기
-	public Board selectKeyNum(SearchVO search) {
-		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), search.getsBoard_num());
+	public Board selectKeyNum(int board_num) {
+		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), board_num);
 		return optionalBoard.orElse(null);
 	}
 	
 	//댓글 전체 리스트 가져오기(글 한개에 대한)
-	public List<Board_comment> selectCommentList(SearchVO search) {
-		return _boardDao.selectByCommentList(QueryProperty.getQuery("board.selectCommentList"), search.getsBoard_num());
+	public List<Board_comment> selectCommentList(int board_num) {
+		return _boardDao.selectByCommentList(QueryProperty.getQuery("board.selectCommentList"), board_num);
 	}
 	
 	//댓글 카운트
-	public int selectCommentCount(SearchVO search) {
-		return _boardDao.selectByCommentCount(QueryProperty.getQuery("board.selectCommentCount"), search.getsBoard_num());
+	public int selectCommentCount(int board_num) {
+		return _boardDao.selectByCommentCount(QueryProperty.getQuery("board.selectCommentCount"), board_num);
 	}
 	
 	//게시판 글 작성
@@ -96,6 +100,20 @@ public class BoardService {
 	}
 	
 	//게시판 댓글 작성
+//	public JSONObject insert(Board_comment comment) {
+//		JSONObject jsonResult = new JSONObject();
+//		int row = _boardDao.insertComment(QueryProperty.getQuery("board.insertComment"), comment);
+//		if (row > 0) {
+//			jsonResult.put("status", true);
+//			System.out.println("반영된 글 갯수 : " + row);
+//			System.out.println("작성한 댓글 = " + comment);
+//			jsonResult.put("board_comment", _boardDao.selectByComment(QueryProperty.getQuery("board.selectCommentRecent"), comment));
+//		} else {
+//			jsonResult.put("status", false);
+//			System.out.println("반영 X");
+//		}
+//		return jsonResult;
+//	}
 	public void insert(Board_comment comment) {
 		int row = _boardDao.insertComment(QueryProperty.getQuery("board.insertComment"), comment);
 		if (row > 0) {
@@ -117,23 +135,38 @@ public class BoardService {
 	}
 	
 	//게시판 댓글 수정
-	public void update(Board_comment comment) {
+	public JSONObject update(Board_comment comment) {
+		JSONObject jsonResult = new JSONObject();
+		String nowtime = StringUtil.getDateToString(new Date(), "yyyy-MM-dd HH:mm:ss");
+		
+		comment.setReg_date(nowtime);
 		int row = _boardDao.updateComment(QueryProperty.getQuery("board.updateComment"), comment);
 		if (row > 0) {
+			
+			jsonResult.put("status", true);
+			jsonResult.put("comment_num", comment.getComment_num());
+			jsonResult.put("detail", comment.getDetail());
+			jsonResult.put("reg_date", nowtime);
 			System.out.println("반영된 댓글 갯수 : " + row);
 		} else {
+			jsonResult.put("status", false);
 			System.out.println("반영 X");
 		}
+		return jsonResult;
 	}
 	
 	//게시판 글 삭제
-	public void delete(SearchVO search) {
-		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), search.getsBoard_num());
+	public JSONObject delete(Board board) {
+		JSONObject jsonResult = new JSONObject();
+		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), board.getBoard_num());
 		if (row > 0) {
-			System.out.println("삭제된 갯수 : " + row);
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageBoardDelete());
 		} else {
-			System.out.println("반영 X");
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessageBoardFail());
 		}
+		return jsonResult;
 	}
 	
 	//게시판 글 체크한것 삭제
@@ -142,8 +175,8 @@ public class BoardService {
 	}
 	
 	//게시판 댓글 삭제
-	public void deleteComment(SearchVO search) {
-		int row = _boardDao.delete(QueryProperty.getQuery("board.deleteComment"), search.getsComment_num());
+	public void deleteComment(int comment_num) {
+		int row = _boardDao.delete(QueryProperty.getQuery("board.deleteComment"), comment_num);
 		if (row > 0) {
 			System.out.println("삭제된 갯수 : " + row);
 		} else {
