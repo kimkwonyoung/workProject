@@ -13,8 +13,8 @@ public interface MemberDAO {
 	Optional<?> selectByMember(String sql, Member member);
 	Optional<?> selectByName(String sql, Member member);
 	Optional<?> selectByIdName(String sql, Member member);
-	int selectByCount(String sql, String memberid);
-	
+	boolean selectByCount(String sql, String memberid) throws Exception;
+	Member checkIdPwd(String sql, Member member) throws Exception;
 	int insert(String sql, Member member);
 	int update(String sql, Member member);
 	int delete(String sql, Member member);

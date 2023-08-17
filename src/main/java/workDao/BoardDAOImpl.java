@@ -9,32 +9,34 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-
+import Utils.ConnectionUtil;
 import Utils.SingletonConnectionHelper;
 import workDto.Board;
 import workDto.Board_comment;
 
-public class BoardDB implements BoardDAO {
+public class BoardDAOImpl implements BoardDAO {
 	
-	private Connection conn = null;
+//	private Connection conn = null;
 	
-	public BoardDB() {
-		try {
-			conn = SingletonConnectionHelper.getConnection("oracle");
-			System.out.println("DB연결 확인 = " + conn);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+//	public BoardDAOImpl() {
+//		try {
+//			conn = SingletonConnectionHelper.getConnection("oracle");
+//			System.out.println("DB연결 확인 = " + conn);
+//		} catch (ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public List<Board> selectByBoardList(String sql) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		List<Board> boardList = new ArrayList<>();
 		
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -60,8 +62,9 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
 		return boardList;
@@ -71,9 +74,11 @@ public class BoardDB implements BoardDAO {
 	public List<Board> selectByIdBoardList(String sql, String id) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		List<Board> boardList = new ArrayList<>();
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			rs = pstmt.executeQuery();
@@ -100,8 +105,9 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		return boardList;
 	}
@@ -111,10 +117,12 @@ public class BoardDB implements BoardDAO {
 	public Optional<Board> selectByBoardNum(String sql, int num) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		Optional<Board> optionBoard = Optional.empty();
 		
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			rs = pstmt.executeQuery();
@@ -139,8 +147,9 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		return optionBoard;
 	}
@@ -149,9 +158,11 @@ public class BoardDB implements BoardDAO {
 	public int insert(String sql, Board board) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		int row = 0;
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, board.getMem_id());
 			pstmt.setString(2, board.getTitle());
@@ -164,8 +175,9 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
@@ -173,10 +185,11 @@ public class BoardDB implements BoardDAO {
 	@Override
 	public int update(String sql, Board board) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		try {
 			java.sql.Date nowDate = new java.sql.Date(System.currentTimeMillis());
-			
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, board.getTitle());
 			pstmt.setString(2, board.getContent());
@@ -190,7 +203,8 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
@@ -198,23 +212,28 @@ public class BoardDB implements BoardDAO {
 	@Override
 	public int delete(String sql, int num) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			row = pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
 	
 	public void delete(String sql, String num) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			String[] numsArray = num.split(",");
 			for (String numValue : numsArray) {
@@ -225,16 +244,18 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 	}
 
 	@Override
 	public int updateViewCount(String sql, int num) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		try {
-			
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			
@@ -243,7 +264,8 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
@@ -252,8 +274,10 @@ public class BoardDB implements BoardDAO {
 	public List<Board_comment> selectByCommentList(String sql, int num) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		List<Board_comment> commentList = new ArrayList<>();
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			rs = pstmt.executeQuery();
@@ -274,7 +298,8 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return commentList;
 	}
@@ -283,8 +308,10 @@ public class BoardDB implements BoardDAO {
 	public int selectByCommentCount(String sql, int num) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		int count = 0;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			rs = pstmt.executeQuery();
@@ -296,7 +323,8 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return count;
 	}
@@ -304,13 +332,15 @@ public class BoardDB implements BoardDAO {
 	@Override
 	public int updateComment(String sql, Board_comment comment) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		try {
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parsedDate = sdf.parse(comment.getReg_date());
 			java.sql.Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-
+			
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, comment.getDetail());
 			pstmt.setTimestamp(2, timestamp);
@@ -320,7 +350,8 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
@@ -329,9 +360,11 @@ public class BoardDB implements BoardDAO {
 	public int insertComment(String sql, Board_comment comment) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		int row = 0;
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, comment.getMem_id());
 			pstmt.setInt(2, comment.getBoard_num());
@@ -341,8 +374,9 @@ public class BoardDB implements BoardDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}

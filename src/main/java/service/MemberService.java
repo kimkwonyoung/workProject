@@ -1,13 +1,13 @@
 package service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+
+import org.json.JSONObject;
 
 import Utils.CommonProperty;
 import Utils.QueryProperty;
-import workDao.MemberDB;
+import workDao.MemberDAOImpl;
 import workDto.Member;
 import workDto.SearchVO;
 
@@ -16,11 +16,7 @@ import workDto.SearchVO;
  *
  */
 public class MemberService {
-	private MemberDB _dao;
-	
-	public MemberService(MemberDB memberdb) {
-		_dao = memberdb;
-	}
+	private MemberDAOImpl _dao;
 	
 	//회원 전체 목록
 	public List<Member> selectByList() {
@@ -32,24 +28,19 @@ public class MemberService {
 		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
 	}
 	
-	//메시지와 회원 정보를 Map으로 리턴
-	public Map<String, Object> selectByMember(Member mem) {
-		Member member = new Member();
-		SearchVO search = new SearchVO();
-		Optional<Member> optionalMember = _dao.selectByMember(QueryProperty.getQuery("member.selectMember"), mem);
-		Map<String, Object> map = new HashMap<>();
-		
-		if (optionalMember.isPresent()) {
-			member = optionalMember.get();
-			search.setMessage(CommonProperty.getMessageLoginSuccess());
-			map.put("member", member);
-			map.put("message", search);
+	//로그인
+	public JSONObject login(Member mem) throws Exception {
+		JSONObject jsonObject = new JSONObject();
+		Member loginMember = _dao.checkIdPwd(QueryProperty.getQuery("member.selectMemid"), mem);
+		if (loginMember != null) {
+			jsonObject.put("member", loginMember);
+			jsonObject.put("status", true);
+			jsonObject.put("message", CommonProperty.getMessageLoginSuccess());
 		} else {
-			search.setMessage(CommonProperty.getMessageMemMiss());
-			//map.put("member", member);
-			map.put("message", search);
+			jsonObject.put("status", false);
+			jsonObject.put("message", CommonProperty.getMessageMemMiss());
 		}
-		return map;
+		return jsonObject;
 	}
 	
 	//아이디 비밀번호 찾기
@@ -77,65 +68,67 @@ public class MemberService {
 	}
 	
 	//존재 하는 회원 카운트
-	public int selectByCount(String memberid) {
-		return _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), memberid);
+	public JSONObject existMember(String memberid) throws Exception {
+		JSONObject jsonResult = new JSONObject();
+		if (_dao.selectByCount(QueryProperty.getQuery("member.selectCount"), memberid)) {
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageExist());
+		} else {
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessagePossibleId());
+		}
+		
+		return jsonResult;
 	}
 	
 	//회원 가입
-	public String insert(Member mem) {
-		String message = "";
-		int count = _dao.selectByCount(QueryProperty.getQuery("member.selectCount"), mem.getMemberid());
+	public JSONObject insert(Member mem) {
+		JSONObject jsonResult = new JSONObject();
 		
-		if (count > 0) {
-			message = CommonProperty.getMessageExist();
+		if (_dao.insert(QueryProperty.getQuery("member.insert"), mem) == 1) {
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageInsertSuccess());
 		} else {
-			int row = _dao.insert(QueryProperty.getQuery("member.insert"), mem);
-			if (row > 0) {
-				System.out.println("반영된 행의 수 : " + row);
-			} else {
-				System.out.println("반영 X");
-			}
-			message = CommonProperty.getMessageInsertSuccess();
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessageExist());
 		}
-		return message;
+		
+		return jsonResult;
 	}
 	
 	//회원 정보 수정
-	public Member update(Member mem) {
-		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
-		if (row > 0) {
-			System.out.println("반영된 행의 수 : " + row);
-		} else {
-			System.out.println("반영 X");
-		}
+	public JSONObject update(Member mem) {
+		JSONObject jsonResult = new JSONObject();
 		SearchVO search = new SearchVO();
 		search.setsMemid(mem.getMemberid());
+		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
+		if (row > 0) {
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageUpdate());
+			jsonResult.put("member", _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search));
+		}
 		
-		return _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search);
+		return jsonResult;
 	}
 	
 	//회원 탈퇴 
-	public Map<String, Object> delete(Member mem) {
-		String message = "";
-		Map<String, Object> map = new HashMap<>();
-		
-		Optional<Member> optionalMamber = _dao.selectByMember(QueryProperty.getQuery("member.selectMember"), mem);
-		if (optionalMamber.isPresent()) {
-			Member member = optionalMamber.get();
-			message = CommonProperty.getMessageWithdraw();
-			map.put("status", true);
-			int row = _dao.delete(QueryProperty.getQuery("member.delete"), member);
-			if (row > 0) {
-				System.out.println("반영된 행의 수 : " + row);
+	public JSONObject delete(Member mem) {
+		JSONObject jsonResult = new JSONObject();
+		Member member;
+		try {
+			member = _dao.checkIdPwd(QueryProperty.getQuery("member.selectMemid"), mem);
+			if (member != null) {
+				jsonResult.put("status", true);
+				jsonResult.put("message", CommonProperty.getMessageWithdraw());
+				_dao.delete(QueryProperty.getQuery("member.delete"), member);
 			} else {
-				System.out.println("반영 X");
+				jsonResult.put("status", false);
+				jsonResult.put("message", CommonProperty.getMessageMemMiss());
 			}
-		} else {
-			message = CommonProperty.getMessageMemMiss();
-			map.put("status", false);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		map.put("message", message);
-		return map;
+		return jsonResult;
 	}
 	
 }

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="/workProject/css/style.css">
+    <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
  
 </head>
 <body>
@@ -16,7 +16,7 @@
     	<h2>비밀번호 찾기</h2>
     </c:if>
         
-        <form action="/workProject/member/memberSearch" method="post">
+        <form action="memberSearch.do" method="post">
          <c:if test="${chkMem eq 'findpwd' }">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
@@ -46,7 +46,7 @@
                 	
         </form>
     </div>
-    <script src="/workProject/js/check.js"></script>
+    <script src="<c:url value='/js/check.js'/>"></script>
 
 </body>
 </html>

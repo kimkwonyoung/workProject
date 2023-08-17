@@ -17,5 +17,7 @@ public class Member {
 	private String pwd;
 	private String phone;
 	
-	
+	public boolean isEqualPwd(Member member) {
+		return pwd.equals(member.getPwd());
+	}
 }

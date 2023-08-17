@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/workProject/css/memberinfo.css">
+  <link rel="stylesheet" href="<c:url value='/css/memberinfo.css'/>">
 </head>
 <body>
   <div class="container">
@@ -22,15 +23,15 @@
     </div>
   </div>
   <script>
-  	var memberid = '${loginMember.memberid}';
-  	var links = document.querySelectorAll('#linklist a');
-    var hrefArr = ['/workProject/main', 
-    			   '/workProject/member/memberUpdateMove?memberid=' + memberid,
-    			   '/workProject/member/memberWithdrawMove'];
+  	var memberid = "${loginMember.memberid}";
+  	var links = document.querySelectorAll("#linklist a");
+    var hrefArr = ["<c:url value='/main/mainIndex.do'/>", 
+    			   "<c:url value='/member/memberUpdateMove.do?sMemid=" + memberid + "'/>",
+    			   "<c:url value='/member/memberWithdrawMove.do'/>"];
 	
 	for(var i = 0; i < links.length; i++) {
 		var link = links[i];
-		link.addEventListener('click', createClickHandler(hrefArr[i]));
+		link.addEventListener("click", createClickHandler(hrefArr[i]));
 	}
   	function createClickHandler(href) {
   		return () => {

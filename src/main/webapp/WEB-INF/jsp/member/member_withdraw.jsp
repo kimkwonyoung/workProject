@@ -5,12 +5,12 @@
 <head>
 </head>
 <title>회원 탈퇴</title>
-    <link rel="stylesheet" href="/workProject/css/style.css">
+    <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
     <div id="userForm2">
         <h2>회원 탈퇴</h2>
-        <form action="/workProject/member/memberWithdraw" method="post">
+        <form action="memberWithdraw.do" method="post" onsubmit="return false;">
             <div class="form-group-insert">
             <div class="form-group-insert">
                 <label for="userid">아이디:</label>
@@ -28,22 +28,41 @@
         </form>
     </div>
     <script type="text/javascript">
-  		var href = '/workProject/member/memberInfo';
+  		var href = "/workProject/member/memberInfo";
 		
-		var back = document.querySelector('.back-upwt');
-    	back.addEventListener('click', () => {
+		var back = document.querySelector(".back-upwt");
+    	back.addEventListener("click", () => {
     		window.location.href = href;
     		
     	});
 		
-    	var pwdCheck = document.querySelector('form');
-    	pwdCheck.addEventListener('submit', (event) => {
-    		if(document.getElementById('password').value !== document.getElementById('password2').value ) {
+    	var pwdCheck = document.querySelector("form");
+    	pwdCheck.addEventListener("submit", (event) => {
+    		if(document.getElementById("password").value !== document.getElementById("password2").value ) {
     			event.preventDefault();
-    			alert('비밀번호가 일치 하지 않습니다.')
+    			alert("비밀번호가 일치 하지 않습니다.")
     		} else {
-    			if(confirm('정말로 회원 탈퇴 하시겠습니까?')) {
-    				pwdCheck.submit();
+    			if(confirm("정말로 회원 탈퇴 하시겠습니까?")) {
+    				const param = {
+    			    		memberid: userid.value,
+    				        pwd: password.value
+    				};
+    			
+    			    fetch("memberWithdraw.do", {
+    			      method: "POST",
+    			      headers: {
+    			        "Content-Type": "application/json; charset=UTF-8",
+    			      },
+    			      body: JSON.stringify(param),
+    			    })
+    			    .then((response) => response.json())
+    			    .then((json) => {
+    			  	    alert(json.message);
+    			        if (json.status) {
+    			      	  location.href = "<c:url value='mainIndex.do'/>"; 
+    			        }
+    			    });
+    				
     			} else {
     				event.preventDefault();
     			}

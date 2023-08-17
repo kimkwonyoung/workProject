@@ -5,12 +5,12 @@
 <head>
 </head>
 <title>회원 정보 수정</title>
-<link rel="stylesheet" href="/workProject/css/style.css">
+<link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 </head>
 <body>
     <div id="userForm">
         <h2 id="titleuser">회원 정보 수정</h2>
-        <form action="/workProject/member/memberUpdate" method="post">
+        <form action="memberUpdate.do" method="post" onsubmit="return false;">
             <div class="form-group-insert">
                 <label for="password">변경 비밀번호:</label>
                 <input type="password" id="password" name="pwd" placeholder="비밀번호를 입력하세요" required>
@@ -26,28 +26,45 @@
                 <input type="tel" id="tel" name="phone" placeholder="휴대폰 번호를 입력하세요" required>
             </div>
             <div class="form-group-insert">
-                <input type="submit" value="정보 수정 하기">
+                <input type="submit" id="updateMem" value="정보 수정 하기">
             </div>
             <a href="#" class="back-upwt">돌아가기</a>
-            <input type="hidden" name="memberid" value="${memid}" >
         </form>
     </div>
-    <script src="/workProject/js/check.js"></script>
-    <script>
-    	var back = document.querySelector('.back-upwt');
-		back.addEventListener('click', () => {
-			window.history.back();
-		});
+    <script src="<c:url value='/js/check.js'/>"></script>
+<script>
+var sMemid = "${sMemid}";
+var back = document.querySelector(".back-upwt");
+back.addEventListener("click", () => {
+	window.history.back();
+});
 
-/*     	var pwdCheck = document.querySelector('form');
-    	pwdCheck.addEventListener('submit', (event) => {
-    		if(document.getElementById('password').value !== document.getElementById('password2').value ) {
-    			event.preventDefault();
-    			alert('변경 할 비밀번호가 일치 하지 않습니다.')
-    		}
-    	}); */
-    	
-    </script>
+document.querySelector("#updateMem").addEventListener("click", e => {
+	const param = {
+		memberid: sMemid,
+	    pwd: password.value,
+	    name: username.value,
+	    phone: tel.value,
+	  };
+	
+	  fetch("memberUpdate.do", {
+	    method: "POST",
+	    headers: {
+	      "Content-Type": "application/json; charset=UTF-8",
+	    },
+	    body: JSON.stringify(param),
+	  })
+	  .then((response) => response.json())
+	  .then((json) => {
+		  alert(json.message);
+	      if (json.status) {
+	    	  //location.href = "<c:url value='memberInfo.do'/>"; 
+	    	  location.href = "memberInfo.do"; 
+	      }
+	  });
+	
+});
+</script>
 
 </body>
 </html>

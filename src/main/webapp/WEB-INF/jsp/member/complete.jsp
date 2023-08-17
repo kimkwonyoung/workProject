@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/workProject/css/complete.css">
+<link rel="stylesheet" href="<c:url value='/css/complete.css'/>">
 </head>
 <body>
 	<div class="complete" id="link">
@@ -15,10 +15,10 @@
   <script>
   	var chkMem = '${chkMem}';
   	var link = document.querySelector('#link a');
-  	var href = '/workProject/member/memberWrite';
+  	var href = 'memberWrite.do';
   	
   	if(chkMem == 'findid' || chkMem =='findpwd') {
-  		href = '/workProject/member/memberSearchMove?chkMem=' + chkMem;
+  		href = 'memberSearchMove.do?chkMem=' + chkMem;
   	}
   	
   	link.addEventListener('click', () => {

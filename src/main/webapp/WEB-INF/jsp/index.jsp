@@ -10,16 +10,16 @@
   <title>DreamHome</title>
   
 </head>
-
+ 
 <body>
   <div id="container"> 
   <%@ include file="header.jsp" %>
     <div id="slideShow">
       <div id="slides">
-        <img src="/workProject/images/a-1.jpg" alt="">
-        <img src="/workProject/images/a-2.jpg" alt="">
-        <img src="/workProject/images/a-3.jpg" alt="">
-        <img src="/workProject/images/a-4.jpg" alt="">
+        <img src="<c:url value='/images/a-1.jpg'/>" alt="">
+        <img src="<c:url value='/images/a-2.jpg'/>" alt="">
+        <img src="<c:url value='/images/a-3.jpg'/>" alt="">
+        <img src="<c:url value='/images/a-4.jpg'/>" alt="">
         <button id="prev">&lang;</button>
         <button id="next">&rang;</button>
       </div>
@@ -41,12 +41,12 @@
         </div>
         <div id="gallery" class="tabContent">
           <ul>
-            <li><img src="/workProject/images/c1.jpg" ></li>
-            <li><img src="/workProject/images/c2.jpg" ></li>
-            <li><img src="/workProject/images/c3.jpg" ></li>
-            <li><img src="/workProject/images/c4.jpg" ></li>
-            <li><img src="/workProject/images/f8.jpg" ></li>  
-            <li><img src="/workProject/images/f5.jpg" ></li>                  
+            <li><img src="<c:url value='/images/c1.jpg'/>" ></li>
+            <li><img src="<c:url value='/images/c2.jpg'/>" ></li>
+            <li><img src="<c:url value='/images/c3.jpg'/>" ></li>
+            <li><img src="<c:url value='/images/c4.jpg'/>" ></li>
+            <li><img src="<c:url value='/images/f8.jpg'/>" ></li>  
+            <li><img src="<c:url value='/images/f9.jpg'/>" ></li>                  
           </ul>
         </div>
         <div id="board" class="tabContent">
@@ -57,7 +57,7 @@
           </ul>
         </div>
         <div id="lightbox">
-			<img src="images/c1.jpg" alt="" id="lightboxImage">			
+			<img src="<c:url value='/images/c1.jpg'/>" alt="" id="lightboxImage">			
     	</div>        
       </div>
       <div id="links">
@@ -78,22 +78,22 @@
       </div>
       <c:if test="${empty loginMember}">
 	      <div id="login">
-	        <form action="/workProject/member/memberLogin" method="post">
+	        <form action="memberLogin.do" method="post" onsubmit="return false;">
 	        	<div class="form-group">
 	        		<h2>로그인</h2>
 	        	</div>
 	            <div id="form-group">
 	            	<label for="username">아이디:</label>
-	                <input type="text" name="memberid" placeholder="enter your id" required>
+	                <input type="text" name="memberid" id="memberid" placeholder="enter your id" required>
 	            	
 	            </div>
 	            <div id="form-group">
 	            	<label for="password">비밀번호:</label>
-	                <input type="password" name="pwd" placeholder="enter your password" required>
+	                <input type="password" name="pwd" id="pwd" placeholder="enter your password" required>
 	            	
 	            </div>
 	            <div id="form-group">
-	                <input type="submit" value="로그인">              
+	                <input type="submit" id="memlogin" onclick="login()" value="로그인">              
 	            </div>
 	            <div id="userInsert">
 	            	<a href="#">아이디 찾기</a>｜
@@ -119,16 +119,16 @@
 	        	<div id="mlist">
 	        		<ul>
 	        			<li>장바구니</li>
-	        			<li><a href="/workProject/member/favorite" class="forlink">사진모음</a></li>
+	        			<li><a href="<c:url value='/member/memberFavorite.do?'/>" class="forlink">사진모음</a></li>
 	        			<li>나의문의내역</li>
 	        		</ul>
 	        	        	
 	        	</div>
 	          	<div id="userInfo">
-	            	<a href="/workProject/member/memberInfo?memberid=${loginMember.memberid}" class="forlink"><span>나의 상세 정보 보기</span></a>
+	            	<a href="<c:url value='/member/memberInfo.do'/>" class="forlink"><span>나의 상세 정보 보기</span></a>
 	            </div>       
 	            <div id="loginOut">
-	            	<a href="/workProject/member/memberLogout" class="forlink"><span>로그 아웃</span></a>
+	            	<a href="#" onclick="logout()" class="forlink"><span>로그 아웃</span></a>
 	            </div>
 	           
 	    	</div>
@@ -147,9 +147,9 @@
         </ul>
         <div id="sns">
           <ul>
-          	<li><a href="#"><img src="images/sns-1.png"></a></li>
-            <li><a href="#"><img src="images/sns-2.png"></a></li>
-            <li><a href="#"><img src="images/sns-3.png"></a></li>
+          	<li><a href="#"><img src="<c:url value='/images/sns-1.png'/>"></a></li>
+            <li><a href="#"><img src="<c:url value='/images/sns-2.png'/>"></a></li>
+            <li><a href="#"><img src="<c:url value='/images/sns-3.png'/>"></a></li>
           </ul>
         </div>
       </div>
@@ -159,56 +159,88 @@
     </footer>  
   </div>
 	<script type="text/javascript">
-	/* var mem = '${loginMember.memberid}';
-	테스트
-	var lnk = document.querySelectorAll('.forlink');
 	
-	var lnkArr = [
-				'/workProject/member?action=memberlist',
-				'/workProject/member/favoriate.jsp',
-				'/workProject/member?action=memberInfo&memberid='+mem,
-				'/workProject/member?action=logout']
-
-	for(let i = 0; i < lnk.length; i++) {
-		lnk[i].addEventListener('click', createClickHandler(lnkArr[i]));
-			
+	
+	function login() {
+		const param = {
+	    		memberid: memberid.value,
+		        pwd: pwd.value
+		};
+	
+	    fetch("/workProject/member/memberLogin.do", {
+	      method: "POST",
+	      headers: {
+	        "Content-Type": "application/json; charset=UTF-8",
+	      },
+	      body: JSON.stringify(param),
+	    })
+	    .then((response) => response.json())
+	    .then((json) => {
+	  	    alert(json.message);
+	        if (json.status) {
+	      	  location.href = "<c:url value='mainIndex.do'/>"; 
+	        }
+	    });
 	}
-	function createClickHandler(href) {
-		return () => {
-			window.location.href = href;
-		}
-	} */
-
-	
-	/* var message = '${alertmessage}';
-	if(message) {
-		alert(message);
-	} */
-
-	var showIframe = (href) => {
-		var iframe = document.createElement('iframe');
-		iframe.src = href;
-		iframe.style.border = '1px solid gray';
-		iframe.width = '355px';
-		iframe.height = '480px';
+/* 	document.querySelector("#memlogin").addEventListener("click", e => {
+	    
 		
-		var closeButton = document.createElement('button');
-        closeButton.className = 'close-button';
-        closeButton.textContent = 'X';
-        closeButton.style.position = 'absolute';
-        closeButton.style.top = '10px';
-        closeButton.style.right = '10px';
-        closeButton.addEventListener('click', () => {
+	}); */
+
+	//로그아웃
+	function logout() {
+		fetch("/workProject/member/memberLogout.do", {
+	        method: "GET",
+	        headers: {
+	          "Content-Type": "application/json; charset=UTF-8",
+	        },
+	      })
+	      .then((response) => response.json())
+	      .then((json) => {
+	         alert(json.message);
+	         console.log(json);
+	         location.href = "<c:url value='mainIndex.do'/>"; 
+	      });
+		
+	}
+	/* document.querySelector("#loginOut").addEventListener("click", e => {
+	    
+	}); */
+	
+	//iframe 닫기 메시지 받는곳
+	window.addEventListener("message", (event) => {
+	    if (event.data === "closeIframe") {
+	        var registrationIframe = document.getElementById("iframeForm");
+	        if (registrationIframe) {
+	            document.body.removeChild(registrationIframe);
+	        }
+	    }
+	});
+	
+	var showIframe = (href) => {
+		var iframe = document.createElement("iframe");
+		iframe.src = href;
+		iframe.style.border = "1px solid gray";
+		iframe.width = "355px";
+		iframe.height = "480px";
+		
+		var closeButton = document.createElement("button");
+        closeButton.className = "close-button";
+        closeButton.textContent = "X";
+        closeButton.style.position = "absolute";
+        closeButton.style.top = "10px";
+        closeButton.style.right = "10px";
+        closeButton.addEventListener("click", () => {
             document.body.removeChild(iframeContainer);
         });
 		
-		var iframeContainer = document.createElement('div');
-        iframeContainer.id = 'iframeForm';
-        iframeContainer.style.position = 'fixed';
-        iframeContainer.style.top = '50%';
-        iframeContainer.style.left = '50%';
-        iframeContainer.style.transform = 'translate(-50%, -50%)';
-        iframeContainer.style.backgroundColor = '#fff';
+		var iframeContainer = document.createElement("div");
+        iframeContainer.id = "iframeForm";
+        iframeContainer.style.position = "fixed";
+        iframeContainer.style.top = "50%";
+        iframeContainer.style.left = "50%";
+        iframeContainer.style.transform = "translate(-50%, -50%)";
+        iframeContainer.style.backgroundColor = "#fff";
         
         iframeContainer.appendChild(iframe);
         iframeContainer.appendChild(closeButton);
@@ -219,14 +251,14 @@
 	}
 	
 	
-	var hrefArr = ['/workProject/member/memberSearchMove?chkMem=findid', 
-				   '/workProject/member/memberSearchMove?chkMem=findpwd',
-				   '/workProject/member/memberWrite'];
-	var links = document.querySelectorAll('#userInsert a');
+	var hrefArr = ["<c:url value='/member/memberSearchMove.do?chkMem=findid'/>", 
+		"<c:url value='/member/memberSearchMove.do?chkMem=findpwd'/>",
+		"<c:url value='/member/memberWrite.do'/>"];
+	var links = document.querySelectorAll("#userInsert a");
 	
 	for(let i = 0; i < links.length; i++) {
 		let link = links[i];
-		link.addEventListener('click', createClickHandler(hrefArr[i]));
+		link.addEventListener("click", createClickHandler(hrefArr[i]));
 	}
 	
 	function createClickHandler(href) {
@@ -237,29 +269,29 @@
 	
 	
 	
-	var imgs = document.querySelectorAll('#gallery ul li img');
-	var lightbox = document.getElementById('lightbox');
-	var lightboxImage = document.getElementById('lightboxImage');
-	var footer = document.querySelector('footer');
+	var imgs = document.querySelectorAll("#gallery ul li img");
+	var lightbox = document.getElementById("lightbox");
+	var lightboxImage = document.getElementById("lightboxImage");
+	var footer = document.querySelector("footer");
 	var sns = document.querySelector("#sns");
 	
 	for (let i = 0; i < imgs.length; i++) {
-		imgs[i].addEventListener('click', (event) => {
-			lightbox.style.display = 'block';
+		imgs[i].addEventListener("click", (event) => {
+			lightbox.style.display = "block";
 			lightboxImage.src = event.target.src;
-			footer.style.display = 'none';
-			sns.style.display = 'none';
+			footer.style.display = "none";
+			sns.style.display = "none";
 		});
 		
 	}
 
 	lightbox.onclick = () => {  
-		lightbox.style.display = 'none';
-		footer.style.display = 'block';
-		sns.style.display = 'block';
+		lightbox.style.display = "none";
+		footer.style.display = "block";
+		sns.style.display = "block";
 }
 	
 </script>
-<script src="/workProject/js/slideshow.js"></script>
+<script src="<c:url value='/js/slideshow.js'/>"></script>
 </body>
 </html>

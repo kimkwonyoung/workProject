@@ -5,11 +5,11 @@
 <head>
 <meta charset="UTF-8">
 </head>
-<link rel="stylesheet" href="/workProject/css/style.css">
+<link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 <body>
 <header>
       <div id="logo">
-        <a href="/workProject/main">
+        <a href="mainIndex.do">
           <h1>DreamHome</h1>
         </a>
       </div>
@@ -36,7 +36,7 @@
 				<a href="#">연혁</a> 
 				<a href="#">비즈니스</a> 
 				<a href="#">연락처</a>
-				<a href="/workProject/member/memberList" class="forlink">전체 회원 보기</a>
+				<a href="<c:url value='/member/memberList.do'/>" class="forlink">전체 회원 보기</a>
 				<a href="/workProject/board/boardList?board_type=10" class="forlink">일반 게시판</a>
 				<a href="/workProject/board/boardList?board_type=20" class="forlink">공지사항 게시판</a>
 				

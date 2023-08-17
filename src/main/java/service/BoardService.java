@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import Utils.QueryProperty;
 import Utils.StringUtil;
-import workDao.BoardDB;
+import workDao.BoardDAOImpl;
 import workDto.Board;
 import workDto.Board_comment;
 import workDto.SearchVO;
@@ -18,11 +18,11 @@ import workDto.SearchVO;
  *
  */
 public class BoardService {
-	final private BoardDB _boardDao;
+	private BoardDAOImpl _boardDao;
 	
-	public BoardService(BoardDB boardDB) {
-		_boardDao = boardDB;
-	}
+//	public BoardService(BoardDAOImpl boardDB) {
+//		_boardDao = boardDB;
+//	}
 	
 	//메인페이지 공지사항, 일반 글 4개
 	public Map<String, List<Board>> selectByMainList() {

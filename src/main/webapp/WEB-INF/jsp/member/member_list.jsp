@@ -5,7 +5,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/workProject/css/memberlist.css">
+  <link rel="stylesheet" href="<c:url value='/css/memberlist.css'/>">
 </head>
 
 <body>
@@ -32,7 +32,7 @@
         </c:forEach>
       </tbody>
     </table>
-    <a class="back" href="/workProject/main">돌아가기</a>
+    <a class="back" href="<c:url value='/main/mainIndex.do'/>">돌아가기</a>
   </div>
 </body>
 </html>

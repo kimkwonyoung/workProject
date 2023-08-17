@@ -3,33 +3,27 @@ package workDao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import Utils.ConnectionUtil;
 import Utils.SingletonConnectionHelper;
 import workDto.Member;
 import workDto.SearchVO;
 
-public class MemberDB implements MemberDAO {
-	private Connection conn = null;
+public class MemberDAOImpl implements MemberDAO {
 	
-	public MemberDB() {
-		try {
-			conn = SingletonConnectionHelper.getConnection("oracle");
-			System.out.println("DB연결 확인 = " + conn);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
 	
 	@Override
 	public List<Member> selectByList(String sql) {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<Member> memberList = new ArrayList();
 		try {
-			
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -50,8 +44,9 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		return memberList;
 	}
@@ -61,8 +56,9 @@ public class MemberDB implements MemberDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		Member mem = null;
-		
+		Connection conn = null;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, search.getsMemid());
@@ -80,8 +76,9 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
 		return mem;
@@ -91,9 +88,11 @@ public class MemberDB implements MemberDAO {
 	public Optional<Member> selectByMember(String sql, Member member) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		Optional<Member> optionMem = Optional.empty();
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, member.getMemberid());
@@ -113,8 +112,9 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
 		return optionMem;
@@ -124,9 +124,11 @@ public class MemberDB implements MemberDAO {
 	public Optional<Member> selectByName(String sql, Member member) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		Optional<Member> optionMem = Optional.empty();
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, member.getName());
@@ -146,8 +148,9 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
 		return optionMem;
@@ -157,9 +160,11 @@ public class MemberDB implements MemberDAO {
 	public Optional<Member> selectByIdName(String sql, Member member) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection conn = null;
 		Optional<Member> optionMem = Optional.empty();
 		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, member.getMemberid());
@@ -179,41 +184,50 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
 		return optionMem;
 	}
 	
 	@Override
-	public int selectByCount(String sql, String memberid) {
+	public boolean selectByCount(String sql, String memberid) throws Exception {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		int count = 0;
+		Connection conn = null;
+		
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, memberid);
 			rs = pstmt.executeQuery();
+			
+			int count = 0;
 			if(rs.next()) {
-				count = Integer.parseInt(rs.getString(1));
+				count = rs.getInt(1);
 			}
+			
+			return count != 0;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw e;
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
-			SingletonConnectionHelper.close(rs);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
 		}
 		
-		return count;
 	}
 
 	@Override
 	public int insert(String sql, Member member) {
 		PreparedStatement pstmt = null;
-		int row = 0;
+		Connection conn = null;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, member.getMemberid());
@@ -221,20 +235,30 @@ public class MemberDB implements MemberDAO {
 			pstmt.setString(3, member.getPwd());
 			pstmt.setString(4, member.getPhone());
 			
-			row = pstmt.executeUpdate();
+			conn.setAutoCommit(false);
+			int row = pstmt.executeUpdate();
+			conn.commit();
+			
+			return row;
 		} catch (Exception e) {
 			e.printStackTrace();
+			if (e instanceof SQLIntegrityConstraintViolationException) {
+				//가입 실패시 필요한 로직 처리
+			}
+			return 0;
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
-		return row;
 	}
 
 	@Override
 	public int update(String sql, Member member) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, member.getPwd());
 			pstmt.setString(2, member.getName());
@@ -245,7 +269,8 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
@@ -253,8 +278,10 @@ public class MemberDB implements MemberDAO {
 	@Override
 	public int delete(String sql, Member member) {
 		PreparedStatement pstmt = null;
+		Connection conn = null;
 		int row = 0;
 		try {
+			conn = ConnectionUtil.getConnection();
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, member.getMemberid());
 			
@@ -262,17 +289,46 @@ public class MemberDB implements MemberDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			SingletonConnectionHelper.close(pstmt);
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(conn);
 		}
 		return row;
 	}
 
-	
-
-	
-
-	
-
+	@Override
+	public Member checkIdPwd(String sql, Member member) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		Member loginMem = null;
+		try {
+			conn = ConnectionUtil.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, member.getMemberid());
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				loginMem = Member.builder()
+						.memberid(rs.getString(1))
+						.name(rs.getString(2))
+						.pwd(rs.getString(3))
+						.phone(rs.getString(4))
+						.build();
+				if(!loginMem.isEqualPwd(member)) {
+					loginMem = null;
+				}
+			}
+			return loginMem;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+	}
 
 
 }

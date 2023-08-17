@@ -1,4 +1,4 @@
-package pj;
+package controller;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,65 +17,63 @@ import Utils.CommonProperty;
 import Utils.StringUtil;
 import service.BoardService;
 import service.MemberService;
-import workDao.BoardDB;
-import workDao.MemberDB;
+import workDao.BoardDAOImpl;
+import workDao.MemberDAOImpl;
 import workDto.Board;
 import workDto.Board_comment;
 import workDto.SearchVO;
 
-/**게시판 서블릿
+/**게시판 컨트롤러
  * @author kky
  * 
  *
  */
-@WebServlet("/board/*")
-public class BoardController extends HttpServlet {
-	private static final long serialVersionUID = -2850407651698537945L;
+public class BoardController {
 	private SearchVO search = new SearchVO();
-	private BoardService _BoardService;
+	private BoardService _boardService;
 	
-	public void init() {
-    	_BoardService = new BoardService(new BoardDB());
-    }
+//	public void init() {
+//    	_boardService = new BoardService(new BoardDAOImpl());
+//    }
 
-	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
-		
-		//가져온 주소 체크 
-		//requestURI = /workProject/board/설정주소
-		//contextPath = /workProject
-		//action = 설정주소
-		String requestURI = request.getRequestURI();
-        String contextPath = request.getContextPath();
-        String action = requestURI.substring(contextPath.length() + "/board/".length());
-		
-		try {
-			switch(action) {
-				case "boardList" -> boardList(request, response);
-				case "boardInfo" -> boardInfo(request, response);
-				case "boardUpdateInfo" -> boardUpdateInfo(request, response);
-				case "boardDelete" -> boardDelete(request, response);
-				case "boardDeleteChkbox" -> boardDeleteChkbox(request, response);
-				case "boardInsert" -> boardInsert(request, response);
-				case "boardUpdate" -> boardUpdate(request, response);
-				case "boardWrite" -> boardWrite(request, response);
-				case "boardUpdateComment" -> boardUpdateComment(request, response);
-				case "commentInsert" -> commentInsert(request, response);
-				case "commentDelete" -> commentDelete(request, response);
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doProcess(request, response);
-	}
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doProcess(request, response);
-	}
+//	public void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		request.setCharacterEncoding("UTF-8");
+//		
+//		//가져온 주소 체크 
+//		//requestURI = /workProject/board/설정주소
+//		//contextPath = /workProject
+//		//action = 설정주소
+//		String requestURI = request.getRequestURI();
+//        String contextPath = request.getContextPath();
+//        String action = requestURI.substring(contextPath.length() + "/board/".length());
+//		
+//		try {
+//			switch(action) {
+//				case "boardList" -> boardList(request, response);
+//				case "boardInfo" -> boardInfo(request, response);
+//				case "boardUpdateInfo" -> boardUpdateInfo(request, response);
+//				case "boardDelete" -> boardDelete(request, response);
+//				case "boardDeleteChkbox" -> boardDeleteChkbox(request, response);
+//				case "boardInsert" -> boardInsert(request, response);
+//				case "boardUpdate" -> boardUpdate(request, response);
+//				case "boardWrite" -> boardWrite(request, response);
+//				case "boardUpdateComment" -> boardUpdateComment(request, response);
+//				case "commentInsert" -> commentInsert(request, response);
+//				case "commentDelete" -> commentDelete(request, response);
+//				
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		doProcess(request, response);
+//	}
+//	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		doProcess(request, response);
+//	}
 	
 	//게시판 글 작성
 	public void boardInsert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -88,10 +86,10 @@ public class BoardController extends HttpServlet {
 						.fixed_yn(request.getParameter("fixed_yn"))
 						.build();
 		
-		_BoardService.insert(board);
+		_boardService.insert(board);
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		request.setAttribute("boardList", _boardService.selectByBoardList(search));
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
 	}
 	
@@ -107,12 +105,12 @@ public class BoardController extends HttpServlet {
 						.fixed_yn(request.getParameter("fixed_yn"))
 						.build();
 						
-		_BoardService.update(board);
+		_boardService.update(board);
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("infoBoard", _BoardService.selectKeyNum(search));
-		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
-		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+		request.setAttribute("infoBoard", _boardService.selectKeyNum(search));
+		request.setAttribute("board_comment", _boardService.selectCommentList(search));
+		request.setAttribute("comment_count", _boardService.selectCommentCount(search));
 
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 		
@@ -124,11 +122,11 @@ public class BoardController extends HttpServlet {
 		
 		search.setsBoard_code(request.getParameter("board_code")); //String board_code를 int로 변환
 		
-		_BoardService.delete(search);
+		_boardService.delete(search);
 		
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		request.setAttribute("boardList", _boardService.selectByBoardList(search));
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
 	}
@@ -138,10 +136,10 @@ public class BoardController extends HttpServlet {
 		search.setsBNumStr(request.getParameter("bnumStr"));
 		System.out.println("넘어온 글번호 값 : " + request.getParameter("bnumStr"));
 		
-		_BoardService.deleteChkbox(search);
+		_boardService.deleteChkbox(search);
 		
 		request.setAttribute("board_type", request.getParameter("board_type"));
-		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		request.setAttribute("boardList", _boardService.selectByBoardList(search));
 		
 //		request.setAttribute(CommonProperty.getAlertmessage(), "게시글 삭제 완료");
 //		request.setAttribute(CommonProperty.getAlerthref(), CommonProperty.getBoardPath() + "board_list.jsp);
@@ -156,7 +154,7 @@ public class BoardController extends HttpServlet {
 		search.setsBoard_code(request.getParameter("board_type"));
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("boardList", _BoardService.selectByBoardList(search));
+		request.setAttribute("boardList", _boardService.selectByBoardList(search));
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_list.jsp").forward(request, response);
 	}
 	
@@ -166,9 +164,9 @@ public class BoardController extends HttpServlet {
 		search.setsBoard_code(request.getParameter("board_type"));
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
-		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
-		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+		request.setAttribute("infoBoard", _boardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _boardService.selectCommentList(search));
+		request.setAttribute("comment_count", _boardService.selectCommentCount(search));
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 	}
@@ -178,7 +176,7 @@ public class BoardController extends HttpServlet {
 		search.setsBoard_num(request.getParameter("board_num"));
 		
 		request.setAttribute("chk", CommonProperty.getUpdate());
-		request.setAttribute("infoBoard", _BoardService.selectKeyNum(search));
+		request.setAttribute("infoBoard", _boardService.selectKeyNum(search));
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_write.jsp").forward(request, response);
 	}
@@ -201,12 +199,12 @@ public class BoardController extends HttpServlet {
 								.mem_id(request.getParameter("mem_id"))
 								.build();
 		
-		_BoardService.insert(comment);
+		_boardService.insert(comment);
 		
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
-		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
-		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+		request.setAttribute("infoBoard", _boardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _boardService.selectCommentList(search));
+		request.setAttribute("comment_count", _boardService.selectCommentCount(search));
 		
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 	}
@@ -217,12 +215,12 @@ public class BoardController extends HttpServlet {
 		search.setsBoard_code(request.getParameter("board_type"));
 		search.setsComment_num(Integer.parseInt(request.getParameter("comment_num")));
 		
-		_BoardService.deleteComment(search);
+		_boardService.deleteComment(search);
 
 		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("infoBoard", _BoardService.selectByBoardNum(search));
-		request.setAttribute("board_comment", _BoardService.selectCommentList(search));
-		request.setAttribute("comment_count", _BoardService.selectCommentCount(search));
+		request.setAttribute("infoBoard", _boardService.selectByBoardNum(search));
+		request.setAttribute("board_comment", _boardService.selectCommentList(search));
+		request.setAttribute("comment_count", _boardService.selectCommentCount(search));
 
 		request.getRequestDispatcher(CommonProperty.getBoardPath() + "board_info.jsp").forward(request, response);
 	}
@@ -252,7 +250,7 @@ public class BoardController extends HttpServlet {
 								.reg_date(nowtime)
 								.build();
 		
-		_BoardService.update(comment);
+		_boardService.update(comment);
 		
 		JSONObject jsonResult = new JSONObject();
 		

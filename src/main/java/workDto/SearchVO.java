@@ -10,7 +10,7 @@ import Utils.CommonProperty;
 public class SearchVO {
 	
 	private String chk; //게시판 글쓰기 타입 ex)write : 글쓰기, update : 글수정
-	private String sMemid; //게시판 글 작성자
+	private String sMemid; //멤버아이디
 	private String chkMem; //회원 아이디 찾기, 비밀번호 찾기 구별자
 	private String message; //포워딩 메시지
 	private String sBNumStr; //게시판 번호 여러개 문자열 (1,2,3,4,5)

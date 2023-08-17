@@ -30,6 +30,8 @@ public class CommonProperty {
 	private static String messageLogout = getProperty("messageLogout");
 	private static String alertmessage = getProperty("alertmessage");
 	private static String alerthref = getProperty("alerthref");
+	private static String messagePossibleId = getProperty("messagePossibleId");
+	
 	
 	
 	public static String getProperty(String keyName) {
@@ -147,6 +149,11 @@ public class CommonProperty {
 
 	public static String getMessageLogout() {
 		return messageLogout;
+	}
+
+
+	public static String getMessagePossibleId() {
+		return messagePossibleId;
 	}
 
 
