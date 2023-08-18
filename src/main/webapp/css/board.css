@@ -2,14 +2,12 @@
 
 .list-all {
 	font-family: Arial, sans-serif;
-	background-color: #f1f1f1;
 	margin: 0;
 	padding: 0;
 }
 
 .board-header {
 	margin-top: 20px;
-	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
@@ -18,9 +16,12 @@
 	float: right;
 }
 
+
+
 .board-title {
 	font-size: 24px;
 	font-weight: bold;
+	margin-bottom: 20px;
 }
 
 .write-button {
@@ -39,10 +40,33 @@
 }
 
 table {
+	background-color: #f2f2f2;
 	width: 100%;
 	border-collapse: collapse;
 	margin-top: 20px;
 }
+.tableDiv {
+	margin-top: 5px;
+    
+}
+.pagelen {
+	font-size: 20px;
+}
+.searchType {
+	font-size: 20px;
+	margin-right: 5px;
+}
+.searchButton {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	padding: 2px 20px;
+	font-size: 16px;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-left:2px;
+}
+
 
 th, td {
 	border: 1px solid #ddd;
@@ -50,14 +74,23 @@ th, td {
 	text-align: center;
 }
 
-th {
-	background-color: #f2f2f2;
+th:nth-child(2), td:nth-child(2) {
+	width: 10%;
 }
-
+th:nth-child(3), td:nth-child(3) {
+	width: 45%;
+}
 th:nth-child(4), td:nth-child(4) {
-	width: 100px;
+	width: 15%;
+}
+th:nth-child(5), td:nth-child(5) {
+	width: 20%;
+}
+.pageStrong {
+	padding:13px;
 }
 
+ 
 tr:hover {
 	background-color: #f9f9f9;
 }

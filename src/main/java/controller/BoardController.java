@@ -1,13 +1,8 @@
 package controller;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,9 +11,6 @@ import org.json.JSONObject;
 import Utils.CommonProperty;
 import Utils.StringUtil;
 import service.BoardService;
-import service.MemberService;
-import workDao.BoardDAOImpl;
-import workDao.MemberDAOImpl;
 import workDto.Board;
 import workDto.Board_comment;
 import workDto.SearchVO;
@@ -33,13 +25,12 @@ public class BoardController {
 	private BoardService _boardService;
 	
 	//게시판 글 작성
-	public String boardInsert(Board board, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("게시판 글 작성 = " + board);
+	public String boardInsert(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		_boardService.insert(board);
 		
-		request.setAttribute("board_type", board.getBoard_code());
-		request.setAttribute("boardList", _boardService.selectByBoardList(search));
+		request.setAttribute("board_code", board.getBoard_code());
+		request.setAttribute("result", _boardService.selectByBoardList(board));
 		return "board/board_list.jsp";
 	}
 	
@@ -47,7 +38,7 @@ public class BoardController {
 	public String boardUpdate(Board board, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 						
 		_boardService.update(board);
-		request.setAttribute("board_type", board.getBoard_code());
+		request.setAttribute("board_code", board.getBoard_code());
 		request.setAttribute("infoBoard", _boardService.selectKeyNum(board.getBoard_num()));
 		request.setAttribute("board_comment", _boardService.selectCommentList(board.getBoard_num()));
 		request.setAttribute("comment_count", _boardService.selectCommentCount(board.getBoard_num()));
@@ -64,33 +55,31 @@ public class BoardController {
 	}
 	
 	//게시판 체크한 글 삭제
-	public String boardDeleteChkbox(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public String boardDeleteChkbox(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		search.setsBNumStr(request.getParameter("bnumStr"));
 		System.out.println("넘어온 글번호 값 : " + request.getParameter("bnumStr"));
 		
 		_boardService.deleteChkbox(search);
 		
-		request.setAttribute("board_type", request.getParameter("board_type"));
-		request.setAttribute("boardList", _boardService.selectByBoardList(search));
+		request.setAttribute("board_code", board.getBoard_code());
+		request.setAttribute("result", _boardService.selectByBoardList(board));
 		
 		return "board/board_list.jsp";
 	}
 	
 	//게시판 목록
-	public String boardList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		if (StringUtil.isEmpty(request.getParameter("board_type"))) search.setsBoard_code("10");
-		search.setsBoard_code(request.getParameter("board_type"));
+	public String boardList(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (StringUtil.isEmpty(request.getParameter("board_code"))) board.setBoard_code(10);
 		
-		request.setAttribute("board_type", search.getsBoard_code());
-		request.setAttribute("boardList", _boardService.selectByBoardList(search));
+		request.setAttribute("board_code", board.getBoard_code());
+		request.setAttribute("result", _boardService.selectByBoardList(board));
 		return "board/board_list.jsp";
 	}
 	
 	//게시판 글 정보
 	public String boardInfo(Board board, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		search.setsBoard_code(request.getParameter("board_type"));
 		
-		request.setAttribute("board_type", search.getsBoard_code());
+		request.setAttribute("board_code", board.getBoard_code());
 		request.setAttribute("infoBoard", _boardService.selectByBoardNum(board.getBoard_num()));
 		request.setAttribute("board_comment", _boardService.selectCommentList(board.getBoard_num()));
 		request.setAttribute("comment_count", _boardService.selectCommentCount(board.getBoard_num()));
@@ -117,11 +106,11 @@ public class BoardController {
 	//댓글 작성
 	public String commentInsert(Board_comment comment, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		search.setsBoard_num(request.getParameter("board_num"));
-		search.setsBoard_code(request.getParameter("board_type"));
+		search.setsBoard_code(request.getParameter("board_code"));
 		
 		_boardService.insert(comment);
 		
-		request.setAttribute("board_type", search.getsBoard_code());
+		request.setAttribute("board_code", search.getsBoard_code());
 		request.setAttribute("infoBoard", _boardService.selectByBoardNum(comment.getBoard_num()));
 		request.setAttribute("board_comment", _boardService.selectCommentList(comment.getBoard_num()));
 		request.setAttribute("comment_count", _boardService.selectCommentCount(comment.getBoard_num()));
@@ -137,11 +126,11 @@ public class BoardController {
 	
 	//댓글 삭제 
 	public String commentDelete(Board_comment comment, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		search.setsBoard_code(request.getParameter("board_type"));
+		search.setsBoard_code(request.getParameter("board_code"));
 		
 		_boardService.deleteComment(comment.getComment_num());
 
-		request.setAttribute("board_type", search.getsBoard_code());
+		request.setAttribute("board_code", search.getsBoard_code());
 		request.setAttribute("infoBoard", _boardService.selectByBoardNum(comment.getBoard_num()));
 		request.setAttribute("board_comment", _boardService.selectCommentList(comment.getBoard_num()));
 		request.setAttribute("comment_count", _boardService.selectCommentCount(comment.getBoard_num()));

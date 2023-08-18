@@ -10,22 +10,109 @@ import java.util.List;
 import java.util.Optional;
 
 import Utils.ConnectionUtil;
-import Utils.SingletonConnectionHelper;
+import Utils.StringUtil;
 import workDto.Board;
 import workDto.Board_comment;
 
 public class BoardDAOImpl implements BoardDAO {
 	
-//	private Connection conn = null;
+	@Override
+	public int selectPageTotalCount(Board board) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		int count = 0;
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			
+			String sql = "select count(*) from board ";
+			if (StringUtil.isEmpty(board.getSearchTitle())) {
+				sql += " where title like concat(concat('%', ?), '%')";
+			}
+			pstmt = conn.prepareStatement(sql);
+			if (StringUtil.isEmpty(board.getSearchTitle())) {
+				pstmt.setString(1, board.getSearchTitle());
+			}
+		
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			
+			return count;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+		
+	}
 	
-//	public BoardDAOImpl() {
-//		try {
-//			conn = SingletonConnectionHelper.getConnection("oracle");
-//			System.out.println("DB연결 확인 = " + conn);
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	@Override
+	public List<?> selectByPageList(Board board) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		List<Board> boardList = new ArrayList<>();
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			
+			String sql = "select c.* from ( "
+					+ "    select rownum nrow, b.* from ( "
+					+ "        select /*+ index_desc(a PK_BOARD) */ a.* "
+					+ "        from board a "
+					+ "        where board_code = ? ";
+					
+					
+			if (!StringUtil.isEmpty(board.getSearchTitle())) {
+				sql += " and title like concat(concat('%', ?), '%')";	
+			}
+				sql += "        order by fixed_yn desc "
+					+  "    ) b "
+					+  "    where rownum <= " + board.getEndNo()
+					+  " ) c "
+					+  " where nrow between " + board.getStartNo() + " and " + board.getEndNo();
+			
+				
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, board.getBoard_code());
+			
+			if (!StringUtil.isEmpty(board.getSearchTitle())) {
+				pstmt.setString(2, board.getSearchTitle());
+			}
+			System.out.println("게시판 쿼리 = " + sql);
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				boardList.add(Board.builder()
+							  .board_num(rs.getInt("board_num"))
+							  .mem_id(rs.getString("mem_id"))
+							  .title(rs.getString("title"))
+							  .content(rs.getString("content"))
+							  .board_code(rs.getInt("board_code"))
+							  .fixed_yn(rs.getString("fixed_yn"))
+							  .build());
+			}
+			
+			return boardList;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+	}
 
 	@Override
 	public List<Board> selectByBoardList(String sql) {
@@ -380,6 +467,8 @@ public class BoardDAOImpl implements BoardDAO {
 		}
 		return row;
 	}
+
+	
 
 //	@Override
 //	public Board_comment selectByComment(String sql, Board_comment comment) {

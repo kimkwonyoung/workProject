@@ -38,18 +38,17 @@ public class BoardService {
 	}
 	
 	//게시판 전체 목록
-	public List<Board> selectByBoardList(SearchVO search) {
-		List<Board> boardList = new ArrayList<>();
+	public Map<String, Object> selectByBoardList(Board board) throws Exception {
 		
-		if (search.getsBoard_code() == 10) {
-			boardList = _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectNomal"));
-		} else if (search.getsBoard_code() == 20) {
-			boardList = _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectNotice"));
-		} else {
-			System.out.println("타입 오류 체크");
-		}
+		board.setTotalCount(_boardDao.selectPageTotalCount(board));
+		System.out.println("총 게시글 개수 = " + board.getTotalCount());
+		Map<String, Object> map = new HashMap<>();
 		
-		return boardList;
+		map.put("pageBoard", board);
+		map.put("list", _boardDao.selectByPageList(board));
+		map.put("notice", _boardDao.selectByBoardList(QueryProperty.getQuery("board.selectMainNotice")));
+		
+		return map;
 	}
 	
 	//아이디를 Key로 게시판 글 가져오기

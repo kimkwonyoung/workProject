@@ -27,15 +27,15 @@
     <div id="contents">
       <div id="tabMenu">
         <input type="radio" id="tab1" name="tabs" checked>
-        <label for="tab1"><a href="<c:url value='/board/boardList.do?board_type=20'/>">공지사항</a></label>
+        <label for="tab1"><a href="<c:url value='/board/boardList.do?board_code=20'/>">공지사항</a></label>
         <input type="radio" id="tab2" name="tabs">
         <label for="tab2">갤러리</label>
        	<input type="radio" id="tab3" name="tabs">
-        <label id = "boardTab" for="tab3"><a href="<c:url value='/board/boardList.do?board_type=10'/>">게시판</a></label>
+        <label id = "boardTab" for="tab3"><a href="<c:url value='/board/boardList.do?board_code=10'/>">게시판</a></label>
         <div id="notice" class="tabContent">
           <ul>
           <c:forEach var="notice" items="${noticeList }">           
-            <li><a href="<c:url value='/board/boardInfo.do?board_num=${notice.board_num }&board_type=${notice.board_code}'/>">${notice.title }</a></li>
+            <li><a href="<c:url value='/board/boardInfo.do?board_num=${notice.board_num }&board_code=${notice.board_code}'/>">${notice.title }</a></li>
           </c:forEach> 
           </ul>
         </div>
@@ -52,7 +52,7 @@
         <div id="board" class="tabContent">
           <ul>            
             <c:forEach var="nomal" items="${nomalList }">           
-            <li><a href="<c:url value='/board/boardInfo.do?board_num=${nomal.board_num }&board_type=${nomal.board_code}'/>">${nomal.title }</a></li>
+            <li><a href="<c:url value='/board/boardInfo.do?board_num=${nomal.board_num }&board_code=${nomal.board_code}'/>">${nomal.title }</a></li>
           </c:forEach> 
           </ul>
         </div>
