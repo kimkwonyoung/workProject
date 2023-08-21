@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import Utils.CommonProperty;
@@ -168,6 +169,31 @@ public class BoardService {
 		return jsonResult;
 	}
 	
+	public JSONObject deleteAjax(Board board) throws Exception {
+		JSONObject jsonResult = new JSONObject();
+		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), board.getBoard_num());
+		if (row > 0) {
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageBoardDelete());
+			jsonResult.put("bod", _boardDao.selectByPageRow(board));
+		} else {
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessageBoardFail());
+		}
+		
+		
+		return jsonResult;
+	}
+	
+	public JSONObject deleteCheckBox(Board board) throws JSONException, Exception {
+		JSONObject jsonResult = new JSONObject();
+		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), board.getDeleteStr());
+		
+		jsonResult.put("bodChk", _boardDao.selectByPageRow2(board));
+	
+		return jsonResult;
+	}
+	
 	//게시판 글 체크한것 삭제
 	public void deleteChkbox(SearchVO search) {
 		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), search.getsBNumStr());
@@ -183,5 +209,7 @@ public class BoardService {
 		}
 		
 	}
+
+	
 	
 }

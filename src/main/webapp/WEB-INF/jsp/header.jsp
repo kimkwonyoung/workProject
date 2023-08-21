@@ -37,6 +37,7 @@
 				<a href="#">비즈니스</a> 
 				<a href="#">연락처</a>
 				<a href="<c:url value='/member/memberList.do'/>" class="forlink">전체 회원 보기</a>
+				<a href="<c:url value='/board/boardList2.do?board_type=10'/>" class="forlink">일반 게시판(삭제새로구현)</a>
 				<a href="/workProject/board/boardList?board_type=10" class="forlink">일반 게시판</a>
 				<a href="/workProject/board/boardList?board_type=20" class="forlink">공지사항 게시판</a>
 				

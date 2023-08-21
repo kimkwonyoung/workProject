@@ -1,6 +1,5 @@
 package workDto;
 
-import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +20,10 @@ public class Board {
 	private int view_count;
 	private int board_code;
 	private String fixed_yn;
+	
+	private int nrow;
+	private int count;
+	private String deleteStr;
 	
 	//검색
 	private String searchTitle = "";

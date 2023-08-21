@@ -15,9 +15,12 @@ public interface BoardDAO {
 	int selectPageTotalCount(Board board) throws Exception;
 	
 	List<?> selectByPageList(Board board) throws Exception;
+	List<?> selectByPageRow(Board board) throws Exception;
+	List<?> selectByPageRow2(Board board) throws Exception;
 	
 	List<?> selectByCommentList(String sql, int num);
 	int selectByCommentCount(String sql, int num);
+	
 //	Board_comment selectByComment(String sql, Board_comment comment);
 	
 	int insert(String sql, Board board);

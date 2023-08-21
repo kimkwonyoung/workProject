@@ -76,6 +76,30 @@ public class BoardController {
 		return "board/board_list.jsp";
 	}
 	
+	
+	public String boardList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		if (StringUtil.isEmpty(request.getParameter("board_code"))) board.setBoard_code(10);
+		
+		request.setAttribute("board_code", board.getBoard_code());
+		request.setAttribute("result", _boardService.selectByBoardList(board));
+		return "board/board_list2.jsp";
+	}
+	
+	public String ajaxList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		JSONObject jsonResult = _boardService.deleteAjax(board);
+		
+		return jsonResult.toString();
+	}
+	
+	public String ajaxCheckDelete(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		JSONObject jsonResult = _boardService.deleteCheckBox(board);
+		
+		return jsonResult.toString();
+		
+	}
+	
 	//게시판 글 정보
 	public String boardInfo(Board board, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

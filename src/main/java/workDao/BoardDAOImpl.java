@@ -27,12 +27,15 @@ public class BoardDAOImpl implements BoardDAO {
 			conn = ConnectionUtil.getConnection();
 			
 			String sql = "select count(*) from board ";
+				   sql += " where board_code = ? ";
 			if (StringUtil.isEmpty(board.getSearchTitle())) {
-				sql += " where title like concat(concat('%', ?), '%')";
+				sql += " and title like concat(concat('%', ?), '%')";
 			}
 			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, board.getBoard_code());
 			if (StringUtil.isEmpty(board.getSearchTitle())) {
-				pstmt.setString(1, board.getSearchTitle());
+				pstmt.setString(2, board.getSearchTitle());
 			}
 		
 			rs = pstmt.executeQuery();
@@ -93,10 +96,12 @@ public class BoardDAOImpl implements BoardDAO {
 			
 			while (rs.next()) {
 				boardList.add(Board.builder()
+							  .nrow(rs.getInt("nrow"))
 							  .board_num(rs.getInt("board_num"))
 							  .mem_id(rs.getString("mem_id"))
 							  .title(rs.getString("title"))
 							  .content(rs.getString("content"))
+							  .mod_date(rs.getString("mod_date"))
 							  .board_code(rs.getInt("board_code"))
 							  .fixed_yn(rs.getString("fixed_yn"))
 							  .build());
@@ -113,6 +118,113 @@ public class BoardDAOImpl implements BoardDAO {
 			ConnectionUtil.close(conn);
 		}
 	}
+	
+	
+	@Override
+	public List<Board> selectByPageRow(Board board) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		List<Board> boardList = new ArrayList<>();
+		try {
+			conn = ConnectionUtil.getConnection();
+			
+			String sql = "select c.* from ( "
+					+ "    select rownum nrow, b.* from ( "
+					+ "        select /*+ index_desc(a PK_BOARD) */ a.* "
+					+ "        from board a "
+					+ "        where board_code = ? ";
+				sql += "        order by fixed_yn desc "
+					+  "    ) b "
+					+  "    where rownum <= " + board.getEndNo()
+					+  " ) c "
+					+  " where nrow between " + board.getStartNo() + " and " + board.getEndNo() + " and nrow = + " + board.getEndNo();
+			
+				
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, board.getBoard_code());
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				boardList.add(Board.builder()
+							  .nrow(rs.getInt("nrow"))
+							  .board_num(rs.getInt("board_num"))
+							  .mem_id(rs.getString("mem_id"))
+							  .title(rs.getString("title"))
+							  .content(rs.getString("content"))
+							  .board_code(rs.getInt("board_code"))
+							  .mod_date(rs.getNString("mod_date"))
+							  .fixed_yn(rs.getString("fixed_yn"))
+							  .build());
+			}
+			
+			return boardList;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+	}
+	
+	@Override
+	public List<Board> selectByPageRow2(Board board) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		List<Board> boardList = new ArrayList<>();
+		try {
+			conn = ConnectionUtil.getConnection();
+			
+			String sql = "select c.* from ( "
+					+ "    select rownum nrow, b.* from ( "
+					+ "        select /*+ index_desc(a PK_BOARD) */ a.* "
+					+ "        from board a "
+					+ "        where board_code = ? ";
+				sql += "        order by fixed_yn desc "
+					+  "    ) b "
+					+  "    where rownum <= " + board.getEndNo()
+					+  " ) c "
+					+  " where nrow between " + board.getStartNo() + " and " + board.getEndNo() + " and nrow > + " + (board.getEndNo() - board.getCount());
+			
+				
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, board.getBoard_code());
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				boardList.add(Board.builder()
+							  .nrow(rs.getInt("nrow"))
+							  .board_num(rs.getInt("board_num"))
+							  .mem_id(rs.getString("mem_id"))
+							  .title(rs.getString("title"))
+							  .content(rs.getString("content"))
+							  .board_code(rs.getInt("board_code"))
+							  .mod_date(rs.getNString("mod_date"))
+							  .fixed_yn(rs.getString("fixed_yn"))
+							  .build());
+			}
+			
+			return boardList;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+	}
+	
+	
 
 	@Override
 	public List<Board> selectByBoardList(String sql) {

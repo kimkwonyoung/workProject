@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 /*
  * 1. Controller 클래스의 service 멤버 변수 설정 (DI) 
@@ -374,7 +375,21 @@ public class MyServlet extends HttpServlet {
 	//						arr[i] = Integer.parseInt(values[i]); 
 	//					}
 	//					field.set(paramObj, arr);
-					} 
+					} else if(field.getType().equals(String[].class)) {
+						JSONArray jsonArray = jsonObject.getJSONArray(key);
+						String[] values = new String[jsonArray.length()];
+						for(int i=0;i<jsonArray.length();i++) {
+							values[i] = jsonArray.getString(i);
+						}
+						field.set(paramObj, values);
+					} else if(field.getType().equals(int[].class)) {
+						JSONArray jsonArray = jsonObject.getJSONArray(key);
+						int[] values = new int[jsonArray.length()];
+						for(int i=0;i<jsonArray.length();i++) {
+							values[i] = jsonArray.getInt(i);
+						}
+						field.set(paramObj, values);
+					}
 					
 				} catch (Exception e) {
 					
