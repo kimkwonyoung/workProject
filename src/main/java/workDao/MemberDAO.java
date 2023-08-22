@@ -19,6 +19,10 @@ public interface MemberDAO {
 	int update(String sql, Member member);
 	int delete(String sql, Member member);
 	
+	boolean insert_ProcedureCall(Member member) throws Exception;
+	boolean update_ProcedureCall(Member member) throws Exception;
+	boolean delete_ProcedureCall(Member member) throws Exception;
+	
 	
 
 }

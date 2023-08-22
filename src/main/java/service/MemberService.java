@@ -82,10 +82,20 @@ public class MemberService {
 	}
 	
 	//회원 가입
-	public JSONObject insert(Member mem) {
+	public JSONObject insert(Member mem) throws Exception {
 		JSONObject jsonResult = new JSONObject();
 		
-		if (_dao.insert(QueryProperty.getQuery("member.insert"), mem) == 1) {
+//		일반 쿼리 적용 로직
+//		if (_dao.insert(QueryProperty.getQuery("member.insert"), mem) == 1) {
+//			jsonResult.put("status", true);
+//			jsonResult.put("message", CommonProperty.getMessageInsertSuccess());
+//		} else {
+//			jsonResult.put("status", false);
+//			jsonResult.put("message", CommonProperty.getMessageExist());
+//		}
+//		
+//		프로시저 적용 로직
+		if (_dao.insert_ProcedureCall(mem)) {
 			jsonResult.put("status", true);
 			jsonResult.put("message", CommonProperty.getMessageInsertSuccess());
 		} else {
@@ -97,15 +107,26 @@ public class MemberService {
 	}
 	
 	//회원 정보 수정
-	public JSONObject update(Member mem) {
+	public JSONObject update(Member mem) throws Exception {
 		JSONObject jsonResult = new JSONObject();
 		SearchVO search = new SearchVO();
 		search.setsMemid(mem.getMemberid());
-		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
-		if (row > 0) {
+		
+//		정보수정 일반 쿼리 로직
+//		int row = _dao.update(QueryProperty.getQuery("member.update"), mem);
+//		if (row > 0) {
+//			jsonResult.put("status", true);
+//			jsonResult.put("message", CommonProperty.getMessageUpdate());
+//			jsonResult.put("member", _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search));
+//		}
+		
+//		정보수정 프로시저 로직
+		if (_dao.update_ProcedureCall(mem)) {
 			jsonResult.put("status", true);
 			jsonResult.put("message", CommonProperty.getMessageUpdate());
 			jsonResult.put("member", _dao.selectBySearch(QueryProperty.getQuery("member.selectMemid"), search));
+		} else {
+			jsonResult.put("status", false);
 		}
 		
 		return jsonResult;
@@ -120,7 +141,13 @@ public class MemberService {
 			if (member != null) {
 				jsonResult.put("status", true);
 				jsonResult.put("message", CommonProperty.getMessageWithdraw());
-				_dao.delete(QueryProperty.getQuery("member.delete"), member);
+				
+				//회원 탈퇴 일반 쿼리 로직
+//				_dao.delete(QueryProperty.getQuery("member.delete"), member);
+				
+				//회원 탈퇴 프로시저 로직
+				_dao.delete_ProcedureCall(member);
+				
 			} else {
 				jsonResult.put("status", false);
 				jsonResult.put("message", CommonProperty.getMessageMemMiss());

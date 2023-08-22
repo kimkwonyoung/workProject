@@ -1,15 +1,16 @@
 package workDao;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import Utils.ConnectionUtil;
-import Utils.SingletonConnectionHelper;
 import workDto.Member;
 import workDto.SearchVO;
 
@@ -326,6 +327,109 @@ public class MemberDAOImpl implements MemberDAO {
 		} finally {
 			ConnectionUtil.close(pstmt);
 			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+	}
+
+	@Override
+	public boolean insert_ProcedureCall(Member member) throws Exception {
+		Connection conn = null;
+		CallableStatement cstmt = null;
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			String sql = "{call member_insert(?,?,?,?,?)}";
+			cstmt = conn.prepareCall(sql);
+			
+			//3개 input, 1개 output 일반 타입
+			
+			cstmt.setString(1, member.getMemberid());
+			cstmt.setString(2, member.getName());
+			cstmt.setString(3, member.getPwd());
+			cstmt.setString(4, member.getPhone());
+			cstmt.registerOutParameter(5, Types.VARCHAR);
+			
+			cstmt.execute();
+			
+			String oracle_msg = (String) cstmt.getObject(5);
+			System.out.println("oracle server message : " + oracle_msg);
+			boolean result = false;
+			if (oracle_msg.equals("SUCCESS")) result = true;
+			
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(cstmt);
+			ConnectionUtil.close(conn);
+		}
+		
+	}
+
+	@Override
+	public boolean update_ProcedureCall(Member member) throws Exception {
+		Connection conn = null;
+		CallableStatement cstmt = null;
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			String sql = "{call member_update(?,?,?,?,?)}";
+			cstmt = conn.prepareCall(sql);
+			
+			//3개 input, 1개 output 일반 타입
+			
+			cstmt.setString(1, member.getName());
+			cstmt.setString(2, member.getPwd());
+			cstmt.setString(3, member.getPhone());
+			cstmt.setString(4, member.getMemberid());
+			cstmt.registerOutParameter(5, Types.VARCHAR);
+			
+			cstmt.execute();
+			
+			String oracle_msg = (String) cstmt.getObject(5);
+			System.out.println("oracle server message : " + oracle_msg);
+			boolean result = false;
+			if (oracle_msg.equals("SUCCESS")) result = true;
+			
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(cstmt);
+			ConnectionUtil.close(conn);
+		}
+	}
+
+	@Override
+	public boolean delete_ProcedureCall(Member member) throws Exception {
+		Connection conn = null;
+		CallableStatement cstmt = null;
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			String sql = "{call member_delete(?,?)}";
+			cstmt = conn.prepareCall(sql);
+			
+			//3개 input, 1개 output 일반 타입
+			
+			cstmt.setString(1, member.getMemberid());
+			
+			cstmt.execute();
+			
+			String oracle_msg = (String) cstmt.getObject(5);
+			System.out.println("oracle server message : " + oracle_msg);
+			
+			boolean result = false;
+			if (oracle_msg.equals("SUCCESS")) result = true;
+			
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(cstmt);
 			ConnectionUtil.close(conn);
 		}
 	}
