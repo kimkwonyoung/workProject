@@ -161,7 +161,7 @@
 	<script type="text/javascript">
 	
 	
-	function login() {
+/* 	function login() {
 		const param = {
 	    		memberid: memberid.value,
 		        pwd: pwd.value
@@ -181,14 +181,44 @@
 	      	  location.href = "<c:url value='mainIndex.do'/>"; 
 	        }
 	    });
-	}
-/* 	document.querySelector("#memlogin").addEventListener("click", e => {
-	    
-		
-	}); */
+	} */
+	//로그인
+	function login() {
+	    const param = {
+	        memberid: memberid.value,
+	        pwd: pwd.value
+	    };
 
+	    $.ajax({
+	        url: "/workProject/member/memberLogin.do",
+	        type: "POST",
+	        contentType: "application/json; charset=UTF-8",
+	        data: JSON.stringify(param),
+	        dataType: "json",
+	        success: (json) => {
+	            alert(json.message);
+	            if (json.status) {
+	                location.href = "<c:url value='mainIndex.do'/>";
+	            }
+	        }
+	    });
+	}
 	//로그아웃
 	function logout() {
+		$.ajax({
+			url: "/workProject/member/memberLogout.do",
+			type: "GET",
+			contentType: "application/json; charset=UTF-8",
+			dataType: "json",
+			success: (json) => {
+				alert(json.message);
+		        location.href = "<c:url value='mainIndex.do'/>";
+			}
+		});
+	}
+
+	
+/* 	function logout() {
 		fetch("/workProject/member/memberLogout.do", {
 	        method: "GET",
 	        headers: {
@@ -202,22 +232,67 @@
 	         location.href = "<c:url value='mainIndex.do'/>"; 
 	      });
 		
-	}
-	/* document.querySelector("#loginOut").addEventListener("click", e => {
-	    
-	}); */
+	} */
 	
-	//iframe 닫기 메시지 받는곳
-	window.addEventListener("message", (event) => {
+/* 	window.addEventListener("message", (event) => {
 	    if (event.data === "closeIframe") {
 	        var registrationIframe = document.getElementById("iframeForm");
 	        if (registrationIframe) {
 	            document.body.removeChild(registrationIframe);
 	        }
 	    }
+	}); */
+	
+	//iframe 닫기 메시지 받는곳
+	$(window).on("message", (event) => {
+		if (event.data === "closeIframe") {
+			 var registrationIframe = $("#iframeForm");
+			 if (registrationIframe.length > 0) {
+				 registrationIframe.remove();
+			 }
+		}
+		
 	});
 	
 	var showIframe = (href) => {
+	    var iframe = $("<iframe>", {
+	        src: href,
+	        css: {
+	            border: "1px solid gray",
+	            width: "355px",
+	            height: "480px"
+	        }
+	    });
+
+	    var closeButton = $("<button>", {
+	        class: "close-button",
+	        text: "X",
+	        css: {
+	            position: "absolute",
+	            top: "10px",
+	            right: "10px"
+	        },
+	        click: () => {
+	            iframeContainer.remove();
+	        }
+	    });
+
+	    var iframeContainer = $("<div>", {
+	        id: "iframeForm",
+	        css: {
+	            position: "fixed",
+	            top: "50%",
+	            left: "50%",
+	            transform: "translate(-50%, -50%)",
+	            backgroundColor: "#fff"
+	        }
+	    });
+
+	    iframeContainer.append(iframe, closeButton);
+	    $("body").append(iframeContainer);
+	}
+	
+/* 	var showIframe = (href) => {
 		var iframe = document.createElement("iframe");
 		iframe.src = href;
 		iframe.style.border = "1px solid gray";
@@ -248,18 +323,25 @@
         document.body.appendChild(iframeContainer);
 		
 		
-	}
+	} */
 	
 	
-	var hrefArr = ["<c:url value='/member/memberSearchMove.do?chkMem=findid'/>", 
+	var hrefArr = [
+		"<c:url value='/member/memberSearchMove.do?chkMem=findid'/>", 
 		"<c:url value='/member/memberSearchMove.do?chkMem=findpwd'/>",
-		"<c:url value='/member/memberWrite.do'/>"];
-	var links = document.querySelectorAll("#userInsert a");
+		"<c:url value='/member/memberWrite.do'/>"
+		];
+
+	$("#userInsert a").each((i, link) => {
+	    $(link).on("click", createClickHandler(hrefArr[i]));
+	});
+	
+/* 	var links = document.querySelectorAll("#userInsert a");
 	
 	for(let i = 0; i < links.length; i++) {
 		let link = links[i];
 		link.addEventListener("click", createClickHandler(hrefArr[i]));
-	}
+	} */
 	
 	function createClickHandler(href) {
 		return () => {
@@ -269,12 +351,11 @@
 	
 	
 	
-	var imgs = document.querySelectorAll("#gallery ul li img");
+/* 	var imgs = document.querySelectorAll("#gallery ul li img");
 	var lightbox = document.getElementById("lightbox");
 	var lightboxImage = document.getElementById("lightboxImage");
 	var footer = document.querySelector("footer");
 	var sns = document.querySelector("#sns");
-	
 	for (let i = 0; i < imgs.length; i++) {
 		imgs[i].addEventListener("click", (event) => {
 			lightbox.style.display = "block";
@@ -282,14 +363,24 @@
 			footer.style.display = "none";
 			sns.style.display = "none";
 		});
-		
 	}
-
 	lightbox.onclick = () => {  
 		lightbox.style.display = "none";
 		footer.style.display = "block";
 		sns.style.display = "block";
-}
+} */
+	$("#gallery ul li img").on("click", (event) => {
+		$("#lightbox").css("display", "block");
+		$("#lightboxImage").attr("src", event.target.src);
+		$("footer").css("display", "none");
+		$("#sns").css("display", "none");
+	});
+
+	$("#lightbox").on("click", () => {
+		$("#lightbox").css("display", "none");
+		$("footer").css("display", "block");
+		$("#sns").css("display", "block");
+	});
 	
 </script>
 <script src="<c:url value='/js/slideshow.js'/>"></script>

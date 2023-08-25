@@ -61,55 +61,84 @@
   </div>
 <script>
 const board_code = '${infoBoard.board_code}';
-const radioButtons = document.getElementsByName("board_code");
 
 //공지사항 일반 라디오 체크
+$("input[name='board_code']").each((i, radio) => {
+    if ($(radio).val() === board_code) {
+        $(radio).prop("checked", true);
+    }
+});
+
+/* const radioButtons = $("input[name='board_code']");
 for (const radioButton of radioButtons) {
 	if (radioButton.value === board_code) {
 		radioButton.checked = true;
 	}
-}
+} */
 
 //form submit
-document.getElementById("submitLink").addEventListener("click", () => {
-	document.getElementById("writeForm").submit();
+$("#submitLink").on("click", () => {
+	$("#writeForm").submit();
 });
 
 //뒤로가기
-var open = document.querySelector('.back-button');
-open.addEventListener('click', () => {
+$(".back-button").on("click", () => {
 	history.back();
 });
 
 //상단 고정 체크박스
-const fixedCheckbox = document.getElementById('fixed-yn');
+$("#fixed").on("click", () => {
+	$("#fixed-yn").prop("checked", !$("#fixed-yn").prop("checked"));
+});
+
+/* const fixedCheckbox = document.getElementById('fixed-yn');
 const fiexed = document.getElementById('fixed');
 fiexed.addEventListener('click', () => {
 	fixedCheckbox.checked = !fixedCheckbox.checked;
-});
+}); */
     
-const noticeRadioButton = document.getElementById('notice');
-const normalRadioButton = document.getElementById('normal');
-
-const checkboxDiv = document.getElementById('checkbox-div');
+const noticeRadioButton = $("#notice");
+const normalRadioButton = $("#normal");
+const checkboxDiv = $("#checkbox-div");
 
 //공지사항 라디오 버튼
-noticeRadioButton.addEventListener('change', ()=> {
+$(noticeRadioButton).on("change", () => {
+	if (noticeRadioButton.prop("checked")) {
+		$(checkboxDiv).css("display", "block");
+	} else {
+		$(checkboxDiv).css("display", "none");
+	}
+});
+
+//일반 라디오 버튼
+$(normalRadioButton).on("change", () => {
+	if (normalRadioButton.prop("checked")) {
+		$(checkboxDiv).css("display", "none");
+	} else {
+		$(checkboxDiv).css("display", "block");
+	}
+});
+
+
+/* noticeRadioButton.addEventListener('change', ()=> {
 	if (noticeRadioButton.checked) {
 		checkboxDiv.style.display = 'block'; 
 	} else {
 		checkboxDiv.style.display = 'none'; 
 	}
-});
+}); */
 
-//일반 라디오 버튼
-normalRadioButton.addEventListener('change', ()=> {
+/* normalRadioButton.addEventListener('change', ()=> {
 if (normalRadioButton.checked) {
 	checkboxDiv.style.display = 'none'; 
 } else {
 	checkboxDiv.style.display = 'block'; 
 	}
-});
+}); */
+
+
+
+
 </script>
 </body>
 </html>

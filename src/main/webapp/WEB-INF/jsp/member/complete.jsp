@@ -6,6 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="<c:url value='/css/complete.css'/>">
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
 	<div class="complete" id="link">
@@ -14,14 +15,15 @@
   </div>
   <script>
   	var chkMem = '${chkMem}';
-  	var link = document.querySelector('#link a');
+  	//var link = document.querySelector('#link a');
+  	
   	var href = 'memberWrite.do';
   	
   	if(chkMem == 'findid' || chkMem =='findpwd') {
   		href = 'memberSearchMove.do?chkMem=' + chkMem;
   	}
   	
-  	link.addEventListener('click', () => {
+  	$("#link a").on("click", () => {
 			window.location.href = href;
 		});
   

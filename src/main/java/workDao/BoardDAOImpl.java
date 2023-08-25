@@ -91,7 +91,6 @@ public class BoardDAOImpl implements BoardDAO {
 			if (!StringUtil.isEmpty(board.getSearchTitle())) {
 				pstmt.setString(2, board.getSearchTitle());
 			}
-			System.out.println("게시판 쿼리 = " + sql);
 			rs = pstmt.executeQuery();
 			
 			while (rs.next()) {
@@ -104,6 +103,7 @@ public class BoardDAOImpl implements BoardDAO {
 							  .mod_date(rs.getString("mod_date"))
 							  .board_code(rs.getInt("board_code"))
 							  .fixed_yn(rs.getString("fixed_yn"))
+							  .view_count(rs.getInt("view_count"))
 							  .build());
 			}
 			

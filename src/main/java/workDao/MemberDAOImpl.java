@@ -18,23 +18,41 @@ public class MemberDAOImpl implements MemberDAO {
 	
 	
 	@Override
-	public List<Member> selectByList(String sql) {
+	public List<Member> selectByList(Member member) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		List<Member> memberList = new ArrayList();
 		try {
 			conn = ConnectionUtil.getConnection();
+			
+			String sql = "select * from ( "
+					+  "    select * from member "
+					+  "    where membernum != 0 ";
+			if (member.getMembernum() != 0) {		
+				sql += "    and membernum < ? ";
+			}
+				sql	+= "    order by membernum desc "
+					+  " ) where rownum <= 10 ";
+			
+			
+			
 			pstmt = conn.prepareStatement(sql);
+			
+			if (member.getMembernum() != 0) {
+				pstmt.setInt(1, member.getMembernum());
+			}
+			
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
 				do {
 					Member mem = Member.builder()
-							.memberid(rs.getString(1))
-							.name(rs.getString(2))
-							.pwd(rs.getString(3))
-							.phone(rs.getString(4))
+							.memberid(rs.getString("memberid"))
+							.name(rs.getString("name"))
+							.pwd(rs.getString("pwd"))
+							.phone(rs.getString("phone"))
+							.membernum(rs.getInt("membernum"))
 							.build();
 					memberList.add(mem);
 				} while(rs.next());
@@ -432,6 +450,44 @@ public class MemberDAOImpl implements MemberDAO {
 			ConnectionUtil.close(cstmt);
 			ConnectionUtil.close(conn);
 		}
+	}
+
+	@Override
+	public List<?> selectList(String sql) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		List<Member> memberList = new ArrayList();
+		try {
+			conn = ConnectionUtil.getConnection();
+		
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				do {
+					Member mem = Member.builder()
+							.memberid(rs.getString("memberid"))
+							.name(rs.getString("name"))
+							.pwd(rs.getString("pwd"))
+							.phone(rs.getString("phone"))
+							.membernum(rs.getInt("membernum"))
+							.build();
+					memberList.add(mem);
+				} while(rs.next());
+			} else {
+				System.out.println("데이터 없음");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+		return memberList;
 	}
 
 

@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-
 <link rel="stylesheet" href="<c:url value='/css/board.css'/>">
 
   <title>게시판 목록</title>
@@ -24,15 +23,17 @@
   <%@ include file="../header.jsp" %>
     <div class="board-header">
     
-    <c:if test="${empty loginMember.memberid eq 'admin' }">
+      <c:if test="${empty loginMember.memberid eq 'admin' }">
       <div class="link-header">
           <a class="write-button" id="del">글삭제</a>
+	      <a class="write-button" id="wr">글쓰기</a> 
       </div>
-     </c:if>
+      </c:if>
     </div>
 
     <table>
-    <caption class="board-title">일반 게시판</caption>
+    
+    <caption class="board-title">공지사항 게시판</caption>
       <thead>
         <tr>
           <th class="checkbox-all"><input type="checkbox" id="checkAll"></th>
@@ -41,43 +42,29 @@
           <th>작성자</th>
           <th>작성일</th>
           <th>조회수</th>
-          <th>삭제</th>
         </tr>
       </thead>
-      <tbody id ="board_list">
+      <tbody>
       <c:forEach var="notice" items="${result.notice }">
        <tr class="highlight">
-      	  <td class="checkbox-cell"></td>
+      	  <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox" value="${notice.board_num }"></td>
           <td>${notice.board_num }</td>
           <td><a href="<c:url value='boardInfo.do?board_num=${notice.board_num }&board_code=${notice.board_code}'/>">${notice.title}</a></td>
           <td>${notice.mem_id }</td>
           <td>${notice.mod_date }</td>
           <td>${notice.view_count }</td>
-          <td></td>
        </tr>
       </c:forEach>
        <c:forEach var="board" items="${result.list}">
         <tr>
-          <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox"></td>
+          <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox" value="${board.board_num }"></td>
           <td>${board.board_num }</td>
           <td><a href="<c:url value='boardInfo.do?board_num=${board.board_num }&board_code=${board.board_code}'/>">${board.title}</a></td>
           <td>${board.mem_id }</td>
           <td>${board.mod_date }</td>
           <td>${board.view_count }</td>
-          <td><input type="button" value="삭제" class="checkDel" onclick="deleteChk(this)"></td>
         </tr>
         </c:forEach>
-        
-        <tr id="boardItem" style="display:none">
-          <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox"></td>
-          <td id="boardN"></td>
-          <td><a href="<c:url value='boardInfo.do?board_num={bodnum }&board_code={bodcode}'/>" id="title"></a></td>
-          <td id="memId"></td>
-          <td id="mod_date"></td>
-          <td id="view_count"></td>
-          <td><input type="button" value="삭제" class="checkDel" onclick="deleteChk(this)"></td>
-        </tr> 
-        
       </tbody>
       <c:if test="${empty result.list}">
 	  <tr>
@@ -138,132 +125,97 @@
 </form>
 	
 <script>
+/* document.querySelector("#mForm").addEventListener("submit", e => {
+	document.querySelector("#mForm > #pageNo").value = "1";
+	
+	return true;
+});
+ */
 $("#mForm").on("submit", () => {
-	$("#mform > #pageNo").val(1);
+	$("#mForm > #pageNo").val(1);
 	return true;
 });
 
 function jsPageNo(pageNo) {
+	/* document.querySelector("#pageForm > #pageNo").value = pageNo;
+	document.querySelector("#pageForm").submit();  */
 	$("#pageForm > #pageNo").val(pageNo);
 	$("#pageForm").submit();
 }
+ 
+//글쓰기 이동
+/* var open = document.querySelector('#wr');
+open.addEventListener('click', () => {
+  window.location.href = 'boardWrite.do';
+}); */
+
+$("#wr").on("click", () => {
+	window.location.href = 'boardWrite.do';
+});
+
+
+/* var checkAllCheckbox = document.getElementById("checkAll");
+var chkboxs = document.querySelectorAll(".chkbox");
+
+
+checkAllCheckbox.addEventListener("click", () => {
+	chkboxs.forEach((chk) => {
+		chk.checked = checkAllCheckbox.checked;
+	});
+}); */
 
 //체크 박스 전체 선택
 $("#checkAll").on("click", () => {
 	$(".chkbox").prop("checked", $("#checkAll").prop("checked"));
 });
+
 var board_code = '${board_code}';
-var pageNo = $("#pageNo").val();
-var pageLength = $("#pageLength").val();
 
-function innerHtml(list) {
-	  const boardItem = $("#boardItem");
-	  const boardListHTML = $("#board_list");
-	  
-	  for (let i=0; i<list.length; i++) {
-		  const board = list[i];
-		  const newBoardItem = boardItem.clone(true);
-		  const title = newBoardItem.find("#title");
-		  
-		  const boardNum = board.board_num;
-		  const boardCode = board.board_code;
-			  
-	   	  title.text(board.title);
-	   	  title.attr("href", title.attr("href").replace("{bodnum}", board.board_num));
-	      title.attr("href", title.attr("href").replace("{bodcode}", board.board_code));
-
-	      
-	      $(title).attr("href", $(title).attr("href").replace("{bodnum }", board.board_num));
-	      $(title).attr("href", $(title).attr("href").replace("{bodcode}", board.board_code));
-	      
-	   	  newBoardItem.find("#boardN").text(board.board_num);
-	      newBoardItem.find("#memId").text(board.mem_id);
-	      newBoardItem.find("#mod_date").text(board.mod_date);
-	      newBoardItem.find("#view_count").text(board.view_count);
-	
-	   	  newBoardItem.show();
-		  boardListHTML.append(newBoardItem);
-	  }
-}
-function deleteChk(btn) {
-    const tr = $(btn).closest("tr");
-    const boardNumCell = tr.find("td:nth-child(2)");
-    const boardNum = boardNumCell.text().trim();
-    
-    const param = {
-	        board_num: boardNum,
-	        board_code: board_code,
-	        pageNo: pageNo,
-	        pageLength: pageLength,
-	      };
-    
-		$.ajax({
-			url: "<c:url value='/board/ajaxList2.do'/>",
-			type: "POST",
-			contentType: "application/json; charset=UTF-8",
-			data: JSON.stringify(param),
-			dataType: "json",
-			success: (json) => {
-			  let html = "";
-	          if (json.status) {
-	        	  const bod = json.bod;
-	        	  alert(json.message);
-	        	  $(tr).css("display", "none");
-	        	  innerHtml(bod);
-
-	          } else {
-	        	  alert(json.message);
-	          }
-				
-			}
-		});
-	return false;
-}
-   
 //체크 박스 선택한것 삭제
-$("#del").on("click", (event) => {		
+$("#del").on("click", (event) => {
 	if (confirm('정말로 삭제 하시겠습니까?')) {
-		var count = 0;
 		var deleteStr = "";
-		$("input[name='chkBoardNum']").each((i, chkbox) => {
-		    if ($(chkbox).prop("checked")) {
-		        count++;
-		        var row = $(chkbox).closest('tr');
-		        
-		        var boardNumCell = row.find('td:nth-child(2)');
-		        var boardNum = boardNumCell.text().trim();
-		        deleteStr += boardNum + ',';
-		        row.css("display", "none");
+		$("input[name='chkBoardNum']").each((i, chk) => {
+		    if ($(chk).prop("checked")) {
+		        deleteStr += $(chk).val() + ',';
 		    }
 		});
-		if (deleteStr == '') {
+		if (deleteStr === '') {
 			alert('삭제할 글을 선택 하세요.');
 		} else {
 			deleteStr = deleteStr.substr(0, deleteStr.length - 1);
-			const param = {
-					 	count: count,
-				        board_code: board_code,
-				        pageNo: pageNo,
-				        pageLength: pageLength,
-				        deleteStr: deleteStr,
-				      };
-			$.ajax({
-				url: "<c:url value='/board/ajaxCheckDelete.do'/>",
-				type: "POST",
-				contentType: "application/json; charset=UTF-8",
-				data: JSON.stringify(param),
-				dataType: "json",
-				success: (json) => {
-					const bod = json.bodChk;
-					innerHtml(bod);
-				}
-			});		
+			window.location.href = 'boardDeleteChkbox.do?board_code=' + board_code + '&bnumStr=' + deleteStr;
 		}
+		
 	} else {
         event.preventDefault();
         return false;
     }
 });
+
+/* var deleteLink = document.getElementById('del');
+deleteLink.addEventListener('click', (event) => {		
+	if (confirm('정말로 삭제 하시겠습니까?')) {
+		var deleteStr = '';
+		var chkb = document.getElementsByName('chkBoardNum');
+		chkb.forEach((chkbox) => {
+			if (chkbox.checked) deleteStr += chkbox.value + ','
+		});
+		
+		if (deleteStr == '') {
+			alert('삭제할 글을 선택 하세요.');
+		} else {
+			deleteStr = deleteStr.substr(0, deleteStr.length - 1);
+			window.location.href = 'boardDeleteChkbox.do?board_code=' + board_code + '&bnumStr=' + deleteStr;
+		}
+	} else {
+        event.preventDefault();
+        return false;
+    }
+	
+}); */
+   
+   
 </script>
 </body>
 </html>

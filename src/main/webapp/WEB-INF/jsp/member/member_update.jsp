@@ -7,6 +7,7 @@
 </head>
 <title>회원 정보 수정</title>
 <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
     <div id="userForm">
@@ -35,12 +36,38 @@
     <script src="<c:url value='/js/check.js'/>"></script>
 <script>
 var sMemid = "${sMemid}";
-var back = document.querySelector(".back-upwt");
+/* var back = document.querySelector(".back-upwt");
 back.addEventListener("click", () => {
+	window.history.back();
+}); */
+$(".back-upwt").on("click", () => {
 	window.history.back();
 });
 
-document.querySelector("#updateMem").addEventListener("click", e => {
+$("#updateMem").on("click", () => {
+	const param = {
+			memberid: sMemid,
+		    pwd: password.value,
+		    name: username.value,
+		    phone: tel.value,
+		  };
+	$.ajax({
+		url: "memberUpdate.do",
+		type: "POST",
+		contentType: "application/json; charset=UTF-8",
+		data: JSON.stringify(param),
+		dataType: "json",
+		success: () => {
+			alert(json.message);
+		    if (json.status) {
+		    	//location.href = "<c:url value='memberInfo.do'/>"; 
+		    	location.href = "memberInfo.do"; 
+		    }
+		}
+	});
+});
+
+/* document.querySelector("#updateMem").addEventListener("click", e => {
 	const param = {
 		memberid: sMemid,
 	    pwd: password.value,
@@ -64,7 +91,7 @@ document.querySelector("#updateMem").addEventListener("click", e => {
 	      }
 	  });
 	
-});
+}); */
 </script>
 
 </body>

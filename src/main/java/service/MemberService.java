@@ -19,8 +19,8 @@ public class MemberService {
 	private MemberDAOImpl _dao;
 	
 	//회원 전체 목록
-	public List<Member> selectByList() {
-		return _dao.selectByList(QueryProperty.getQuery("member.selectMemList"));
+	public List<Member> selectByList(Member member) {
+		return _dao.selectByList(member);
 	}
 	
 	//아이디를 Key로 회원 조회
@@ -105,6 +105,22 @@ public class MemberService {
 		
 		return jsonResult;
 	}
+	//회원 가입
+	public JSONObject insertAjax(Member mem) throws Exception {
+		JSONObject jsonResult = new JSONObject();
+//		프로시저 적용 로직
+		if (_dao.insert_ProcedureCall(mem)) {
+			jsonResult.put("status", true);
+			jsonResult.put("list", _dao.selectList(QueryProperty.getQuery("member.selectAjax")));
+			jsonResult.put("message", CommonProperty.getMessageInsertSuccess());
+		} else {
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessageExist());
+		}
+		
+		return jsonResult;
+	}
+	
 	
 	//회원 정보 수정
 	public JSONObject update(Member mem) throws Exception {

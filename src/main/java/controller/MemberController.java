@@ -21,11 +21,16 @@ import workDto.SearchVO;
  */
 public class MemberController {
 	private MemberService _memberService;
-	
 	//회원 가입 수행
 	public String memberInsert(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		JSONObject jsonResult = _memberService.insert(member);
 		return jsonResult.toString();
+	}
+	
+	public String memberAjaxInsert(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		JSONObject jsonResult = _memberService.insertAjax(member);
+		
+		return jsonResult.toString(); 
 	}
 	
 	//아이디 중복 체크
@@ -58,12 +63,28 @@ public class MemberController {
 		return "member/member_info.jsp";
 	}
 	
-	//회원 전체 목록
-	public String memberList(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		List<Member> memberList = _memberService.selectByList();
+	public String memberList(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<Member> memberList = _memberService.selectByList(member);
 		
 		request.setAttribute("memberlist", memberList);
+		
 		return "member/member_list.jsp";
+	}
+	
+	//회원 목록 더보기
+	public String memberAjaxList(Member member, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		JSONObject result = new JSONObject();
+		
+		try { 
+			List<Member> memberList = _memberService.selectByList(member);
+        	result.put("status", true);
+        	result.put("memberlist", memberList);
+        } catch (Exception e) { 
+        	result.put("status", false);
+        	result.put("message", "서버에 오류 발생");
+        	e.printStackTrace();
+        }
+		return result.toString();
 	}
 	
 	

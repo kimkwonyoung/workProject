@@ -8,7 +8,8 @@ import workDto.SearchVO;
 
 public interface MemberDAO {
 	
-	List<?> selectByList(String sql);
+	List<?> selectByList(Member member);
+	List<?> selectList(String sql);
 	Object selectBySearch(String sql, SearchVO search);
 	Optional<?> selectByMember(String sql, Member member);
 	Optional<?> selectByName(String sql, Member member);

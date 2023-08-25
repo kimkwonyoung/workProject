@@ -6,6 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="<c:url value='/css/memberinfo.css'/>">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -24,15 +25,19 @@
   </div>
   <script>
   	var memberid = "${loginMember.memberid}";
-  	var links = document.querySelectorAll("#linklist a");
+  	//var links = document.querySelectorAll("#linklist a");
     var hrefArr = ["<c:url value='/main/mainIndex.do'/>", 
     			   "<c:url value='/member/memberUpdateMove.do?sMemid=" + memberid + "'/>",
     			   "<c:url value='/member/memberWithdrawMove.do'/>"];
 	
-	for(var i = 0; i < links.length; i++) {
+/* 	for(var i = 0; i < links.length; i++) {
 		var link = links[i];
 		link.addEventListener("click", createClickHandler(hrefArr[i]));
-	}
+	} */
+	$("#linklist a").each((i, link) => {
+	    $(link).on("click", createClickHandler(hrefArr[i]));
+	});
+	
   	function createClickHandler(href) {
   		return () => {
   		    window.location.href = href;

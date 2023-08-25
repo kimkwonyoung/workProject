@@ -5,6 +5,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
  
 </head>
 <body>

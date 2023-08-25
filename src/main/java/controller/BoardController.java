@@ -24,6 +24,11 @@ public class BoardController {
 	private SearchVO search = new SearchVO();
 	private BoardService _boardService;
 	
+	public String ex(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		return "board/ex.jsp";
+	}
+	
 	//게시판 글 작성
 	public String boardInsert(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
@@ -31,7 +36,14 @@ public class BoardController {
 		
 		request.setAttribute("board_code", board.getBoard_code());
 		request.setAttribute("result", _boardService.selectByBoardList(board));
-		return "board/board_list.jsp";
+		
+		String url = "";
+		if (board.getBoard_code() == 10) { // 일반 게시판
+			url = "board/board_list.jsp";
+		} else if (board.getBoard_code() == 20) { // 공지사항 게시판
+			url = "board/notice_list.jsp";
+		}
+		return url;
 	}
 	
 	//게시판 글 업데이트
@@ -64,25 +76,36 @@ public class BoardController {
 		request.setAttribute("board_code", board.getBoard_code());
 		request.setAttribute("result", _boardService.selectByBoardList(board));
 		
-		return "board/board_list.jsp";
+		String url = "";
+		if (board.getBoard_code() == 10) { // 일반 게시판
+			url = "board/board_list.jsp";
+		} else if (board.getBoard_code() == 20) { // 공지사항 게시판
+			url = "board/notice_list.jsp";
+		}
+		return url;
 	}
 	
-	//게시판 목록
+//	//게시판 목록
+//	public String List(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+//		
+//		request.setAttribute("board_code", board.getBoard_code());
+//		request.setAttribute("result", _boardService.selectByBoardList(board));
+//		return "board/notice_list.jsp";
+//	}
+	
+	//일반게시판 목록
 	public String boardList(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		if (StringUtil.isEmpty(request.getParameter("board_code"))) board.setBoard_code(10);
+		String url = "";
 		
 		request.setAttribute("board_code", board.getBoard_code());
 		request.setAttribute("result", _boardService.selectByBoardList(board));
-		return "board/board_list.jsp";
-	}
-	
-	
-	public String boardList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		if (StringUtil.isEmpty(request.getParameter("board_code"))) board.setBoard_code(10);
 		
-		request.setAttribute("board_code", board.getBoard_code());
-		request.setAttribute("result", _boardService.selectByBoardList(board));
-		return "board/board_list2.jsp";
+		if (board.getBoard_code() == 10) { // 일반 게시판
+			url = "board/board_list.jsp";
+		} else if (board.getBoard_code() == 20) { // 공지사항 게시판
+			url = "board/notice_list.jsp";
+		}
+		return url;
 	}
 	
 	public String ajaxList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {

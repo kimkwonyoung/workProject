@@ -93,38 +93,33 @@
  	var loginmem = '${loginMember.memberid}';
  	var infomem = '${infoBoard.mem_id}';
  	var boardtype = '${board_code}';
-	var updateLink = document.getElementById('edit');
-	var deleteLink = document.getElementById('del');
-	const writeCommentLink = document.querySelector('.write-comment');
 	
 	//로그인 회원과 게시글의 회원과 일치 하면 수정 삭제 링크 스크립트 작동
 	if (loginmem === infomem) {
 		//글 수정
-		updateLink.addEventListener('click', () => {
+		$("#edit").on("click", () => {
 			window.location.href = 'boardUpdateInfo.do?board_num=' + boardnum;
 		});
 		//글 삭제
-		deleteLink.addEventListener('click', (event)=> {
+		$("#del").on("click", (event)=> {
 			if(confirm('정말로 삭제 하시겠습니까?')) {
 				const param = {
 					board_num: boardnum,
 					board_code: boardcode,
 				  };
-				
-				  fetch("boardDelete.do", {
-				    method: "POST",
-				    headers: {
-				      "Content-Type": "application/json; charset=UTF-8",
-				    },
-				    body: JSON.stringify(param),
-				  })
-				  .then((response) => response.json())
-				  .then((json) => {
-					  alert(json.message);
-				      if (json.status) {
-				    	  location.href = "boardList.do?board_code=" + boardtype; 
-				      }
-				  });
+				$.ajax({
+					url: "boardDelete.do",
+					type: "POST",
+					contentType: "application/json; charset=UTF-8",
+					data: JSON.stringify(param),
+					dataType: "json",
+					success: () => {
+						alert(json.message);
+					    if (json.status) {
+					    	location.href = "boardList.do?board_code=" + boardtype; 
+					    }
+					}
+				});
 			} else {
 				event.preventDefault();
 			}
@@ -132,135 +127,72 @@
 	}
 	
 	//댓글 작성 폼 전송
-	writeCommentLink.addEventListener('click', (event) => {
-	    event.preventDefault();
-	    const commentForm = document.getElementById('commentForm');
-	    commentForm.submit();
+	$(".write-comment").on("click", () => {
+	   $("#commentForm").submit();
 	});
-/* 	writeCommentLink.addEventListener('click', () => {
-	    const param = {
-				board_num: boardnum,
-				mem_id: loginmem,
-				detail: detail.value,
-			  };
-			
-			  fetch("commentInsert.do", {
-			    method: "POST",
-			    headers: {
-			      "Content-Type": "application/json; charset=UTF-8",
-			    },
-			    body: JSON.stringify(param),
-			  })
-			  .then((response) => response.json())
-			  .then((json) => {
-			      if (json.status) {
-			    	  addNewComment(json.board_comment);
-			      }
-			  });
-	}); */
-	
-/* 	function addNewComment(newComment) {
-	    const commentForm = document.querySelector(".comment-form");
 
-	    const newCommentHTML = `
-	        <div class="comment-list">
-	            <h5>${newComment.mem_id}</h5>
-	            <div class="comment-area">
-	                <div class="commentdetail">
-	                    <span class="comment-content">${newComment.detail}</span>
-	                </div>
-	                <div class="up-del-link">
-	    			<h5 class="comment-date">${newComment.reg_date}</h5>	
-	    				<a href="" class="edit-comment-link" style="margin-right:10px" data-mem-id="${newComment.mem_id }">수정</a>
-	    				<a href="/workProject/board/commentDelete?board_num=${infoBoard.board_num}&board_code=${requestScope.board_code }&comment_num=${newComment.comment_num }"class="delete-comment">삭제</a>
-	    			</div>
-	            </div>
-	            <div class="edit-comment-form" style="display:none;">
-	            	<textarea class="edit-comment-textarea" rows="4" cols="50">${newComment.detail}</textarea>
-	        		<a href="#" class="save-edited-comment" data-comment-id="${newComment.comment_num}">저장</a>
-	        		<a href="#" class="cancel-edit-comment">취소</a>
-	            </div>
-	        </div>
-	    `;
-
-	    commentForm.insertAdjacentHTML("beforeend", newCommentHTML);
-	} */
-	
-	const commentArea = document.querySelectorAll('.comment-area');
-	const editCommentLinks = document.querySelectorAll('.edit-comment-link');
-    const editCommentForms = document.querySelectorAll('.edit-comment-form');
-    const commentContents = document.querySelectorAll('.comment-content');
-    const editTextareas = document.querySelectorAll('.edit-comment-textarea');
-    const saveButtons = document.querySelectorAll('.save-edited-comment');
-    const cancelLinks = document.querySelectorAll('.cancel-edit-comment');
-    const commentDate = document.querySelectorAll('.comment-date');
-    const deleteComment = document.querySelectorAll('.delete-comment');
-    
-    //정보보기 페이지 왔을때 로그인 회원과 글에 등록된 댓글 작성자와 일치시 댓글 수정,삭제 링크 활성화
-	window.onload = () => {
-		if (loginmem === infomem) {
-			updateLink.style.display = 'inline-block';
-			deleteLink.style.display = 'inline-block';
-		}
-		
-		editCommentLinks.forEach((link, index) => {
-			const memid = link.getAttribute('data-mem-id');
-			if (loginmem === memid) {
-				link.style.display = 'block';
-				deleteComment[index].style.display = 'block';
-			}
-		});
-    };
+    $(window).on("load", () => {
+        if (loginmem === infomem) {
+            $("#edit, #del").css("display", "inline-block");
+        }
+        
+        $(".edit-comment-link").each((index, link) => {
+            const memid = $(link).attr('data-mem-id');
+            if (loginmem === memid) {
+                $(link).css("display", "block");
+                //$(deleteComment[index]).css("display", "block");
+                $(".delete-comment").eq(index).css("display", "block");
+            }
+        });
+    });
     
     //댓글 수정하기 수정폼 보이게 하기
-    editCommentLinks.forEach((link, index) => {
-        link.addEventListener('click', (event) => {
+    $(".edit-comment-link").each((index, link) => {
+        $(link).on("click", (event) => {
             event.preventDefault();
-            editCommentForms[index].style.display = 'block';
-            commentContents[index].style.display = 'none';
-            commentArea[index].style.display = 'none';
+            $(".edit-comment-form").eq(index).css("display", "block");
+            $(".comment-content").eq(index).css("display", "none");
+            $(".comment-area").eq(index).css("display", "none");
         });
     });
     
     
     //ajax fetch로 댓글 수정
-    saveButtons.forEach((button, index) => {
-        button.addEventListener('click', (event) => {
+    $(".save-edited-comment").each((index, button) => {
+        $(button).on("click", (event) => {
         	event.preventDefault();
-            const editedContent = editTextareas[index].value;
-            const commentNum = button.getAttribute('data-comment-id');
             const param = {
-            		comment_num: commentNum,
-    				detail: editedContent
+            		comment_num: $(button).attr('data-comment-id'),
+    				detail: $(".edit-comment-textarea").eq(index).val()
     			  };
-            fetch('boardUpdateComment.do', {
-            	method: 'POST',
-            	headers: {
-            		  "Content-Type": "application/json; charset=UTF-8",
-    			  },
-    			  body: JSON.stringify(param),
-            })
-            .then((response) => response.json())
-    		.then((json) => {
-    			if (json.status) {
-	    				commentContents[index].textContent = json.detail
-	    				commentDate[index].textContent = json.comment_date
-	    				editCommentForms[index].style.display = 'none';
-	    	            commentContents[index].style.display = 'block';
-	    	            commentArea[index].style.display = 'block';
+            
+            $.ajax({
+				url: "boardUpdateComment.do",
+				type: "POST",
+				contentType: "application/json; charset=UTF-8",
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: () => {
+					if (json.status) {
+						$(".comment-content").eq(index).text(json.detail);
+						$(".comment-date").eq(index).text(json.comment_date);
+						$(".edit-comment-form").eq(index).css("display", "none");
+						$(".comment-content").eq(index).css("display", "block");
+						$(".comment-area").eq(index).css("display", "block");
     				}
-    			}
+				}
+			});	
     		);
          });
      });
     
     //댓글 수정 취소 원래 댓글로 되돌리기
-    cancelLinks.forEach((link, index) => {
-        link.addEventListener('click', (event) => {
+    $(".cancel-edit-comment").each((index, link) => {
+        $(link).on("click", (event) => {
             event.preventDefault();
-            editCommentForms[index].style.display = 'none';
-            commentContents[index].style.display = 'block';
-            commentArea[index].style.display = 'block';
+            $(".edit-comment-form").eq(index).css("display", "none");
+            $(".comment-content").eq(index).css("display", "block");
+            $(".comment-area").eq(index).css("display", "block");
         });
     });
 	

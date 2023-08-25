@@ -4,18 +4,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+
 <link rel="stylesheet" href="<c:url value='/css/board.css'/>">
 
   <title>게시판 목록</title>
 </head>
 <body>
-<form name="pageForm" id="pageForm" action="<c:url value='/board/boardList2.do'/>" method="post" >
+<form name="pageForm" id="pageForm" action="<c:url value='/board/boardList.do'/>" method="post" >
 		<input type="hidden" name="pageNo" id="pageNo" value="${result.pageBoard.pageNo}" />
 		<input type="hidden" name="searchTitle" id="searchTitle" value="${result.pageBoard.searchTitle}" >
 		<input type="hidden" name="pageLength" id="pageLength" value="${result.pageBoard.pageLength}" >
 		<input type="hidden" name="board_code" value="${requestScope.board_code}" >
 </form>
-<form name="mForm" id="mForm" action="<c:url value='/board/boardList2.do'/>" method="post" >
+<form name="mForm" id="mForm" action="<c:url value='/board/boardList.do'/>" method="post" >
 	<input type="hidden" name="pageNo" id="pageNo" value="${result.pageBoard.pageNo}" />
 	<input type="hidden" name="board_code" value="${requestScope.board_code}" />
 	
@@ -23,19 +24,15 @@
   <%@ include file="../header.jsp" %>
     <div class="board-header">
     
+    <c:if test="${empty loginMember.memberid eq 'admin' }">
       <div class="link-header">
           <a class="write-button" id="del">글삭제</a>
       </div>
+     </c:if>
     </div>
 
     <table>
-    
-    <c:if test="${board_code eq 20 }">
-    	<caption class="board-title">공지사항 게시판</caption>
-    </c:if>
-    <c:if test="${board_code eq 10 }">
-    	<caption class="board-title">일반 게시판</caption>
-    </c:if>
+    <caption class="board-title">일반 게시판</caption>
       <thead>
         <tr>
           <th class="checkbox-all"><input type="checkbox" id="checkAll"></th>
@@ -141,43 +138,62 @@
 </form>
 	
 <script>
-document.querySelector("#mForm").addEventListener("submit", e => {
-	document.querySelector("#mForm > #pageNo").value = "1";
-	
+$("#mForm").on("submit", () => {
+	$("#mform > #pageNo").val(1);
 	return true;
 });
 
-
 function jsPageNo(pageNo) {
-	document.querySelector("#pageForm > #pageNo").value = pageNo;
-	document.querySelector("#pageForm").submit(); 
+	$("#pageForm > #pageNo").val(pageNo);
+	$("#pageForm").submit();
 }
- 
-//글쓰기 이동
-/* var open = document.querySelector('#wr');
-open.addEventListener('click', () => {
-  window.location.href = 'boardWrite.do';
-}); */
-
-
-var board_code = '${board_code}';
-var checkAllCheckbox = document.getElementById("checkAll");
-var chkboxs = document.querySelectorAll(".chkbox");
-var pageNo = document.getElementById("pageNo").value;
-var pageLength = document.getElementById("pageLength").value;
 
 //체크 박스 전체 선택
-checkAllCheckbox.addEventListener("click", () => {
-	chkboxs.forEach((chk) => {
-		chk.checked = checkAllCheckbox.checked;
-	});
+$("#checkAll").on("click", () => {
+	$(".chkbox").prop("checked", $("#checkAll").prop("checked"));
 });
+var board_code = '${board_code}';
+var pageNo = $("#pageNo").val();
+var pageLength = $("#pageLength").val();
 
+function innerHtml(list) {
+	  const boardItem = $("#boardItem");
+	  const boardListHTML = $("#board_list");
+	  
+	  for (let i=0; i<list.length; i++) {
+		  const board = list[i];
+		  const newBoardItem = boardItem.clone(true);
+		  const title = newBoardItem.find("#title");
+		  
+		  const boardNum = board.board_num;
+		  const boardCode = board.board_code;
+			  
+	   	  title.text(board.title);
+	   	  title.attr("href", title.attr("href").replace("{bodnum}", board.board_num));
+	      title.attr("href", title.attr("href").replace("{bodcode}", board.board_code));
+
+	      
+	      $(title).attr("href", $(title).attr("href").replace("{bodnum }", board.board_num));
+	      $(title).attr("href", $(title).attr("href").replace("{bodcode}", board.board_code));
+	      
+/* 	   	  title.href = title.href.replace("{bodnum }", board.board_num);
+	   	  title.href = title.href.replace("{bodcode}", board.board_code); */
+	   	  
+	   	  newBoardItem.find("#boardN").text(board.board_num);
+	      newBoardItem.find("#memId").text(board.mem_id);
+	      newBoardItem.find("#mod_date").text(board.mod_date);
+	      newBoardItem.find("#view_count").text(board.view_count);
+	
+	   	  /* newBoardItem.style.display = "";
+	   	  boardListHTML.appendChild(newBoardItem); */
+	   	  newBoardItem.show();
+		  boardListHTML.append(newBoardItem);
+	  }
+}
 function deleteChk(btn) {
-	const tr = btn.closest("tr");
-    const boardNumCell = tr.querySelector("td:nth-child(2)");
-    const boardNum = boardNumCell.textContent.trim(); 
-    
+    const tr = $(btn).closest("tr");
+    const boardNumCell = tr.find("td:nth-child(2)");
+    const boardNum = boardNumCell.text().trim();
     
     const param = {
 	        board_num: boardNum,
@@ -185,141 +201,74 @@ function deleteChk(btn) {
 	        pageNo: pageNo,
 	        pageLength: pageLength,
 	      };
-
-	      fetch("<c:url value='/board/ajaxList2.do'/>", {
-	        method: "POST",
-	        headers: {
-	          "Content-Type": "application/json; charset=UTF-8",
-	        },
-	        body: JSON.stringify(param),
-	      })
-	      .then((response) => response.json())
-	      .then((json) => {
-	    	  let html = "";
+    
+		$.ajax({
+			url: "<c:url value='/board/ajaxList2.do'/>",
+			type: "POST",
+			contentType: "application/json; charset=UTF-8",
+			data: JSON.stringify(param),
+			dataType: "json",
+			success: (json) => {
+			  let html = "";
 	          if (json.status) {
 	        	  const bod = json.bod;
 	        	  alert(json.message);
-	        	  const boardItem = document.querySelector("#boardItem");
-	        	  const boardListHTML = document.querySelector("#board_list");
-	        	  
-	        	  for (let i=0; i<bod.length; i++) {
-	        		  const board = bod[i];
-		        	  const newBoardItem = boardItem.cloneNode(true);
-					  const title = newBoardItem.querySelector("#title");
-					  
-					  const boardNum = board.board_num;
-					  const boardCode = board.board_code;
-					  
-		        	  title.innerText = board.title;
-		        	  title.href = title.href.replace("{bodnum }", board.board_num);
-		        	  title.href = title.href.replace("{bodcode}", board.board_code);
-		        	  
-		        	  
-		        	  newBoardItem.querySelector("#boardN").innerText = board.board_num; 
-		        	  newBoardItem.querySelector("#memId").innerText = board.mem_id; 
-		        	  newBoardItem.querySelector("#mod_date").innerText = board.mod_date; 
-		        	  newBoardItem.querySelector("#view_count").innerText = board.view_count; 
-	
-		        	  newBoardItem.style.display = "";
-		        	  tr.remove();
-		        	  boardListHTML.appendChild(newBoardItem);
-	        	  }
+	        	  $(tr).css("display", "none");
+	        	  innerHtml(bod);
 
 	          } else {
 	        	  alert(json.message);
 	          }
-	          
-	      });
-	
-	return false;
-}
-
-
-
-   
-//체크 박스 선택한것 삭제
-var deleteLink = document.getElementById('del');
-deleteLink.addEventListener('click', (event) => {		
-	if (confirm('정말로 삭제 하시겠습니까?')) {
-		var deleteStr = '';
-		var count = 0;
-		var chkb = document.getElementsByName('chkBoardNum');
-		chkb.forEach((chkbox) => {
-			if (chkbox.checked)  {
-				count++;
-				const row = chkbox.closest('tr');
 				
-	            const boardNumCell = row.querySelector('td:nth-child(2)');
-	            const boardNum = boardNumCell.textContent.trim();
-				deleteStr += boardNum + ',';
-				row.style.display = "none";
 			}
 		});
-		
+	return false;
+}
+   
+//체크 박스 선택한것 삭제
+$("#del").on("click", (event) => {		
+	if (confirm('정말로 삭제 하시겠습니까?')) {
+		var count = 0;
+		var deleteStr = "";
+		$("input[name='chkBoardNum']").each((i, chkbox) => {
+		    if ($(chkbox).prop("checked")) {
+		        count++;
+		        var row = $(chkbox).closest('tr');
+		        
+		        var boardNumCell = row.find('td:nth-child(2)');
+		        var boardNum = boardNumCell.text().trim();
+		        deleteStr += boardNum + ',';
+		        row.css("display", "none");
+		    }
+		});
 		if (deleteStr == '') {
 			alert('삭제할 글을 선택 하세요.');
 		} else {
-			
 			deleteStr = deleteStr.substr(0, deleteStr.length - 1);
-			//window.location.href = 'boardDeleteChkbox.do?board_code=' + board_code + '&bnumStr=' + deleteStr;
-		 const param = {
-				 	count: count,
-			        board_code: board_code,
-			        pageNo: pageNo,
-			        pageLength: pageLength,
-			        deleteStr: deleteStr,
-			      };
-
-			      fetch("<c:url value='/board/ajaxCheckDelete.do'/>", {
-			        method: "POST",
-			        headers: {
-			          "Content-Type": "application/json; charset=UTF-8",
-			        },
-			        body: JSON.stringify(param),
-			      })
-			      .then((response) => response.json())
-			      .then((json) => {
-			    	  let html = "";
-		        	  const bod = json.bodChk;
-		        	  const boardItem = document.querySelector("#boardItem");
-		        	  const boardListHTML = document.querySelector("#board_list");
-		        	  
-		        	  for (let i=0; i<bod.length; i++) {
-		        		  const board = bod[i];
-			        	  const newBoardItem = boardItem.cloneNode(true);
-						  const title = newBoardItem.querySelector("#title");
-						  
-						  const boardNum = board.board_num;
-						  const boardCode = board.board_code;
-						  
-			        	  title.innerText = board.title;
-			        	  title.href = title.href.replace("{bodnum }", board.board_num);
-			        	  title.href = title.href.replace("{bodcode}", board.board_code);
-			        	  
-			        	  
-			        	  newBoardItem.querySelector("#boardN").innerText = board.board_num; 
-			        	  newBoardItem.querySelector("#memId").innerText = board.mem_id; 
-			        	  newBoardItem.querySelector("#mod_date").innerText = board.mod_date; 
-			        	  newBoardItem.querySelector("#view_count").innerText = board.view_count; 
-		
-			        	  newBoardItem.style.display = "";
-			        	 
-			        	  boardListHTML.appendChild(newBoardItem);
-		        	  }
-			          
-			      });
-			
-			
-			
+			const param = {
+					 	count: count,
+				        board_code: board_code,
+				        pageNo: pageNo,
+				        pageLength: pageLength,
+				        deleteStr: deleteStr,
+				      };
+			$.ajax({
+				url: "<c:url value='/board/ajaxCheckDelete.do'/>",
+				type: "POST",
+				contentType: "application/json; charset=UTF-8",
+				data: JSON.stringify(param),
+				dataType: "json",
+				success: (json) => {
+					const bod = json.bodChk;
+					innerHtml(bod);
+				}
+			});		
 		}
 	} else {
         event.preventDefault();
         return false;
     }
-	
 });
-   
-   
 </script>
 </body>
 </html>

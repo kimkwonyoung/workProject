@@ -1,10 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 </head>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
 <body>
 <header>
@@ -36,10 +41,13 @@
 				<a href="#">연혁</a> 
 				<a href="#">비즈니스</a> 
 				<a href="#">연락처</a>
-				<a href="<c:url value='/member/memberList.do'/>" class="forlink">전체 회원 보기</a>
-				<a href="<c:url value='/board/boardList2.do?board_type=10'/>" class="forlink">일반 게시판(삭제새로구현)</a>
-				<a href="/workProject/board/boardList?board_type=10" class="forlink">일반 게시판</a>
-				<a href="/workProject/board/boardList?board_type=20" class="forlink">공지사항 게시판</a>
+				 <c:if test="${empty loginMember.memberid eq 'admin' }">
+				 	<a href="<c:url value='/member/memberList.do'/>" class="forlink">전체 회원 보기</a>
+				 </c:if>
+				<a href="<c:url value='/board/boardList.do?board_code=10'/>" class="forlink">일반 게시판</a>
+				<a href="<c:url value='/board/boardList.do?board_code=20'/>" class="forlink">공지사항 게시판</a>
+				<a href="<c:url value='/board/ex.do'/>" class="forlink">예제</a>
+				
 				
 			</div>
           </li>
@@ -47,7 +55,15 @@
       </nav>
     </header>
 <script type="text/javascript">
-	var open = document.querySelector('.openbtn');
+	$(".openbtn").on("click", () => {
+		$(".sidebar").css("width", "226px");
+		$(this).css("display", "none");
+	});
+	$(".closebtn").on("click", () => {
+		$(".sidebar").css("width", "0");
+		$(".openbtn").css("display", "block");
+	});
+/* 	var open = document.querySelector('.openbtn');
 	var close = document.querySelector('.closebtn');
 	open.addEventListener('click', () => {
 		document.querySelector('.sidebar').style.width = "226px";
@@ -56,7 +72,7 @@
 	close.addEventListener('click', () => {
 		document.querySelector('.sidebar').style.width = "0";
 		document.querySelector('.openbtn').style.display = 'block';
-	});
+	}); */
 </script>
 </body>
 </html>

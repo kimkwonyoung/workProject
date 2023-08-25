@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Member {
 	
+	private int membernum;
 	private String memberid;
 	private String name;
 	private String pwd;

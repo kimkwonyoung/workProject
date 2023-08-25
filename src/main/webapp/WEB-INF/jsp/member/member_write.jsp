@@ -7,6 +7,7 @@
 <meta charset="UTF-8">
     <title>회원 가입</title>
 <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 </head>
 <body>
     <div id="userForm">
@@ -38,8 +39,30 @@
     </div>
 <script>
 let existUidChecked = false;
+$("#existUid").on("click", () => {
+	const param = {memberid: userid.value};
+	
+	$.ajax({
+		url: "memberExist.do",
+		type: "POST",
+		contentType: "application/json; charset=UTF-8",
+		data: JSON.stringify(param),
+		dataType: "json",
+		success: () => {
+		alert(json.message);
+	       if (json.status) {
+	    	   userid.value = "";
+	    	   userid.focus();
+	  	       existUidChecked = false;
+	       } else {
+	    	   existUidChecked = true;
+	       }
+		}
+		
+	});
+});
 
-document.querySelector("#existUid").addEventListener("click", e => {
+/* document.querySelector("#existUid").addEventListener("click", e => {
     const param = {memberid: userid.value};
 
     fetch("memberExist.do", {
@@ -60,9 +83,37 @@ document.querySelector("#existUid").addEventListener("click", e => {
     	   existUidChecked = true;
        }
     });
+}); */
+
+$("#register").on("click", () => {
+	if (!existUidChecked) {
+		alert("아이디 중복을 확인 해주세요");
+		existUid.focus();
+		return;
+	}
+	const param = {
+    		memberid: userid.value,
+	        pwd: password.value,
+	        name: username.value,
+	        phone: tel.value,
+	      };
+	
+	$.ajax({
+		url: "memberInsert.do",
+		type: "POST",
+		contentType: "application/json; charset=UTF-8",
+		data: JSON.stringify(param),
+		dataType: "json",
+		success: () => {
+		alert(json.message);
+          if (json.status) {
+        	  window.parent.postMessage("closeIframe", "*");
+          	}
+		}
+	});
 });
 
-document.querySelector("#register").addEventListener("click", e => {
+/* document.querySelector("#register").addEventListener("click", e => {
 	if (!existUidChecked) {
 		alert("아이디 중복을 확인 해주세요");
 		existUid.focus();
@@ -90,7 +141,7 @@ document.querySelector("#register").addEventListener("click", e => {
 	          }
 	      });
 	
-});
+}); */
     
     
 </script>
