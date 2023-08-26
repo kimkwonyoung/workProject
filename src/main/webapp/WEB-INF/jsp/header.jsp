@@ -46,7 +46,7 @@
 				 </c:if>
 				<a href="<c:url value='/board/boardList.do?board_code=10'/>" class="forlink">일반 게시판</a>
 				<a href="<c:url value='/board/boardList.do?board_code=20'/>" class="forlink">공지사항 게시판</a>
-				<a href="<c:url value='/board/ex.do'/>" class="forlink">예제</a>
+				<a href="<c:url value='/board/boardList2.do'/>" class="forlink">일반 더보기 게시판</a>
 				
 				
 			</div>

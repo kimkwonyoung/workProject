@@ -198,7 +198,7 @@ function deleteChk(btn) {
 	      };
     
 		$.ajax({
-			url: "<c:url value='/board/ajaxList2.do'/>",
+			url: "<c:url value='/board/ajaxDeleteChkOne.do'/>",
 			type: "POST",
 			contentType: "application/json; charset=UTF-8",
 			data: JSON.stringify(param),
@@ -248,7 +248,7 @@ $("#del").on("click", (event) => {
 				        deleteStr: deleteStr,
 				      };
 			$.ajax({
-				url: "<c:url value='/board/ajaxCheckDelete.do'/>",
+				url: "<c:url value='/board/ajaxDeleteChkAll.do'/>",
 				type: "POST",
 				contentType: "application/json; charset=UTF-8",
 				data: JSON.stringify(param),

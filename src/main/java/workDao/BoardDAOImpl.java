@@ -17,6 +17,62 @@ import workDto.Board_comment;
 public class BoardDAOImpl implements BoardDAO {
 	
 	@Override
+	public List<Board> selectByAddList(Board board) throws Exception {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		List<Board> boardList = new ArrayList<>();
+		
+		try {
+			conn = ConnectionUtil.getConnection();
+			String sql = "select * from ( "
+					+  "    select * from board "
+					+  "    where board_code = 10 ";
+			if (board.getBoard_num() != 0) {
+				sql += " and board_num < ? ";
+			}
+				sql += "    order by board_num desc "
+					+  ") "
+					+  "where rownum <= ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			if (board.getBoard_num() != 0) {
+				pstmt.setInt(1, board.getBoard_num());
+				pstmt.setInt(2, board.getNrow());
+			} else {
+				pstmt.setInt(1, board.getNrow());
+			}
+			
+			rs = pstmt.executeQuery();
+			
+			while (rs.next()) {
+				boardList.add(Board.builder()
+							  .board_num(rs.getInt("board_num"))
+							  .mem_id(rs.getString("mem_id"))
+							  .title(rs.getString("title"))
+							  .content(rs.getString("content"))
+							  .mod_date(rs.getString("mod_date"))
+							  .board_code(rs.getInt("board_code"))
+							  .fixed_yn(rs.getString("fixed_yn"))
+							  .view_count(rs.getInt("view_count"))
+							  .build());
+			}
+			
+			return boardList;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			ConnectionUtil.close(pstmt);
+			ConnectionUtil.close(rs);
+			ConnectionUtil.close(conn);
+		}
+		
+	}
+	
+	@Override
 	public int selectPageTotalCount(Board board) throws Exception {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -579,6 +635,8 @@ public class BoardDAOImpl implements BoardDAO {
 		}
 		return row;
 	}
+
+
 
 	
 

@@ -126,7 +126,7 @@ $(function() {
         }
       },
       close: function() {
-        form[ 0 ].reset();
+        //form[ 0 ].reset();
       }
     });
     dialog.closest(".ui-dialog").find(".ui-dialog-buttonpane button:contains('Cancel')").addClass("cancel-button");

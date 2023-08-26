@@ -23,6 +23,7 @@ public class Board {
 	
 	private int nrow;
 	private int count;
+	private int lastBnum;
 	private String deleteStr;
 	
 	//검색

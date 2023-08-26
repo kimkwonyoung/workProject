@@ -59,10 +59,8 @@ public class BoardService {
 	
 	//게시판 번호를 Key로 게시판 글 가져오기 + 조회수 1증가 업데이트
 	public Board selectByBoardNum(int board_num) {
-		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), board_num);
-		
 		int row = _boardDao.updateViewCount(QueryProperty.getQuery("board.updateView"), board_num);
-		
+		Optional<Board> optionalBoard =  _boardDao.selectByBoardNum(QueryProperty.getQuery("board.selectNum"), board_num);
 		if (row > 0) {
 			System.out.println("조회수 반영된 갯수 : " + row);
 		} else {
@@ -185,7 +183,37 @@ public class BoardService {
 		return jsonResult;
 	}
 	
+	public JSONObject deleteAjax2(Board board) throws Exception {
+		JSONObject jsonResult = new JSONObject();
+		int row = _boardDao.delete(QueryProperty.getQuery("board.delete"), board.getBoard_num());
+		if (row > 0) {
+			
+			board.setBoard_num(board.getLastBnum());
+			board.setNrow(1);
+			jsonResult.put("status", true);
+			jsonResult.put("message", CommonProperty.getMessageBoardDelete());
+			jsonResult.put("bod", _boardDao.selectByAddList(board));
+		} else {
+			jsonResult.put("status", false);
+			jsonResult.put("message", CommonProperty.getMessageBoardFail());
+		}
+		
+		
+		return jsonResult;
+	}
+	
+	
 	public JSONObject deleteCheckBox(Board board) throws JSONException, Exception {
+		JSONObject jsonResult = new JSONObject();
+		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), board.getDeleteStr());
+		board.setBoard_num(board.getLastBnum());
+		board.setNrow(board.getCount());
+		jsonResult.put("bodChk", _boardDao.selectByAddList(board));
+	
+		return jsonResult;
+	}
+	
+	public JSONObject deleteCheckBox2(Board board) throws JSONException, Exception {
 		JSONObject jsonResult = new JSONObject();
 		_boardDao.delete(QueryProperty.getQuery("board.deleteChk"), board.getDeleteStr());
 		
@@ -208,6 +236,40 @@ public class BoardService {
 			System.out.println("반영 X");
 		}
 		
+	}
+	
+	//게시판 board_list2.jsp용
+	public List<Board> selectByAddList(Board board) throws Exception {
+		board.setNrow(10);
+		return _boardDao.selectByAddList(board);
+	}
+	
+	public JSONObject selectByAjaxList(Board board) throws JSONException, Exception {
+		JSONObject jsonResult = new JSONObject();
+		board.setNrow(10);
+		jsonResult.put("boardAjaxList", _boardDao.selectByAddList(board));
+		
+		return jsonResult;
+	}
+	
+	public JSONObject selectByAjaxOneRow(Board board) throws JSONException, Exception {
+		JSONObject jsonResult = new JSONObject();
+		board.setNrow(1);
+		jsonResult.put("boardAjaxOne", _boardDao.selectByAddList(board));
+		
+		return jsonResult;
+	}
+	
+	public void insert2(Board board) {
+		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
+		board.setBoard_code(10);
+		System.out.println("최종 입력 보드 값 = " + board);
+		int row = _boardDao.insert(QueryProperty.getQuery("board.insert"), board);
+		if (row > 0) {
+			System.out.println("반영된 글 갯수 : " + row);
+		} else {
+			System.out.println("반영 X");
+		}
 	}
 
 	

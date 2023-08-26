@@ -17,6 +17,7 @@ public interface BoardDAO {
 	List<?> selectByPageList(Board board) throws Exception;
 	List<?> selectByPageRow(Board board) throws Exception;
 	List<?> selectByPageRow2(Board board) throws Exception;
+	List<?> selectByAddList(Board board) throws Exception; 
 	
 	List<?> selectByCommentList(String sql, int num);
 	int selectByCommentCount(String sql, int num);

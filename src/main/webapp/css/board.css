@@ -1,5 +1,16 @@
 @charset "UTF-8";
 
+#dialogInfo {
+  word-wrap: break-word;
+}
+#moreBtn {
+	display: inline-block;
+	width: 90px;
+    height: 30px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .list-all {
 	font-family: Arial, sans-serif;
 	margin: 0;

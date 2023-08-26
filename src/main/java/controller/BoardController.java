@@ -1,6 +1,8 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import Utils.StringUtil;
 import service.BoardService;
 import workDto.Board;
 import workDto.Board_comment;
+import workDto.Member;
 import workDto.SearchVO;
 
 /**게시판 컨트롤러
@@ -24,9 +27,42 @@ public class BoardController {
 	private SearchVO search = new SearchVO();
 	private BoardService _boardService;
 	
-	public String ex(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String boardList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception { 
+		request.setAttribute("boardList2", _boardService.selectByAddList(board));
+		return "board/board_list2.jsp";
+	}
+	public String boardAjaxList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception { 
+		JSONObject jsonResult = _boardService.selectByAjaxList(board);
+		return jsonResult.toString();
+	}
+	
+	public String ajaxDeleteChkOne2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		JSONObject jsonResult = _boardService.deleteAjax2(board);
 		
-		return "board/ex.jsp";
+		return jsonResult.toString();
+	}
+	
+	public String ajaxDeleteChkAll2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		JSONObject jsonResult = _boardService.deleteCheckBox2(board);
+		
+		return jsonResult.toString();
+	}
+	
+	public String ajaxInfo2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		JSONObject jsonResult = new JSONObject();
+		List<Board> boardList = new ArrayList<>();
+		boardList.add(_boardService.selectByBoardNum(board.getBoard_num()));		
+		
+		jsonResult.put("boardInfo", boardList);
+		
+		return jsonResult.toString();
+	}
+	
+	public String ajaxWrite2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		_boardService.insert2(board);
+		JSONObject jsonResult = _boardService.selectByAjaxOneRow(board);
+		
+		return jsonResult.toString();
 	}
 	
 	//게시판 글 작성
@@ -108,14 +144,14 @@ public class BoardController {
 		return url;
 	}
 	
-	public String ajaxList2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String ajaxDeleteChkOne(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		JSONObject jsonResult = _boardService.deleteAjax(board);
 		
 		return jsonResult.toString();
 	}
 	
-	public String ajaxCheckDelete(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public String ajaxDeleteChkAll(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		JSONObject jsonResult = _boardService.deleteCheckBox(board);
 		
