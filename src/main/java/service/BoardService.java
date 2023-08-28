@@ -263,7 +263,6 @@ public class BoardService {
 	public void insert2(Board board) {
 		if (StringUtil.isEmpty(board.getFixed_yn())) board.setFixed_yn("N");
 		board.setBoard_code(10);
-		System.out.println("최종 입력 보드 값 = " + board);
 		int row = _boardDao.insert(QueryProperty.getQuery("board.insert"), board);
 		if (row > 0) {
 			System.out.println("반영된 글 갯수 : " + row);
@@ -271,6 +270,7 @@ public class BoardService {
 			System.out.println("반영 X");
 		}
 	}
+	
 
 	
 	

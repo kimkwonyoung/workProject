@@ -26,6 +26,15 @@
     </div>
 
     <table>
+    <tr id="boardItem" style="display:none">
+          <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox"></td>
+          <td id="boardN"></td>
+          <td><a href="#" id="title"></a></td>
+          <td id="memId"></td>
+          <td id="mod_date"></td>
+          <td id="view_count"></td>
+          <td><input type="button" value="삭제" class="checkDel" onclick="deleteChk(this)"></td>
+        </tr> 
     <caption class="board-title">일반 더보기 게시판</caption>
       <thead>
         <tr>
@@ -51,15 +60,7 @@
         </tr>
         </c:forEach>
         
-        <tr id="boardItem" style="display:none">
-          <td class="checkbox-cell"><input type="checkbox" name="chkBoardNum" class="chkbox"></td>
-          <td id="boardN"></td>
-          <td><a href="#" id="title"></a></td>
-          <td id="memId"></td>
-          <td id="mod_date"></td>
-          <td id="view_count"></td>
-          <td><input type="button" value="삭제" class="checkDel" onclick="deleteChk(this)"></td>
-        </tr> 
+        
         
       </tbody>
     </table>
@@ -70,6 +71,7 @@
 
 <!-- 게시판 글 상세보기 -->
 <div id="dialogInfo" title="">
+<input type="hidden" id="infoBoardnum" value="">
 	<div>
       <p class="post-meta" id="post-meta">작성자: <span id="author"></span> | 작성일: <span id="date"></span> | 조회수: <span id="views"></span></p>
       <div class="post-content" id="post-content">
@@ -127,6 +129,15 @@
       <label for="content">내용:</label><br>
       <textarea id="writeContent" name="content" rows="10" class="form-input"></textarea><br>
 </div>
+
+<!-- 게시판 글 수정하기  -->
+<div id="dialogUpdate" title="글 수정">
+<label for="title">제목:</label><br>
+      <input type="text" id="updateTitle" name="title" class="form-input"><br>
+
+      <label for="content">내용:</label><br>
+      <textarea id="updateContent" name="content" rows="10" class="form-input"></textarea><br>
+</div>
 	
 <script>
 $(document).ready(function() {
@@ -137,7 +148,8 @@ $(document).ready(function() {
         height: 800,
         buttons: {
         	"글 수정": function() {
-    			openUpdate();
+        		const boardnum = $("#infoBoardnum").val();
+    			openUpdate(boardnum);
     		},
             "Close": function() {
                 $(this).dialog("close");
@@ -160,10 +172,74 @@ $(document).ready(function() {
             }
         }
     });
+    $("#dialogUpdate").dialog({
+        autoOpen: false,
+        modal: true,
+        width: 800,
+        height: 500,
+        buttons: {
+        	"글 수정 완료": function() {
+        		const boardnum = $("#dialogUpdate").data("boardnum");
+        		console.log("보드넘=" + boardnum);
+        		addUpdate(boardnum)
+        		$(this).dialog("close");
+        	},
+            "Close": function() {
+                $(this).dialog("close");
+            }
+        }
+    });
 });
 
-function openUpdate() {
-	$("#dialogWrite").dialog("open");
+function addUpdate(boardnum) {
+	const param = {
+	        board_num: boardnum,
+	        board_code: 10,
+	        title: $("#updateTitle").val(),
+	        content: $("#updateContent").val(),
+	      };
+    
+	$.ajax({
+		url: "<c:url value='/board/ajaxUpdate2.do'/>",
+		type: "POST",
+		contentType: "application/json; charset=UTF-8",
+		data: JSON.stringify(param),
+		dataType: "json",
+		success: (json) => {
+			location.reload();
+		}
+	});
+	
+	$("#dialogInfo").dialog("close");
+	
+}
+
+function openUpdate(boardnum) {
+	console.log(boardnum)
+	const param = {
+	        board_num: boardnum,
+	      };
+    
+	$.ajax({
+		url: "<c:url value='/board/ajaxInfo2.do'/>",
+		type: "POST",
+		contentType: "application/json; charset=UTF-8",
+		data: JSON.stringify(param),
+		dataType: "json",
+		success: (json) => {
+       	  const infoList = json.boardInfo;
+       	  for (let i=0; i<infoList.length; i++) {
+       		  const info = infoList[i];
+       		  
+       		  $("#updateTitle").val(info.title);
+     		  $("#updateContent").html(info.content);
+       		 
+       	  }
+			
+		}
+	});
+	$("#dialogUpdate").data("boardnum", boardnum).dialog("open");
+	
 }
 
 function addWrite() {
@@ -223,6 +299,7 @@ function info(boardnum) {
        	  for (let i=0; i<infoList.length; i++) {
        		  const info = infoList[i];
        		  
+       		  $("#infoBoardnum").val(info.board_num);
        		  $("#author").text(info.mem_id);
        	      $("#date").text(info.mod_date);
        	      $("#views").text(info.view_count);
@@ -346,11 +423,11 @@ $("#del").on("click", (event) => {
 });
 
 $("#moreBtn").on("click", e => {
+	const boardnum = $("#board_list tr:last-child td:nth-child(2)").text();
 	e.preventDefault();
 	const param = {
-	        board_num: $("#board_list tr:last-child td:nth-child(2)").text(),
+	        board_num: boardnum,
 	      };
-	
 	$.ajax({
 		url: "<c:url value='/board/boardAjaxList2.do'/>",
 		type: "POST",

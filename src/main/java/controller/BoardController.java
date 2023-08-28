@@ -65,6 +65,14 @@ public class BoardController {
 		return jsonResult.toString();
 	}
 	
+	public String ajaxUpdate2(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		_boardService.update(board);
+		JSONObject jsonResult = new JSONObject();
+		jsonResult.put("boardUpdate", _boardService.selectByBoardNum(board.getBoard_num()));	
+		
+		return jsonResult.toString();
+	}
+	
 	//게시판 글 작성
 	public String boardInsert(Board board, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
