@@ -1,6 +1,12 @@
 package workDto;
 
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONObject;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -64,6 +70,28 @@ public class Board {
 	public int getEndNo() {
 		return pageNo * pageLength;
 	}
+	
+	public JSONObject getJSONObject() throws Exception {
+        JSONObject json = new JSONObject();
+
+        Class cls = this.getClass();
+        for (Field field : cls.getDeclaredFields()) {
+            json.put(field.getName(), field.get(this));
+        }
+
+        return json;
+    }
+
+    public Map<String, Object> getMapObject() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+
+        Class cls = this.getClass();
+        for (Field field : cls.getDeclaredFields()) {
+            map.put(field.getName(), field.get(this));
+        }
+
+        return map;
+    }
 	
 	
 

@@ -9,8 +9,11 @@
 </head>
 <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="<c:url value='/js/jsrender.js'/>"></script>
+<script src="<c:url value='/js/jsviews.js'/>"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="<c:url value='/css/style.css'/>">
+<script src="<c:url value='/js/slideshow.js'/>"></script>
 <body>
 <header>
       <div id="logo">

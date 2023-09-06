@@ -71,6 +71,15 @@
  
     
 </div>
+<script id="memberItemTemplate" type="text/x-jsrender">
+    <tr>
+        <td>{{:membernum}}</td>
+        <td>{{:name}}</td>
+        <td>{{:memberid}}</td>
+        <td>{{:pwd}}</td>
+        <td>{{:phone}}</td>
+    </tr>
+</script>
   
 <script type="text/javascript">
 $(function() {
@@ -154,25 +163,16 @@ $("#moreBtn").on("click", e => {
 		dataType: "json",
 		success: (json) => {
           if (json.status) {
-        	  const memberList = json.memberlist;
-        	  
-        	  const memberItem = $("#memberItem");
-        	  const memberListHTML = $("#memberList");
-        	  
-        	  for (let i=0; i<memberList.length; i++) {
-	        	  const member = memberList[i];
-	        	  const newMemberItem = $(memberItem).clone(true);
-	        	  
-				  
-	        	  $(newMemberItem).find("#memnum").text(member.membernum);
-	        	  $(newMemberItem).find("#memname").text(member.name);
-	        	  $(newMemberItem).find("#memid").text(member.memberid);
-	        	  $(newMemberItem).find("#mempwd").text(member.pwd);
-	        	  $(newMemberItem).find("#memphone").text(member.phone);
+        	  	const memberList = json.memberlist;
+        	    const memberItemTemplate = $("#memberItemTemplate").html();
+        	    const tmpl = $.templates(memberItemTemplate);
+        	    const memberListHTML = $("#memberList");
 
-	        	  $(newMemberItem).css("display", "");
-	        	  $(memberListHTML).append(newMemberItem);
-        	  }
+        	    for (let i = 0; i < memberList.length; i++) {
+        	        const member = memberList[i];
+        	        const renderedMemberItem = tmpl.render(member);
+        	        $(memberListHTML).append(renderedMemberItem);
+        	    }
           }
 		}
 	});
